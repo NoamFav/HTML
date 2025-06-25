@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tignes Hiking Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.7;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 2px,
+                rgba(255, 255, 255, 0.05) 2px,
+                rgba(255, 255, 255, 0.05) 4px
+            );
+            animation: shimmer 20s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .intro {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            border-left: 5px solid #3498db;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .intro::before {
+            content: '🏔️';
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            opacity: 0.3;
+        }
+
+        .day {
+            margin-bottom: 50px;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .day:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .day-header {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 25px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .day-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .day:hover .day-header::after {
+            left: 100%;
+        }
+
+        .day-content {
+            padding: 30px;
+            background: white;
+        }
+
+        .time-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .morning {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-left: 4px solid #ff9800;
+        }
+
+        .lunch {
+            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+            border-left: 4px solid #4caf50;
+        }
+
+        .afternoon {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            border-left: 4px solid #9c27b0;
+        }
+
+        .time-label {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .time-label::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .morning .time-label::before { background: #ff9800; }
+        .lunch .time-label::before { background: #4caf50; }
+        .afternoon .time-label::before { background: #9c27b0; }
+
+        .highlight {
+            background: linear-gradient(135deg, #fff59d 0%, #ffeb3b 50%, #fff59d 100%);
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 5px rgba(255, 235, 59, 0.5); }
+            to { box-shadow: 0 0 15px rgba(255, 235, 59, 0.8); }
+        }
+
+        .quote {
+            font-style: italic;
+            color: #555;
+            border-left: 3px solid #e0e0e0;
+            padding-left: 15px;
+            margin: 15px 0;
+        }
+
+        .sources {
+            background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+
+        .mountain-icon {
+            display: inline-block;
+            margin: 0 5px;
+            font-size: 1.2em;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .intro, .time-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1>3-Day Scenic Hiking Plan</h1>
+                <div class="subtitle">Tignes, French Alps <span class="mountain-icon">🏔️</span> For Your Parents</div>
+            </div>
+            
+            <div class="content">
+                <div class="intro">
+                    In summer Tignes (French Alps) offers <span class="highlight">well-marked hiking routes for all levels</span>, from easy lakeshore strolls to challenging mountain treks. This plan uses cable cars plus trails so your active parents can reach high alpine scenery quickly. Each day features a scenic hike (alpine lakes, ridges or waterfalls) and a midday meet-up for lunch (either a packed picnic or an affordable "plat du jour" at a mountain café). All activities focus only on food costs – most trails have free viewpoints or simple huts with snacks (e.g. Refuge du Mont Pourri on Day 3) – so they won't break the bank.
+                </div>
+
+                <div class="day">
+                    <div class="day-header">
+                        Day 1: Aiguille Percée Summit (Tignes Le Lac via Palafour)
+                    </div>
+                    <div class="day-content">
+                        <div class="time-section morning">
+                            <div class="time-label">Morning</div>
+                            <p>Take the <span class="highlight">Palafour cable car</span> from Tignes Le Lac up to about 2,400 m, then hike ~700 m up to the <span class="highlight">Aiguille Percée</span> summit (2,740 m). It's a strenuous climb, but you'll be rewarded with outstanding alpine views – you'll even see the Grande Motte and Sassière glaciers (and possibly a distant Mont Blanc on a clear day).</p>
+                        </div>
+
+                        <div class="time-section lunch">
+                            <div class="time-label">Lunch</div>
+                            <p>Picnic at the summit viewpoint (it has a 360° panorama) or eat sandwiches with your bikers. The high spot is perfect for a snack break.</p>
+                        </div>
+
+                        <div class="time-section afternoon">
+                            <div class="time-label">Afternoon</div>
+                            <p>Descend via an alternate loop (for example the <span class="highlight">Bois de la Laye</span> trail) back to the resort. In the evening, take a gentle stroll around <span class="highlight">Lac de Tignes</span> <span class="quote">(the easy lakeside path is "a wonderful place" for a walk)</span> before dinner.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="day">
+                    <div class="day-header">
+                        Day 2: High Ridge Walk (Tignes Val Claret via Tufs)
+                    </div>
+                    <div class="day-content">
+                        <div class="time-section morning">
+                            <div class="time-label">Morning</div>
+                            <p>Ride the <span class="highlight">Tufs chairlift</span> (Val Claret) up to ~2,500 m and then walk along the high ridge line. This route is surprisingly easy (no technical parts) and <span class="highlight">"accessible to all"</span> levels, yet offers <span class="quote">"breathtaking views all along"</span> the ridgeline. You can wander along the summits, take in alpine panoramas, and even loop back partway via the gondola if needed.</p>
+                        </div>
+
+                        <div class="time-section lunch">
+                            <div class="time-label">Lunch</div>
+                            <p>Return to Tignes Val Claret by midday and grab an affordable lunch at a mountain café or bistro. (Many restaurants there offer a budget "plat du jour" at lunchtime.) This is a good spot to meet your biking family for a meal.</p>
+                        </div>
+
+                        <div class="time-section afternoon">
+                            <div class="time-label">Afternoon</div>
+                            <p>For more hiking, continue on the family-friendly loop toward <span class="highlight">Col de Fresse</span> (undulating but easy terrain). Eventually take the gondola or bus back to Tignes. Alternatively, spend a relaxing afternoon lakeside by Tignes – the shore path around Lac de Tignes is a very pleasant flat walk.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="day">
+                    <div class="day-header">
+                        Day 3: Waterfall and Lake Walk (Route de la Ferme to Gouille du Salin)
+                    </div>
+                    <div class="day-content">
+                        <div class="time-section morning">
+                            <div class="time-label">Morning</div>
+                            <p>Drive or take the shuttle to the <span class="highlight">Route de la Ferme</span> trailhead (near Le Lavachet). Hike <em>downhill</em> about 30 minutes to the <span class="highlight">Gouille du Salin</span>, a hidden turquoise pond. This crystal-clear mountain lagoon is surprisingly warm for July and looks like a little oasis – it's easy and <em>very</em> scenic. Continue past it along the trail to the <span class="highlight">Salin waterfall</span> (a botanical path rich in alpine flowers).</p>
+                        </div>
+
+                        <div class="time-section lunch">
+                            <div class="time-label">Lunch</div>
+                            <p>Keep following the trail downhill to <span class="highlight">Lac du Chevril</span> (the large dam lake). There are picnic spots on the lakeshore for your packed lunch. <em>(As an alternative, the nearby <strong>Refuge du Mont Pourri</strong> at 2,374 m offers a simple lunch/snack menu – it requires a short detour uphill but can be a dry refuge if needed (cash only). You can meet your family here or at the lake.)</em></p>
+                        </div>
+
+                        <div class="time-section afternoon">
+                            <div class="time-label">Afternoon</div>
+                            <p>After lunch, hike back gently along the <span class="highlight">Bois de la Laye</span> trail (which offers more views of the turquoise Lac du Chevril). Return to Tignes Le Lac by shuttle or on foot. If time allows, finish with a final lakeside stroll <span class="quote">(the easy loop around Lac de Tignes is noted as a <strong>"gentle route"</strong> for walking)</span> before your last evening together.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sources">
+                    <strong>Sources:</strong> Expert local guides and Tignes tourism sources highlight these routes and features, and note the scenic highlights (alpine lakes, glaciers, viewpoints) and amenities (midday meals, lift access) recommended above. Enjoy the trip! <span class="mountain-icon">⛰️</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
