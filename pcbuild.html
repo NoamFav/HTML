@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC Build Guide - CUDA Ready Gaming Workstation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .build-section {
+            margin-bottom: 50px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .build-header {
+            padding: 25px 30px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .build-header.v2 {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+        }
+
+        .build-header.optional {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .build-header.dual-boot {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .build-header.arch {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .build-header.cables {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        }
+
+        .build-header.summary {
+            background: linear-gradient(135deg, #1abc9c, #16a085);
+        }
+
+        .build-content {
+            padding: 30px;
+            background: white;
+        }
+
+        .component-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .component-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .component-list li:last-child {
+            border-bottom: none;
+        }
+
+        .component-name {
+            font-weight: bold;
+            color: #2c3e50;
+            min-width: 120px;
+            margin-right: 15px;
+        }
+
+        .component-details {
+            flex: 1;
+            color: #555;
+        }
+
+        .price-tag {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(231, 76, 60, 0.3);
+        }
+
+        .price-tag.v2 {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            box-shadow: 0 3px 10px rgba(142, 68, 173, 0.3);
+        }
+
+        .highlight {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .drive-layout {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .drive-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .drive-item {
+            margin: 8px 0;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .package-category {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-top: 4px solid #3498db;
+        }
+
+        .package-category h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .package-list {
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .summary-points {
+            background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .summary-points li {
+            margin: 10px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .summary-points li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .component-list li {
+                flex-direction: column;
+            }
+
+            .component-name {
+                min-width: auto;
+                margin-bottom: 5px;
+            }
+
+            .packages-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Ultimate PC Build Guide</h1>
+            <p>CUDA-Ready Gaming Workstation • Dual Boot • Future-Proof</p>
+        </div>
+
+        <div class="content">
+            <!-- Build v1 -->
+            <div class="build-section">
+                <div class="build-header">
+                    <span class="price-tag">≈€2k starter</span>
+                    Build v1 — CUDA-ready
+                </div>
+                <div class="build-content">
+                    <ul class="component-list">
+                        <li>
+                            <div class="component-name">Case:</div>
+                            <div class="component-details">Corsair <strong>7000D Airflow</strong> (black or white) — full tower, E-ATX, 420/360 mm rad support, 4-slot GPU clearance.</div>
+                        </li>
+                        <li>
+                            <div class="component-name">PSU:</div>
+                            <div class="component-details">Corsair <strong>RM1000e</strong> (ATX 3.0, 1000 W) — quiet now, headroom for future GPU.</div>
+                        </li>
+                        <li>
+                            <div class="component-name">CPU:</div>
+                            <div class="component-details">AMD <strong>Ryzen 7 7800X3D</strong> (AM5).</div>
+                        </li>
+                        <li>
+                            <div class="component-name">Cooler:</div>
+                            <div class="component-details">Thermalright <strong>Peerless Assassin 120 SE</strong> (air) — or Arctic <strong>Liquid Freezer III 360</strong> (AIO) if you want it silent under load.</div>
+                        </li>
+                        <li>
+                            <div class="component-name">Motherboard:</div>
+                            <div class="component-details">MSI <strong>MAG B650 Tomahawk WiFi</strong> (ATX, 4× DDR5 DIMMs, multiple M.2).</div>
+                        </li>
+                        <li>
+                            <div class="component-name">RAM:</div>
+                            <div class="component-details"><strong>128 GB</strong> (2×64) DDR5-5600 EXPO — Crucial Pro <strong>CP2K64G56C46U5</strong>.</div>
+                        </li>
+                        <li>
+                            <div class="component-name">GPU:</div>
+                            <div class="component-details">NVIDIA <strong>GeForce RTX 4070 SUPER</strong> (any 2–3-fan AIB).</div>
+                        </li>
+                        <li>
+                            <div class="component-name">Storage:</div>
+                            <div class="component-details">Samsung <strong>990 PRO 4 TB</strong> (PCIe 4.0 NVMe).</div>
+                        </li>
+                        <li>
+                            <div class="component-name">Case fans:</div>
+                            <div class="component-details">3× quality 140 mm PWM (e.g., Arctic P14 PWM or Noctua P14 redux) to fully populate the 7000D front/top.</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Build v2 -->
+            <div class="build-section">
+                <div class="build-header v2">
+                    <span class="price-tag v2">≈€6–7k upgrade</span>
+                    Build v2 — the beast
+                </div>
+                <div class="build-content">
+                    <ul class="component-list">
+                        <li>
+                            <div class="component-name">CPU:</div>
+                            <div class="component-details">swap to AMD <strong>Ryzen 9 9950X</strong>.</div>
+                        </li>
+                        <li>
+                            <div class="component-name">GPU:</div>
+                            <div class="component-details">swap to NVIDIA <strong>GeForce RTX 5090</strong> (4-slot; plan front intake/top exhaust).</div>
+                        </li>
+                        <li>
+                            <div class="component-name">PSU:</div>
+                            <div class="component-details">swap to Corsair <strong>RM1200x SHIFT</strong> (ATX 3.1, <strong>native 12V-2×6</strong> cable).</div>
+                        </li>
+                        <li>
+                            <div class="component-name">RAM:</div>
+                            <div class="component-details">add the <em>same</em> kit as v1 → <strong>256 GB</strong> total (4×64).</div>
+                        </li>
+                        <li>
+                            <div class="component-name">Storage:</div>
+                            <div class="component-details">add second Samsung <strong>990 PRO 4 TB</strong> (use as games/datasets/scratch).</div>
+                        </li>
+                        <li>
+                            <div class="component-name">Cooler:</div>
+                            <div class="component-details">move to 360 mm AIO (if not already) — e.g., Corsair <strong>iCUE H150i</strong> / Arctic <strong>LF III 360</strong>.</div>
+                        </li>
+                        <li>
+                            <div class="component-name">Extras:</div>
+                            <div class="component-details">GPU anti-sag bracket; optional 10 GbE PCIe card; extra 140 mm fans if needed.</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Optional Endgame -->
+            <div class="build-section">
+                <div class="build-header optional">
+                    Optional "Endgame" adds (later, if you want)
+                </div>
+                <div class="build-content">
+                    <ul class="component-list">
+                        <li>
+                            <div class="component-details">More NVMe via PCIe M.2 adapter card (adds 2–4 drives).</div>
+                        </li>
+                        <li>
+                            <div class="component-details">Third Samsung 990 PRO (backups/scratch) + external NVMe for offsite borg/borgmatic.</div>
+                        </li>
+                        <li>
+                            <div class="component-details">2.5/10 GbE switch + NAS if you start hoarding datasets.</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Dual Boot Layout -->
+            <div class="build-section">
+                <div class="build-header dual-boot">
+                    Clean dual-boot layout (2× NVMe)
+                </div>
+                <div class="build-content">
+                    <div class="drive-layout">
+                        <div class="drive-title">💾 Drive 1 (Arch):</div>
+                        <div class="drive-item">EFI (512 MB, FAT32)</div>
+                        <div class="drive-item">btrfs root with subvolumes @, @home, @snapshots (mount with ssd,compress=zstd:3,noatime).</div>
+                    </div>
+                    
+                    <div class="drive-layout">
+                        <div class="drive-title">💽 Drive 2 (Windows 11):</div>
+                        <div class="drive-item">let Windows create its EFI + NTFS; keep whole disk NTFS.</div>
+                    </div>
+
+                    <div class="highlight">
+                        <strong>Boot Strategy:</strong> Boot via BIOS picker (no shared bootloader drama). Mount the Windows NTFS in Arch when needed.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arch Setup -->
+            <div class="build-section">
+                <div class="build-header arch">
+                    Arch + Hyprland "rice" starter pack
+                </div>
+                <div class="build-content">
+                    <div class="packages-grid">
+                        <div class="package-category">
+                            <h4>🖥️ Core</h4>
+                            <div class="package-list">hyprland, waybar, wofi (or rofi-wayland), mako, hyprpaper (or swww), alacritty (or kitty), zsh + starship</div>
+                        </div>
+                        <div class="package-category">
+                            <h4>🎨 Theming</h4>
+                            <div class="package-list">Catppuccin or Tokyo Night GTK, Papirus icons, FiraCode Nerd Font</div>
+                        </div>
+                        <div class="package-category">
+                            <h4>🎮 Gaming</h4>
+                            <div class="package-list">Steam (proton-ge-custom), Heroic/Lutris, mangohud, vkbasalt, gamemode</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cables & Small Stuff -->
+            <div class="build-section">
+                <div class="build-header cables">
+                    Cable & small stuff (don't forget)
+                </div>
+                <div class="build-content">
+                    <ul class="component-list">
+                        <li>
+                            <div class="component-details">Pre-applied paste on many AIOs; otherwise grab Thermal Grizzly <strong>Kryonaut</strong>.</div>
+                        </li>
+                        <li>
+                            <div class="component-details">Extra <strong>12V-2×6</strong> GPU cable comes with the RM1200x SHIFT (use <em>native</em>, no adapters).</div>
+                        </li>
+                        <li>
+                            <div class="component-details">Quality USB-C (40 Gbps) and DisplayPort 1.4/2.1 cables for your monitors.</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="build-section">
+                <div class="build-header summary">
+                    Summary (how you'll use this)
+                </div>
+                <div class="build-content">
+                    <div class="summary-points">
+                        <ul>
+                            <li><strong>Buy v1</strong> now (fits your budget, zero compromises for gaming + CUDA work).</li>
+                            <li><strong>Swap to v2</strong> later: CPU, GPU, PSU, add RAM + second NVMe — everything else stays.</li>
+                            <li>Case/airflow/clearances are already sized for the 5090 + 360 mm cooling.</li>
+                            <li>Arch + Hyprland on NVMe #1, Windows on NVMe #2, pick at boot. Smooth.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
