@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Theory Study Guide - KEN3130</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: white;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid #e9ecef;
+        }
+
+        .nav h3 {
+            color: #4a90e2;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+        }
+
+        .nav-item {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4a90e2;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: #4a90e2;
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        .section {
+            margin-bottom: 40px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+        }
+
+        .section h2 {
+            color: #4a90e2;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .section h3 {
+            color: #357abd;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .section h4 {
+            color: #2c5aa0;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .definition {
+            background: linear-gradient(135deg, #e8f4fd, #f0f8ff);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #4a90e2;
+            margin: 15px 0;
+        }
+
+        .definition strong {
+            color: #357abd;
+        }
+
+        .example {
+            background: linear-gradient(135deg, #fff9e6, #fffbf0);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #ffa500;
+            margin: 15px 0;
+        }
+
+        .matrix {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            border: 1px solid #dee2e6;
+            overflow-x: auto;
+        }
+
+        .matrix pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        .theorem {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #0891b2;
+            margin: 15px 0;
+        }
+
+        .theorem strong {
+            color: #0891b2;
+        }
+
+        .application {
+            background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #10b981;
+            margin: 15px 0;
+        }
+
+        .application strong {
+            color: #059669;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+            opacity: 0;
+            transform: translateY(100px);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .back-to-top:hover {
+            background: #357abd;
+            transform: scale(1.1);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(to right, #4a90e2, #357abd);
+            z-index: 1000;
+            transition: width 0.1s ease;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a8e6cf 0%, #dcedc1 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 20px;
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <div class="container">
+        <header class="header">
+            <h1>Game Theory Study Guide</h1>
+            <p>KEN3130 - Maastricht University Data Science & AI</p>
+        </header>
+
+        <nav class="nav">
+            <h3>📚 Table of Contents</h3>
+            <div class="nav-grid">
+                <div class="nav-item" onclick="scrollToSection('fundamental')">1. Fundamental Concepts</div>
+                <div class="nav-item" onclick="scrollToSection('strategic')">2. Strategic Form Games</div>
+                <div class="nav-item" onclick="scrollToSection('nash')">3. Nash Equilibrium</div>
+                <div class="nav-item" onclick="scrollToSection('extensive')">4. Extensive Form Games</div>
+                <div class="nav-item" onclick="scrollToSection('mixed')">5. Mixed Strategies</div>
+                <div class="nav-item" onclick="scrollToSection('cooperative')">6. Cooperative Game Theory</div>
+                <div class="nav-item" onclick="scrollToSection('auction')">7. Auction Theory</div>
+                <div class="nav-item" onclick="scrollToSection('mechanism')">8. Mechanism Design</div>
+                <div class="nav-item" onclick="scrollToSection('behavioral')">9. Behavioral Game Theory</div>
+                <div class="nav-item" onclick="scrollToSection('applications')">10. AI & Data Science Applications</div>
+            </div>
+        </nav>
+
+        <section id="fundamental" class="section fade-in">
+            <h2>1. Fundamental Concepts</h2>
+            
+            <div class="definition">
+                <strong>Game Theory</strong>: The mathematical study of strategic interaction between rational decision-makers (players) who must consider the actions and reactions of others when making decisions.
+            </div>
+
+            <h3>Core Components of a Game</h3>
+            <ul>
+                <li><span class="highlight">Players</span>: Decision-makers in the game</li>
+                <li><span class="highlight">Strategies</span>: Available actions for each player</li>
+                <li><span class="highlight">Payoffs</span>: Outcomes/utilities for each player given strategy combinations</li>
+                <li><span class="highlight">Information</span>: What each player knows when making decisions</li>
+            </ul>
+
+            <h3>Types of Games</h3>
+            
+            <div class="definition">
+                <strong>Strategic Games (Normal Form)</strong>: Players choose strategies simultaneously with no temporal structure and complete information about game structure.
+            </div>
+
+            <div class="definition">
+                <strong>Extensive Games (Sequential)</strong>: Players move in a specific order with temporal structure and may involve incomplete information.
+            </div>
+
+            <div class="definition">
+                <strong>Cooperative vs Non-Cooperative</strong>: Cooperative games allow binding agreements; non-cooperative games require independent action.
+            </div>
+
+            <h3>Key Assumptions</h3>
+            <div class="theorem">
+                <strong>Rationality</strong>: Players have well-defined preferences, seek to maximize payoffs, and can process information effectively.
+            </div>
+            
+            <div class="theorem">
+                <strong>Common Knowledge</strong>: All players know the game structure, the rationality of all players, and that everyone else knows these facts.
+            </div>
+        </section>
+
+        <section id="strategic" class="section fade-in">
+            <h2>2. Strategic Form Games</h2>
+
+            <h3>Matrix Representation</h3>
+            <div class="matrix">
+<pre>           Player 2
+           C    D
+Player 1 C (3,3) (0,5)
+         D (5,0) (1,1)</pre>
+            </div>
+            <p><em>First number = Player 1's payoff, Second number = Player 2's payoff</em></p>
+
+            <h3>Classic Examples</h3>
+
+            <h4>Prisoner's Dilemma</h4>
+            <div class="example">
+                <div class="matrix">
+<pre>           Player 2
+           Cooperate  Defect
+Player 1 C    (3,3)    (0,5)
+         D    (5,0)    (1,1)</pre>
+                </div>
+                <strong>Key Insight</strong>: Individual rationality leads to collectively suboptimal outcome.
+            </div>
+
+            <h4>Coordination Game</h4>
+            <div class="example">
+                <div class="matrix">
+<pre>           Player 2
+           Left   Right
+Player 1 L  (1,1)   (0,0)
+         R  (0,0)   (1,1)</pre>
+                </div>
+                <strong>Key Insight</strong>: Multiple equilibria; coordination problem.
+            </div>
+
+            <h4>Battle of the Sexes</h4>
+            <div class="example">
+                <div class="matrix">
+<pre>           Wife
+           Opera  Football
+Husband O  (2,1)    (0,0)
+        F  (0,0)    (1,2)</pre>
+                </div>
+                <strong>Key Insight</strong>: Conflict over which equilibrium to choose.
+            </div>
+
+            <h3>Solution Concepts</h3>
+            
+            <div class="definition">
+                <strong>Dominant Strategy</strong>: A strategy that yields higher payoff regardless of opponents' actions.
+                <ul>
+                    <li><strong>Strictly Dominant</strong>: Always better than alternatives</li>
+                    <li><strong>Weakly Dominant</strong>: At least as good as alternatives, sometimes better</li>
+                </ul>
+            </div>
+
+            <div class="theorem">
+                <strong>Iterated Elimination of Dominated Strategies</strong>: Process of removing dominated strategies sequentially to simplify games and find solutions.
+            </div>
+        </section>
+
+        <section id="nash" class="section fade-in">
+            <h2>3. Nash Equilibrium</h2>
+
+            <div class="definition">
+                <strong>Nash Equilibrium</strong>: A strategy profile where no player can unilaterally deviate and improve their payoff.
+                <br><br>
+                Formally: Strategy profile s* = (s₁*, s₂*, ..., sₙ*) is a Nash equilibrium if for all players i and all strategies sᵢ:
+                <br>
+                uᵢ(s₁*, ..., sᵢ*, ..., sₙ*) ≥ uᵢ(s₁*, ..., sᵢ, ..., sₙ*)
+            </div>
+
+            <h3>Properties</h3>
+            <ul>
+                <li><span class="highlight">Existence</span>: Every finite game has at least one Nash equilibrium (in mixed strategies)</li>
+                <li><span class="highlight">Uniqueness</span>: Nash equilibria may not be unique</li>
+                <li><span class="highlight">Efficiency</span>: Nash equilibria may not be Pareto efficient</li>
+            </ul>
+
+            <h3>Finding Nash Equilibria</h3>
+
+            <div class="theorem">
+                <strong>Best Response Method</strong>:
+                <ol>
+                    <li>For each player, identify best responses to opponent strategies</li>
+                    <li>Find intersections of best response correspondences</li>
+                </ol>
+            </div>
+
+            <div class="theorem">
+                <strong>Cell-by-Cell Method (2x2 Games)</strong>:
+                <ol>
+                    <li>For each cell, check if either player wants to deviate</li>
+                    <li>If no player wants to deviate, it's a Nash equilibrium</li>
+                </ol>
+            </div>
+
+            <h3>Refinements</h3>
+            <ul>
+                <li><span class="highlight">Subgame Perfect Equilibrium</span>: Nash equilibrium that remains Nash in every subgame</li>
+                <li><span class="highlight">Perfect Bayesian Equilibrium</span>: Combines sequential rationality with consistent beliefs</li>
+                <li><span class="highlight">Trembling Hand Perfect</span>: Equilibrium robust to small mistakes by opponents</li>
+            </ul>
+        </section>
+
+        <section id="extensive" class="section fade-in">
+            <h2>4. Extensive Form Games</h2>
+
+            <h3>Components</h3>
+            <div class="definition">
+                <strong>Game Tree</strong>: Graphical representation showing:
+                <ul>
+                    <li><strong>Decision nodes</strong>: Points where players choose actions</li>
+                    <li><strong>Chance nodes</strong>: Points where random events occur</li>
+                    <li><strong>Terminal nodes</strong>: End points with payoffs</li>
+                    <li><strong>Branches</strong>: Available actions at each node</li>
+                </ul>
+            </div>
+
+            <div class="definition">
+                <strong>Information Sets</strong>: Collections of decision nodes where a player cannot distinguish between them.
+                <ul>
+                    <li><strong>Perfect Information</strong>: Each information set contains exactly one node</li>
+                    <li><strong>Imperfect Information</strong>: Some information sets contain multiple nodes</li>
+                </ul>
+            </div>
+
+            <h3>Backward Induction</h3>
+            <div class="theorem">
+                <strong>Process</strong>:
+                <ol>
+                    <li>Start at terminal nodes</li>
+                    <li>Work backward through game tree</li>
+                    <li>At each decision node, choose action maximizing payoff</li>
+                    <li>Replace node with expected payoff</li>
+                </ol>
+            </div>
+
+            <div class="example">
+                <strong>Sequential Prisoner's Dilemma</strong>: Player 1 chooses first (Cooperate/Defect), Player 2 observes and responds.
+                <br><strong>Analysis</strong>: Player 2 will always defect, so Player 1 should defect.
+            </div>
+
+            <div class="example">
+                <strong>Centipede Game</strong>: Players alternately choose to continue or stop. Payoffs increase as game continues.
+                <br><strong>Theoretical Prediction</strong>: Stop immediately (backward induction)
+                <br><strong>Experimental Observation</strong>: Often continue for several rounds
+            </div>
+        </section>
+
+        <section id="mixed" class="section fade-in">
+            <h2>5. Mixed Strategies</h2>
+
+            <div class="definition">
+                <strong>Mixed Strategy</strong>: A probability distribution over pure strategies.
+                <br><br>
+                For player i with strategy set Sᵢ = {s₁, s₂, ..., sₖ}, a mixed strategy is:
+                <br>σᵢ = (p₁, p₂, ..., pₖ) where pⱼ ≥ 0 and Σpⱼ = 1
+            </div>
+
+            <h3>Expected Payoffs</h3>
+            <div class="theorem">
+                Expected payoff from mixed strategy profile σ:
+                <br>Uᵢ(σ) = Σₛ [∏ⱼ σⱼ(sⱼ)] uᵢ(s)
+            </div>
+
+            <h3>Mixed Strategy Nash Equilibrium</h3>
+            <div class="theorem">
+                <strong>Indifference Condition</strong>: In equilibrium, players must be indifferent between all pure strategies played with positive probability.
+            </div>
+
+            <div class="example">
+                <strong>Matching Pennies</strong>:
+                <div class="matrix">
+<pre>           Player 2
+           Heads  Tails
+Player 1 H  (1,-1) (-1,1)
+         T (-1,1)  (1,-1)</pre>
+                </div>
+                <strong>Mixed Strategy Equilibrium</strong>: Both players play each strategy with probability 1/2.
+            </div>
+
+            <h3>Finding Mixed Strategy Equilibria</h3>
+            <ol>
+                <li>Identify which strategies might be played in equilibrium</li>
+                <li>Use indifference conditions to solve for probabilities</li>
+                <li>Verify that no profitable deviations exist</li>
+            </ol>
+        </section>
+
+        <section id="cooperative" class="section fade-in">
+            <h2>6. Cooperative Game Theory</h2>
+
+            <h3>Coalition Form Games</h3>
+            <div class="definition">
+                <strong>Definition</strong>: Game specified by:
+                <ul>
+                    <li>Set of players N</li>
+                    <li>Characteristic function v: 2ᴺ → ℝ</li>
+                    <li>v(S) = value created by coalition S</li>
+                </ul>
+            </div>
+
+            <h3>Core</h3>
+            <div class="definition">
+                <strong>Core</strong>: Set of payoff allocations that no coalition can improve upon.
+                <br><br>
+                Core = {x ∈ ℝⁿ : Σᵢ∈ₙ xᵢ = v(N) and Σᵢ∈ₛ xᵢ ≥ v(S) for all S ⊆ N}
+            </div>
+
+            <h3>Shapley Value</h3>
+            <div class="theorem">
+                <strong>Unique solution concept satisfying</strong>:
+                <ul>
+                    <li><strong>Symmetry</strong>: Equal treatment of symmetric players</li>
+                    <li><strong>Efficiency</strong>: Full allocation of total value</li>
+                    <li><strong>Dummy</strong>: Dummy players receive zero</li>
+                    <li><strong>Additivity</strong>: Value of sum equals sum of values</li>
+                </ul>
+                <br>
+                <strong>Formula</strong>: φᵢ(v) = Σₛ⊆ₙ\{ⅈ} [|S|!(n-|S|-1)!/n!][v(S∪{i}) - v(S)]
+            </div>
+
+            <h3>Nucleolus</h3>
+            <div class="definition">
+                <strong>Nucleolus</strong>: Lexicographically minimizes maximum complaint of any coalition.
+                <ul>
+                    <li>Always exists and is unique</li>
+                    <li>Lies in core when core is non-empty</li>
+                    <li>Represents "fairest" allocation</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="auction" class="section fade-in">
+            <h2>7. Auction Theory</h2>
+
+            <h3>Auction Types</h3>
+            
+            <div class="example">
+                <strong>English Auction (Open Ascending)</strong>: Price starts low and increases. Bidders drop out when price exceeds value. Winner pays final price.
+            </div>
+
+            <div class="example">
+                <strong>Dutch Auction (Open Descending)</strong>: Price starts high and decreases. First bidder to accept wins and pays accepted price.
+            </div>
+
+            <div class="example">
+                <strong>First-Price Sealed-Bid</strong>: Simultaneous sealed bids. Highest bidder wins and pays their bid.
+            </div>
+
+            <div class="example">
+                <strong>Second-Price Sealed-Bid (Vickrey)</strong>: Simultaneous sealed bids. Highest bidder wins but pays second-highest bid.
+            </div>
+
+            <h3>Key Results</h3>
+            
+            <div class="theorem">
+                <strong>Revenue Equivalence Theorem</strong>: Under certain conditions, all standard auction formats yield the same expected revenue.
+            </div>
+
+            <div class="theorem">
+                <strong>Vickrey Auction Properties</strong>:
+                <ul>
+                    <li>Truthful bidding is dominant strategy</li>
+                    <li>Efficient allocation (highest value wins)</li>
+                    <li>Individual rationality satisfied</li>
+                </ul>
+            </div>
+
+            <h3>Mechanism Design Principles</h3>
+            <ul>
+                <li><span class="highlight">Incentive Compatibility</span>: Truth-telling is optimal strategy</li>
+                <li><span class="highlight">Individual Rationality</span>: Participation yields non-negative payoff</li>
+                <li><span class="highlight">Revelation Principle</span>: Any implementable social choice function can be implemented by truthful mechanism</li>
+            </ul>
+        </section>
+
+        <section id="mechanism" class="section fade-in">
+            <h2>8. Mechanism Design</h2>
+
+            <h3>Framework</h3>
+            <div class="definition">
+                <strong>Problem</strong>: Design game rules to achieve desired outcomes when players have private information.
+                <br><br>
+                <strong>Components</strong>:
+                <ul>
+                    <li><strong>Type space</strong>: Private information players might have</li>
+                    <li><strong>Mechanism</strong>: Rules specifying outcomes based on reported types</li>
+                    <li><strong>Implementation</strong>: Mechanism successfully achieves desired outcome</li>
+                </ul>
+            </div>
+
+            <h3>Impossibility Results</h3>
+            
+            <div class="theorem">
+                <strong>Gibbard-Satterthwaite Theorem</strong>: No voting mechanism with 3+ alternatives can be simultaneously non-dictatorial, strategy-proof, and onto.
+            </div>
+
+            <div class="theorem">
+                <strong>Arrow's Impossibility Theorem</strong>: No social choice function can satisfy all desirable properties simultaneously.
+            </div>
+
+            <h3>Applications</h3>
+            <ul>
+                <li><span class="highlight">Auction Design</span>: Maximize revenue while maintaining efficiency</li>
+                <li><span class="highlight">Voting Systems</span>: Aggregate preferences fairly</li>
+                <li><span class="highlight">Contract Theory</span>: Align incentives between principals and agents</li>
+            </ul>
+        </section>
+
+        <section id="behavioral" class="section fade-in">
+            <h2>9. Behavioral Game Theory</h2>
+
+            <h3>Deviations from Rationality</h3>
+            <ul>
+                <li><span class="highlight">Bounded Rationality</span>: Limited computational abilities and information processing</li>
+                <li><span class="highlight">Social Preferences</span>: Caring about others' payoffs (altruism, inequality aversion, reciprocity)</li>
+                <li><span class="highlight">Learning</span>: Players adapt strategies based on experience</li>
+            </ul>
+
+            <h3>Experimental Findings</h3>
+            
+            <div class="example">
+                <strong>Ultimatum Game</strong>:
+                <br>Theoretical prediction: Accept any positive offer
+                <br>Experimental result: Rejection of "unfair" offers (< 30%)
+            </div>
+
+            <div class="example">
+                <strong>Public Goods Games</strong>:
+                <br>Theoretical prediction: Zero contribution
+                <br>Experimental result: Substantial initial contribution, declining over time
+            </div>
+
+            <div class="example">
+                <strong>Beauty Contest Game</strong>:
+                <br>Theoretical prediction: Choose 0
+                <br>Experimental result: Gradual convergence toward 0 over rounds
+            </div>
+
+            <h3>Psychological Factors</h3>
+            <ul>
+                <li><span class="highlight">Framing Effects</span>: How options are presented affects choices</li>
+                <li><span class="highlight">Loss Aversion</span>: Losses weigh more heavily than equivalent gains</li>
+                <li><span class="highlight">Fairness Concerns</span>: Willingness to sacrifice material payoffs for fairness</li>
+            </ul>
+        </section>
+
+        <section id="applications" class="section fade-in">
+            <h2>10. Applications in AI and Data Science</h2>
+
+            <h3>Multi-Agent Systems</h3>
+            <div class="application">
+                <ul>
+                    <li><strong>Coordination Problems</strong>: Ensuring agents work together effectively</li>
+                    <li><strong>Resource Allocation</strong>: Distributing computational resources or data fairly</li>
+                    <li><strong>Distributed Optimization</strong>: Agents optimize local objectives while considering global outcome</li>
+                </ul>
+            </div>
+
+            <h3>Machine Learning</h3>
+            <div class="application">
+                <ul>
+                    <li><strong>Adversarial Learning</strong>: Two networks compete (GANs - Generative Adversarial Networks)</li>
+                    <li><strong>Multi-Agent Reinforcement Learning</strong>: Agents learn in environments with other learning agents</li>
+                    <li><strong>Federated Learning</strong>: Incentivizing data sharing while preserving privacy</li>
+                </ul>
+            </div>
+
+            <h3>Algorithmic Game Theory</h3>
+            <div class="application">
+                <ul>
+                    <li><strong>Internet Auctions</strong>: Design of online advertising auctions (Google AdWords)</li>
+                    <li><strong>Network Games</strong>: Behavior in social networks, information cascades</li>
+                    <li><strong>Computational Social Choice</strong>: Voting algorithms and preference aggregation</li>
+                </ul>
+            </div>
+
+            <h3>Strategic Classification</h3>
+            <div class="application">
+                <strong>Problem</strong>: Individuals may game their features to receive better algorithmic decisions.
+                <br><strong>Solutions</strong>: Robust classification, mechanism design for learning.
+            </div>
+
+            <h3>Market Design</h3>
+            <div class="application">
+                <ul>
+                    <li><strong>Matching Markets</strong>: Pairing students to schools, doctors to hospitals</li>
+                    <li><strong>Two-Sided Markets</strong>: Platforms connecting buyers and sellers (eBay, Airbnb)</li>
+                    <li><strong>Prediction Markets</strong>: Aggregating information through betting mechanisms</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="section fade-in">
+            <h2>📋 Key Theorems and Results</h2>
+
+            <h3>Existence Theorems</h3>
+            <div class="theorem">
+                <ul>
+                    <li><strong>Nash's Theorem</strong>: Every finite game has at least one Nash equilibrium</li>
+                    <li><strong>Fixed Point Theorems</strong>: Brouwer, Kakutani for equilibrium existence</li>
+                </ul>
+            </div>
+
+            <h3>Impossibility Results</h3>
+            <div class="theorem">
+                <ul>
+                    <li><strong>Arrow's Impossibility Theorem</strong>: Perfect voting systems don't exist</li>
+                    <li><strong>Gibbard-Satterthwaite</strong>: Strategy-proof voting is limited</li>
+                </ul>
+            </div>
+
+            <h3>Efficiency Results</h3>
+            <div class="theorem">
+                <ul>
+                    <li><strong>First Welfare Theorem</strong>: Competitive equilibria are Pareto efficient</li>
+                    <li><strong>Revenue Equivalence</strong>: Auction formats yield equal expected revenue</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="section fade-in">
+            <h2>🎯 Problem-Solving Strategies</h2>
+
+            <h3>For Strategic Form Games</h3>
+            <div class="application">
+                <ol>
+                    <li>Check for dominant strategies</li>
+                    <li>Eliminate dominated strategies iteratively</li>
+                    <li>Look for pure strategy Nash equilibria</li>
+                    <li>If none exist, find mixed strategy equilibria using indifference conditions</li>
+                </ol>
+            </div>
+
+            <h3>For Extensive Form Games</h3>
+            <div class="application">
+                <ol>
+                    <li>Draw complete game tree</li>
+                    <li>Identify information sets</li>
+                    <li>Use backward induction for perfect information</li>
+                    <li>Check for subgame perfect equilibrium</li>
+                </ol>
+            </div>
+
+            <h3>For Cooperative Games</h3>
+            <div class="application">
+                <ol>
+                    <li>Define characteristic function</li>
+                    <li>Check core existence using balancedness</li>
+                    <li>Calculate Shapley value using formula or marginal contributions</li>
+                    <li>Verify individual rationality and efficiency</li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="section fade-in">
+            <h2>🔍 Practical Analysis Framework</h2>
+
+            <div class="definition">
+                <strong>When Analyzing Strategic Situations:</strong>
+                <ol>
+                    <li><strong>Identify Players</strong>: Who are the decision-makers?</li>
+                    <li><strong>Define Strategies</strong>: What actions can each player take?</li>
+                    <li><strong>Determine Payoffs</strong>: What does each player want to maximize?</li>
+                    <li><strong>Assess Information</strong>: What does each player know and when?</li>
+                    <li><strong>Predict Outcomes</strong>: What equilibria are likely to emerge?</li>
+                    <li><strong>Evaluate Efficiency</strong>: How good are these outcomes?</li>
+                </ol>
+            </div>
+
+            <div class="example">
+                <strong>Study Tips</strong>:
+                <ul>
+                    <li>Focus on understanding intuition before diving into mathematics</li>
+                    <li>Always connect abstract theory back to practical applications</li>
+                    <li>Practice with simple examples before tackling complex problems</li>
+                    <li>Remember that game theory provides insights into strategic thinking in AI and data science</li>
+                </ul>
+            </div>
+        </section>
+
+        <footer style="text-align: center; padding: 30px 0; color: #666; border-top: 1px solid #e9ecef; margin-top: 40px;">
+            <p>📚 <strong>Game Theory Study Guide</strong> - KEN3130 Maastricht University</p>
+            <p>🎯 Focus on understanding concepts, then master the mathematics</p>
+            <p>🚀 Connect theory to AI and Data Science applications</p>
+        </footer>
+    </div>
+
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
+
+    <script>
+        // Progress bar functionality
+        window.addEventListener('scroll', function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progressBar").style.width = scrolled + "%";
+
+            // Back to top button
+            const backToTop = document.getElementById("backToTop");
+            if (winScroll > 300) {
+                backToTop.classList.add("visible");
+            } else {
+                backToTop.classList.remove("visible");
+            }
+        });
+
+        // Smooth scrolling for navigation
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Fade in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Add click effects to navigation items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Add ripple effect
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'translateX(5px)';
+                }, 100);
+            });
+        });
+
+        // Add hover effects to sections
+        document.querySelectorAll('.section').forEach(section => {
+            section.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.15)';
+            });
+            
+            section.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.08)';
+            });
+        });
+
+        // Add interactive matrix highlighting
+        document.querySelectorAll('.matrix').forEach(matrix => {
+            matrix.addEventListener('click', function() {
+                this.style.background = '#e3f2fd';
+                setTimeout(() => {
+                    this.style.background = '#f8f9fa';
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>

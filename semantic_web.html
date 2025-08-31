@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Web Study Guide - Maastricht University</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --bg-color: #0f172a;
+            --surface-color: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --code-bg: #0f1629;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--bg-color) 0%, #1a1a2e 100%);
+            color: var(--text-primary);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+            margin: 0 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Navigation */
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .nav {
+            background: var(--surface-color);
+            width: 300px;
+            height: calc(100vh - 80px);
+            position: fixed;
+            top: 80px;
+            left: 0;
+            overflow-y: auto;
+            border-right: 1px solid var(--border-color);
+            transition: transform 0.3s ease;
+            z-index: 999;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            font-size: 0.9rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--text-primary);
+            background: rgba(37, 99, 235, 0.1);
+            border-left-color: var(--primary-color);
+        }
+
+        /* Main Content */
+        .main {
+            margin-left: 300px;
+            margin-top: 80px;
+            padding: 2rem;
+            min-height: calc(100vh - 80px);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+            border-radius: 20px;
+            margin-bottom: 3rem;
+            border: 1px solid rgba(37, 99, 235, 0.2);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .university {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Sections */
+        .section {
+            margin: 3rem 0;
+            background: var(--surface-color);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.2);
+        }
+
+        .section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem 0;
+            color: var(--accent-color);
+        }
+
+        .section h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+            color: var(--text-primary);
+        }
+
+        .section p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Code Blocks */
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        pre::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 0.5rem;
+            right: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        code {
+            color: #e2e8f0;
+            font-family: 'Fira Code', 'Consolas', monospace;
+        }
+
+        .inline-code {
+            background: var(--code-bg);
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.9em;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--surface-color);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: rgba(37, 99, 235, 0.1);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        td {
+            color: var(--text-secondary);
+        }
+
+        /* Lists */
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        /* Special Elements */
+        .definition {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+            border-left: 4px solid var(--success-color);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .warning {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%);
+            border-left: 4px solid var(--warning-color);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .example {
+            background: rgba(37, 99, 235, 0.05);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        /* Progress Indicator */
+        .progress {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--surface-color);
+            z-index: 998;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav {
+                transform: translateX(-100%);
+            }
+
+            .nav.active {
+                transform: translateX(0);
+            }
+
+            .nav-toggle {
+                display: block;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .search-container {
+                display: none;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Syntax Highlighting */
+        .keyword { color: #c792ea; }
+        .string { color: #c3e88d; }
+        .comment { color: #546e7a; font-style: italic; }
+        .number { color: #f78c6c; }
+        .operator { color: #89ddff; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🕸️ Semantic Web Guide</div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search concepts..." id="searchInput">
+            </div>
+            <button class="nav-toggle" id="navToggle">☰</button>
+        </div>
+    </header>
+
+    <!-- Progress Bar -->
+    <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <ul class="nav-list">
+            <li class="nav-item"><a href="#hero" class="nav-link">Introduction</a></li>
+            <li class="nav-item"><a href="#foundational" class="nav-link">Foundational Concepts</a></li>
+            <li class="nav-item"><a href="#rdf" class="nav-link">RDF Framework</a></li>
+            <li class="nav-item"><a href="#rdfa" class="nav-link">RDFa</a></li>
+            <li class="nav-item"><a href="#sparql" class="nav-link">SPARQL</a></li>
+            <li class="nav-item"><a href="#owl2" class="nav-link">OWL2</a></li>
+            <li class="nav-item"><a href="#description-logics" class="nav-link">Description Logics</a></li>
+            <li class="nav-item"><a href="#ontology-engineering" class="nav-link">Ontology Engineering</a></li>
+            <li class="nav-item"><a href="#design-patterns" class="nav-link">Design Patterns</a></li>
+            <li class="nav-item"><a href="#linked-data" class="nav-link">Linked Data</a></li>
+            <li class="nav-item"><a href="#applications" class="nav-link">Applications</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Hero Section -->
+            <section id="hero" class="hero">
+                <h1>Complete Semantic Web Study Guide</h1>
+                <p>Master the technologies that power the web of data</p>
+                <p class="university">Maastricht University - Data Science & AI</p>
+            </section>
+
+            <!-- Foundational Concepts -->
+            <section id="foundational" class="section">
+                <h2>🔬 Foundational Concepts</h2>
+                
+                <div class="definition">
+                    <h4>What is the Semantic Web?</h4>
+                    <p><strong>Definition:</strong> The Semantic Web is an extension of the current web where information is given well-defined meaning, enabling computers and people to work in better cooperation.</p>
+                </div>
+
+                <h3>Key Problem Addressed</h3>
+                <p>Traditional web content is designed for human consumption. Machines can display and link content but cannot understand its meaning or context.</p>
+
+                <h3>Vision</h3>
+                <p>Transform the web from a "web of documents" to a "web of data" where machines can:</p>
+                <ul>
+                    <li>Understand content semantics</li>
+                    <li>Perform automated reasoning</li>
+                    <li>Integrate data from multiple sources</li>
+                    <li>Enable intelligent agents to work on our behalf</li>
+                </ul>
+
+                <h3>Core Principles</h3>
+                <div class="example">
+                    <h4>1. Separation of Content and Presentation</h4>
+                    <p>Content meaning is independent of how it's displayed, enabling machine processing without visual interpretation.</p>
+                    
+                    <h4>2. Machine-Readable Semantics</h4>
+                    <p>Explicit representation of meaning with formal logic foundations for reasoning.</p>
+                    
+                    <h4>3. Interoperability</h4>
+                    <p>Shared vocabularies and standards enable cross-system data integration.</p>
+                    
+                    <h4>4. Decentralized Architecture</h4>
+                    <p>No single point of control with distributed knowledge representation.</p>
+                </div>
+
+                <h3>The Semantic Web Stack</h3>
+                <pre data-lang="text"><code>Trust & Proof
+    |
+Crypto & Digital Signatures
+    |
+Logic & Rules
+    |
+Ontologies (OWL)
+    |
+Query (SPARQL)
+    |
+RDF Schema
+    |
+RDF Model & Syntax
+    |
+XML & Namespaces
+    |
+URI/IRI & Unicode</code></pre>
+            </section>
+
+            <!-- RDF -->
+            <section id="rdf" class="section">
+                <h2>🔗 RDF (Resource Description Framework)</h2>
+                
+                <div class="definition">
+                    <p><strong>Definition:</strong> RDF is a framework for representing information about resources on the web using a graph-based data model.</p>
+                </div>
+
+                <h3>RDF Triple Structure</h3>
+                <p>Every statement in RDF consists of three parts:</p>
+                <ul>
+                    <li><strong>Subject:</strong> What the statement is about</li>
+                    <li><strong>Predicate:</strong> The property or relationship</li>
+                    <li><strong>Object:</strong> The value or related resource</li>
+                </ul>
+                <p><strong>Syntax:</strong> <span class="inline-code">(Subject, Predicate, Object)</span></p>
+
+                <h3>RDF Serialization Formats</h3>
+                
+                <h4>1. RDF/XML</h4>
+                <pre data-lang="xml"><code><span class="keyword">&lt;rdf:RDF</span> <span class="string">xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"</span>
+         <span class="string">xmlns:foaf="http://xmlns.com/foaf/0.1/"</span><span class="keyword">&gt;</span>
+  <span class="keyword">&lt;rdf:Description</span> <span class="string">rdf:about="http://example.org/john"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;foaf:name&gt;</span><span class="string">John Smith</span><span class="keyword">&lt;/foaf:name&gt;</span>
+    <span class="keyword">&lt;foaf:age&gt;</span><span class="number">25</span><span class="keyword">&lt;/foaf:age&gt;</span>
+  <span class="keyword">&lt;/rdf:Description&gt;</span>
+<span class="keyword">&lt;/rdf:RDF&gt;</span></code></pre>
+
+                <h4>2. Turtle (TTL)</h4>
+                <pre data-lang="turtle"><code><span class="keyword">@prefix</span> <span class="string">foaf:</span> &lt;http://xmlns.com/foaf/0.1/&gt; .
+<span class="keyword">@prefix</span> <span class="string">ex:</span> &lt;http://example.org/&gt; .
+
+<span class="string">ex:john</span> <span class="string">foaf:name</span> <span class="string">"John Smith"</span> ;
+        <span class="string">foaf:age</span> <span class="number">25</span> .</code></pre>
+
+                <h4>3. JSON-LD</h4>
+                <pre data-lang="json"><code>{
+  <span class="string">"@context"</span>: {
+    <span class="string">"foaf"</span>: <span class="string">"http://xmlns.com/foaf/0.1/"</span>
+  },
+  <span class="string">"@id"</span>: <span class="string">"http://example.org/john"</span>,
+  <span class="string">"foaf:name"</span>: <span class="string">"John Smith"</span>,
+  <span class="string">"foaf:age"</span>: <span class="number">25</span>
+}</code></pre>
+
+                <h3>Key RDF Concepts</h3>
+                <div class="example">
+                    <h4>IRIs (Internationalized Resource Identifiers)</h4>
+                    <p>Global identifiers for resources that enable global uniqueness and linking.</p>
+                    
+                    <h4>Literals</h4>
+                    <p>Data values with optional datatypes and language tags.</p>
+                    <p>Examples: <span class="inline-code">"John"@en</span>, <span class="inline-code">"25"^^xsd:integer</span></p>
+                    
+                    <h4>Blank Nodes</h4>
+                    <p>Anonymous resources without IRIs, used for complex structures.</p>
+                </div>
+            </section>
+
+            <!-- RDFa -->
+            <section id="rdfa" class="section">
+                <h2>📝 RDFa (RDF in Attributes)</h2>
+                
+                <div class="definition">
+                    <p><strong>RDFa:</strong> A W3C recommendation for expressing RDF data within HTML/XHTML documents using HTML attributes.</p>
+                </div>
+
+                <h3>Purpose</h3>
+                <ul>
+                    <li>Embed structured data directly in web pages</li>
+                    <li>Maintain human readability</li>
+                    <li>Enable search engines and applications to extract semantic information</li>
+                </ul>
+
+                <h3>Key RDFa Attributes</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Attribute</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="inline-code">vocab</span></td>
+                                <td>Default vocabulary</td>
+                            </tr>
+                            <tr>
+                                <td><span class="inline-code">typeof</span></td>
+                                <td>Type of resource</td>
+                            </tr>
+                            <tr>
+                                <td><span class="inline-code">property</span></td>
+                                <td>Property of the resource</td>
+                            </tr>
+                            <tr>
+                                <td><span class="inline-code">resource</span></td>
+                                <td>Reference to another resource</td>
+                            </tr>
+                            <tr>
+                                <td><span class="inline-code">prefix</span></td>
+                                <td>Namespace declarations</td>
+                            </tr>
+                            <tr>
+                                <td><span class="inline-code">about</span></td>
+                                <td>Subject of statements</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>RDFa Examples</h3>
+                <h4>Basic Person Information</h4>
+                <pre data-lang="html"><code><span class="keyword">&lt;div</span> <span class="string">vocab="http://schema.org/" typeof="Person"</span><span class="keyword">&gt;</span>
+  <span class="keyword">&lt;span</span> <span class="string">property="name"</span><span class="keyword">&gt;</span>John Smith<span class="keyword">&lt;/span&gt;</span> is 
+  <span class="keyword">&lt;span</span> <span class="string">property="age"</span><span class="keyword">&gt;</span>25<span class="keyword">&lt;/span&gt;</span> years old.
+<span class="keyword">&lt;/div&gt;</span></code></pre>
+            </section>
+
+            <!-- SPARQL -->
+            <section id="sparql" class="section">
+                <h2>🔍 SPARQL Query Language</h2>
+                
+                <div class="definition">
+                    <p><strong>SPARQL:</strong> Protocol and RDF Query Language - the standard query language for RDF data.</p>
+                </div>
+
+                <h3>SPARQL Query Types</h3>
+                <ul>
+                    <li><strong>SELECT:</strong> Retrieve specific variables</li>
+                    <li><strong>CONSTRUCT:</strong> Create new RDF graphs</li>
+                    <li><strong>ASK:</strong> Boolean queries</li>
+                    <li><strong>DESCRIBE:</strong> Get RDF description of resources</li>
+                </ul>
+
+                <h3>Basic SPARQL Syntax</h3>
+                <pre data-lang="sparql"><code><span class="keyword">PREFIX</span> <span class="string">prefix:</span> &lt;namespace&gt;
+
+<span class="keyword">SELECT</span> ?variable1 ?variable2
+<span class="keyword">WHERE</span> {
+  <span class="comment"># Graph patterns</span>
+  ?subject ?predicate ?object .
+  <span class="comment"># Additional patterns</span>
+}
+<span class="keyword">ORDER BY</span> ?variable1
+<span class="keyword">LIMIT</span> <span class="number">10</span></code></pre>
+
+                <h3>SPARQL Examples</h3>
+                
+                <h4>Basic SELECT Query</h4>
+                <pre data-lang="sparql"><code><span class="keyword">PREFIX</span> <span class="string">foaf:</span> &lt;http://xmlns.com/foaf/0.1/&gt;
+
+<span class="keyword">SELECT</span> ?name ?age
+<span class="keyword">WHERE</span> {
+  ?person <span class="string">foaf:name</span> ?name ;
+          <span class="string">foaf:age</span> ?age .
+}</code></pre>
+
+                <h4>FILTER Conditions</h4>
+                <pre data-lang="sparql"><code><span class="keyword">PREFIX</span> <span class="string">foaf:</span> &lt;http://xmlns.com/foaf/0.1/&gt;
+
+<span class="keyword">SELECT</span> ?name
+<span class="keyword">WHERE</span> {
+  ?person <span class="string">foaf:name</span> ?name ;
+          <span class="string">foaf:age</span> ?age .
+  <span class="keyword">FILTER</span>(?age > <span class="number">18</span>)
+}</code></pre>
+
+                <h4>CONSTRUCT Query</h4>
+                <pre data-lang="sparql"><code><span class="keyword">PREFIX</span> <span class="string">foaf:</span> &lt;http://xmlns.com/foaf/0.1/&gt;
+<span class="keyword">PREFIX</span> <span class="string">ex:</span> &lt;http://example.org/&gt;
+
+<span class="keyword">CONSTRUCT</span> {
+  ?person <span class="string">ex:isAdult</span> <span class="keyword">true</span> .
+}
+<span class="keyword">WHERE</span> {
+  ?person <span class="string">foaf:age</span> ?age .
+  <span class="keyword">FILTER</span>(?age >= <span class="number">18</span>)
+}</code></pre>
+            </section>
+
+            <!-- OWL2 -->
+            <section id="owl2" class="section">
+                <h2>🦉 OWL2 (Web Ontology Language)</h2>
+                
+                <div class="definition">
+                    <p><strong>OWL2:</strong> A knowledge representation language for authoring ontologies, designed to facilitate machine interpretability of web content.</p>
+                </div>
+
+                <h3>OWL2 Profiles</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Profile</th>
+                                <th>Optimization</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>OWL2 EL</strong></td>
+                                <td>Large-scale ontologies</td>
+                            </tr>
+                            <tr>
+                                <td><strong>OWL2 QL</strong></td>
+                                <td>Query answering</td>
+                            </tr>
+                            <tr>
+                                <td><strong>OWL2 RL</strong></td>
+                                <td>Rule-based reasoning</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Core OWL2 Constructs</h3>
+                
+                <h4>Classes and Individuals</h4>
+                <pre data-lang="turtle"><code><span class="keyword">@prefix</span> <span class="string">owl:</span> &lt;http://www.w3.org/2002/07/owl#&gt; .
+<span class="keyword">@prefix</span> <span class="string">ex:</span> &lt;http://example.org/&gt; .
+
+<span class="string">ex:Person</span> <span class="keyword">a</span> <span class="string">owl:Class</span> .
+<span class="string">ex:Student</span> <span class="keyword">a</span> <span class="string">owl:Class</span> .
+<span class="string">ex:john</span> <span class="keyword">a</span> <span class="string">ex:Person</span> .</code></pre>
+
+                <h4>Complex Class Expressions</h4>
+                <pre data-lang="turtle"><code><span class="comment"># Intersection (AND)</span>
+<span class="string">ex:WorkingParent</span> <span class="string">owl:equivalentClass</span> [
+  <span class="keyword">a</span> <span class="string">owl:Class</span> ;
+  <span class="string">owl:intersectionOf</span> (<span class="string">ex:Person</span> <span class="string">ex:Employee</span> <span class="string">ex:Parent</span>)
+] .</code></pre>
+
+                <h3>OWL2 Reasoning Tasks</h3>
+                <ul>
+                    <li><strong>Consistency Checking:</strong> Is the ontology logically consistent?</li>
+                    <li><strong>Satisfiability:</strong> Can a class have instances?</li>
+                    <li><strong>Subsumption:</strong> Is one class a subclass of another?</li>
+                    <li><strong>Instance Checking:</strong> Is an individual a member of a class?</li>
+                    <li><strong>Realization:</strong> What are the most specific classes of an individual?</li>
+                </ul>
+            </section>
+
+            <!-- Description Logics -->
+            <section id="description-logics" class="section">
+                <h2>🧮 Description Logics</h2>
+                
+                <div class="definition">
+                    <p><strong>Description Logics (DL):</strong> A family of formal knowledge representation languages that serve as the logical foundation for OWL2.</p>
+                </div>
+
+                <h3>Basic DL Syntax</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Construct</th>
+                                <th>DL Syntax</th>
+                                <th>OWL2</th>
+                                <th>Meaning</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Concept</td>
+                                <td>A, B</td>
+                                <td>Class</td>
+                                <td>Unary predicate</td>
+                            </tr>
+                            <tr>
+                                <td>Role</td>
+                                <td>r, s</td>
+                                <td>Property</td>
+                                <td>Binary predicate</td>
+                            </tr>
+                            <tr>
+                                <td>Top</td>
+                                <td>⊤</td>
+                                <td>owl:Thing</td>
+                                <td>Universal concept</td>
+                            </tr>
+                            <tr>
+                                <td>Bottom</td>
+                                <td>⊥</td>
+                                <td>owl:Nothing</td>
+                                <td>Empty concept</td>
+                            </tr>
+                            <tr>
+                                <td>Conjunction</td>
+                                <td>A ⊓ B</td>
+                                <td>owl:intersectionOf</td>
+                                <td>AND</td>
+                            </tr>
+                            <tr>
+                                <td>Disjunction</td>
+                                <td>A ⊔ B</td>
+                                <td>owl:unionOf</td>
+                                <td>OR</td>
+                            </tr>
+                            <tr>
+                                <td>Negation</td>
+                                <td>¬A</td>
+                                <td>owl:complementOf</td>
+                                <td>NOT</td>
+                            </tr>
+                            <tr>
+                                <td>Existential</td>
+                                <td>∃r.A</td>
+                                <td>owl:someValuesFrom</td>
+                                <td>EXISTS</td>
+                            </tr>
+                            <tr>
+                                <td>Universal</td>
+                                <td>∀r.A</td>
+                                <td>owl:allValuesFrom</td>
+                                <td>FOR ALL</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>DL Reasoning</h3>
+                <div class="example">
+                    <h4>TBox (Terminological Box)</h4>
+                    <p>Contains concept definitions and axioms - defines the vocabulary of the domain.</p>
+                    
+                    <h4>ABox (Assertional Box)</h4>
+                    <p>Contains facts about individuals - states what is true in a specific situation.</p>
+                </div>
+
+                <h4>Example TBox</h4>
+                <pre data-lang="dl"><code>Parent ≡ Person ⊓ ∃hasChild.Person
+Father ≡ Parent ⊓ Male  
+Mother ≡ Parent ⊓ Female</code></pre>
+
+                <h4>Example ABox</h4>
+                <pre data-lang="dl"><code>Person(john)
+hasChild(john, mary)
+Male(john)</code></pre>
+
+                <h3>Complexity Classes</h3>
+                <ul>
+                    <li><strong>𝒜ℒℂ:</strong> Basic ALC logic - EXPTIME-complete</li>
+                    <li><strong>𝒮ℋℐQ:</strong> SROIQ - N2EXPTIME-complete</li>
+                    <li><strong>ℰℒ:</strong> EL - PTIME-complete</li>
+                    <li><strong>DL-Lite:</strong> LOGSPACE-complete</li>
+                </ul>
+            </section>
+
+            <!-- Ontology Engineering -->
+            <section id="ontology-engineering" class="section">
+                <h2>🏗️ Ontology Engineering</h2>
+                
+                <div class="definition">
+                    <p><strong>Ontology:</strong> A formal, explicit specification of a shared conceptualization of a domain of interest.</p>
+                </div>
+
+                <h3>Ontology Components</h3>
+                <ul>
+                    <li><strong>Classes/Concepts:</strong> Categories of objects</li>
+                    <li><strong>Properties/Relations:</strong> Relationships between objects</li>
+                    <li><strong>Individuals:</strong> Specific instances</li>
+                    <li><strong>Axioms:</strong> Statements that are always true</li>
+                    <li><strong>Rules:</strong> Conditional statements</li>
+                </ul>
+
+                <h3>Ontology Engineering Process</h3>
+                
+                <div class="example">
+                    <h4>1. Specification Phase</h4>
+                    <ul>
+                        <li><strong>Purpose:</strong> Why build the ontology?</li>
+                        <li><strong>Scope:</strong> What domain does it cover?</li>
+                        <li><strong>Users:</strong> Who will use it?</li>
+                        <li><strong>Requirements:</strong> What questions should it answer?</li>
+                    </ul>
+                    
+                    <h4>2. Conceptualization Phase</h4>
+                    <ul>
+                        <li>Identify key concepts</li>
+                        <li>Define concept hierarchy</li>
+                        <li>Identify properties and relationships</li>
+                        <li>Create conceptual model</li>
+                    </ul>
+                    
+                    <h4>3. Formalization Phase</h4>
+                    <ul>
+                        <li>Choose representation language (OWL2)</li>
+                        <li>Implement formal model</li>
+                        <li>Define axioms and constraints</li>
+                    </ul>
+                    
+                    <h4>4. Implementation Phase</h4>
+                    <ul>
+                        <li>Use ontology development tools (Protégé)</li>
+                        <li>Create ontology files</li>
+                        <li>Implement in target system</li>
+                    </ul>
+                    
+                    <h4>5. Evaluation Phase</h4>
+                    <ul>
+                        <li>Verify syntactic correctness</li>
+                        <li>Validate semantic consistency</li>
+                        <li>Test against competency questions</li>
+                        <li>User evaluation</li>
+                    </ul>
+                </div>
+
+                <h3>Ontology Design Principles</h3>
+                <ul>
+                    <li><strong>Clarity:</strong> Definitions should be clear and unambiguous</li>
+                    <li><strong>Coherence:</strong> Should be logically consistent</li>
+                    <li><strong>Extendibility:</strong> Should support future extensions</li>
+                    <li><strong>Minimal Encoding Bias:</strong> Should be independent of representation</li>
+                    <li><strong>Minimal Ontological Commitment:</strong> Minimum assumptions about domain</li>
+                </ul>
+
+                <div class="warning">
+                    <h4>Common Ontology Pitfalls</h4>
+                    <ul>
+                        <li>Confusion between Classes and Instances</li>
+                        <li>Inappropriate Class Hierarchies</li>
+                        <li>Ambiguous Property Definitions</li>
+                        <li>Over-specification</li>
+                        <li>Under-specification</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Design Patterns -->
+            <section id="design-patterns" class="section">
+                <h2>🎨 Design Patterns & Best Practices</h2>
+                
+                <h3>Upper-Level Ontologies</h3>
+                <div class="definition">
+                    <p><strong>Upper-Level Ontologies:</strong> Generic ontologies that provide basic concepts common to many domains.</p>
+                </div>
+                
+                <p><strong>Examples:</strong></p>
+                <ul>
+                    <li><strong>SUMO:</strong> Suggested Upper Merged Ontology</li>
+                    <li><strong>DOLCE:</strong> Descriptive Ontology for Linguistic and Cognitive Engineering</li>
+                    <li><strong>BFO:</strong> Basic Formal Ontology</li>
+                </ul>
+
+                <h3>Common Design Patterns</h3>
+                
+                <h4>1. Classification Pattern</h4>
+                <pre data-lang="turtle"><code><span class="string">ex:Animal</span> <span class="keyword">a</span> <span class="string">owl:Class</span> .
+<span class="string">ex:Mammal</span> <span class="string">rdfs:subClassOf</span> <span class="string">ex:Animal</span> .
+<span class="string">ex:Dog</span> <span class="string">rdfs:subClassOf</span> <span class="string">ex:Mammal</span> .</code></pre>
+
+                <h4>2. Part-Whole Pattern</h4>
+                <pre data-lang="turtle"><code><span class="string">ex:hasPart</span> <span class="keyword">a</span> <span class="string">owl:ObjectProperty</span> ;
+          <span class="string">owl:inverseOf</span> <span class="string">ex:partOf</span> .
+
+<span class="string">ex:Body</span> <span class="string">ex:hasPart</span> <span class="string">ex:Arm</span> .
+<span class="string">ex:Arm</span> <span class="string">ex:partOf</span> <span class="string">ex:Body</span> .</code></pre>
+
+                <h4>3. N-ary Relation Pattern</h4>
+                <pre data-lang="turtle"><code><span class="comment"># Instead of: john marriedTo mary in 2020</span>
+<span class="string">ex:Marriage</span> <span class="keyword">a</span> <span class="string">owl:Class</span> .
+<span class="string">ex:marriage1</span> <span class="keyword">a</span> <span class="string">ex:Marriage</span> ;
+             <span class="string">ex:hasSpouse</span> <span class="string">ex:john</span> ;
+             <span class="string">ex:hasSpouse</span> <span class="string">ex:mary</span> ;
+             <span class="string">ex:marriageDate</span> <span class="string">"2020-01-01"</span>^^<span class="string">xsd:date</span> .</code></pre>
+
+                <h3>Naming Conventions</h3>
+                <ul>
+                    <li><strong>Classes:</strong> Use nouns, CamelCase (e.g., <span class="inline-code">Person</span>, <span class="inline-code">TrafficLight</span>)</li>
+                    <li><strong>Properties:</strong> Use verbs/relationships, camelCase (e.g., <span class="inline-code">hasName</span>, <span class="inline-code">partOf</span>)</li>
+                    <li><strong>Individuals:</strong> Use proper nouns, lowercase (e.g., <span class="inline-code">john</span>, <span class="inline-code">paris</span>)</li>
+                    <li>Use meaningful, descriptive names</li>
+                    <li>Be consistent across ontology</li>
+                </ul>
+            </section>
+
+            <!-- Linked Data -->
+            <section id="linked-data" class="section">
+                <h2>🌐 Linked Data & Open Data</h2>
+                
+                <h3>Linked Data Principles</h3>
+                <div class="definition">
+                    <p><strong>Tim Berners-Lee's 4 Rules:</strong></p>
+                    <ol>
+                        <li>Use URIs as names for things</li>
+                        <li>Use HTTP URIs so people can look up those names</li>
+                        <li>When someone looks up a URI, provide useful information using standards (RDF, SPARQL)</li>
+                        <li>Include links to other URIs so people can discover more things</li>
+                    </ol>
+                </div>
+
+                <h3>Linked Data Cloud</h3>
+                <p><strong>Major Datasets:</strong></p>
+                <ul>
+                    <li><strong>DBpedia:</strong> Structured information from Wikipedia</li>
+                    <li><strong>Wikidata:</strong> Free knowledge base</li>
+                    <li><strong>YAGO:</strong> Knowledge base from Wikipedia and WordNet</li>
+                    <li><strong>Freebase:</strong> (Now part of Wikidata)</li>
+                </ul>
+
+                <h3>5-Star Rating System</h3>
+                <div class="example">
+                    <p>★ Available on web with open license</p>
+                    <p>★★ Machine-readable structured data</p>
+                    <p>★★★ Non-proprietary format</p>
+                    <p>★★★★ Uses RDF standards</p>
+                    <p>★★★★★ Links to other data</p>
+                </div>
+
+                <h3>Data Publishing Patterns</h3>
+                
+                <h4>1. Direct Mapping</h4>
+                <pre data-lang="turtle"><code><span class="comment"># Database table: Person(id, name, age)</span>
+<span class="string">ex:person/1</span> <span class="keyword">a</span> <span class="string">ex:Person</span> ;
+            <span class="string">ex:name</span> <span class="string">"John Smith"</span> ;
+            <span class="string">ex:age</span> <span class="number">25</span> .</code></pre>
+
+                <h4>2. Entity Linking</h4>
+                <pre data-lang="turtle"><code><span class="string">ex:john</span> <span class="string">foaf:name</span> <span class="string">"John Smith"</span> ;
+        <span class="string">owl:sameAs</span> &lt;http://dbpedia.org/resource/John_Smith&gt; .</code></pre>
+            </section>
+
+            <!-- Applications -->
+            <section id="applications" class="section">
+                <h2>🚀 Applications & Use Cases</h2>
+                
+                <h3>Knowledge Graphs</h3>
+                <div class="definition">
+                    <p><strong>Knowledge Graphs:</strong> Large networks of entities, their semantic types, properties, and relationships.</p>
+                </div>
+
+                <p><strong>Examples:</strong></p>
+                <ul>
+                    <li><strong>Google Knowledge Graph</strong></li>
+                    <li><strong>Microsoft Satori</strong></li>
+                    <li><strong>Facebook Entity Graph</strong></li>
+                    <li><strong>Amazon Product Knowledge Graph</strong></li>
+                </ul>
+
+                <p><strong>Use Cases:</strong></p>
+                <ul>
+                    <li>Search enhancement</li>
+                    <li>Question answering</li>
+                    <li>Recommendation systems</li>
+                    <li>Content understanding</li>
+                </ul>
+
+                <h3>Biomedical Applications</h3>
+                <div class="example">
+                    <h4>Ontologies:</h4>
+                    <ul>
+                        <li><strong>Gene Ontology (GO):</strong> Gene and protein functions</li>
+                        <li><strong>SNOMED CT:</strong> Clinical terminology</li>
+                        <li><strong>ChEBI:</strong> Chemical entities</li>
+                        <li><strong>Human Phenotype Ontology:</strong> Phenotypic abnormalities</li>
+                    </ul>
+                    
+                    <h4>Applications:</h4>
+                    <ul>
+                        <li>Drug discovery</li>
+                        <li>Clinical decision support</li>
+                        <li>Literature mining</li>
+                        <li>Data integration</li>
+                    </ul>
+                </div>
+
+                <h3>Smart Cities & IoT</h3>
+                <p><strong>Semantic IoT applications:</strong></p>
+                <ul>
+                    <li>Device interoperability</li>
+                    <li>Context awareness</li>
+                    <li>Automated reasoning</li>
+                    <li>Service composition</li>
+                </ul>
+
+                <p><strong>Example Ontologies:</strong></p>
+                <ul>
+                    <li><strong>SSN:</strong> Semantic Sensor Network</li>
+                    <li><strong>SOSA:</strong> Sensor, Observation, Sample, and Actuator</li>
+                    <li>Smart City ontologies</li>
+                </ul>
+
+                <h3>E-Commerce & Web Services</h3>
+                <p><strong>Applications:</strong></p>
+                <ul>
+                    <li>Product matching</li>
+                    <li>Service discovery</li>
+                    <li>Automated negotiation</li>
+                    <li>Semantic web services</li>
+                </ul>
+
+                <p><strong>Standards:</strong></p>
+                <ul>
+                    <li><strong>GoodRelations:</strong> E-commerce vocabulary</li>
+                    <li><strong>Schema.org:</strong> Web markup</li>
+                    <li><strong>OWL-S:</strong> Semantic web services</li>
+                </ul>
+
+                <h3>Enterprise Knowledge Management</h3>
+                <div class="example">
+                    <h4>Use Cases:</h4>
+                    <ul>
+                        <li>Information integration</li>
+                        <li>Expert finding</li>
+                        <li>Document classification</li>
+                        <li>Workflow automation</li>
+                    </ul>
+                    
+                    <h4>Benefits:</h4>
+                    <ul>
+                        <li>Improved search and discovery</li>
+                        <li>Better data integration</li>
+                        <li>Enhanced collaboration</li>
+                        <li>Knowledge preservation</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Study Tips -->
+            <section class="section">
+                <h2>📚 Study Tips & Exam Preparation</h2>
+                
+                <h3>Key Concepts to Master</h3>
+                <ul>
+                    <li><strong>RDF Graph Model:</strong> Understand triples, serializations</li>
+                    <li><strong>SPARQL Queries:</strong> Practice all query types</li>
+                    <li><strong>OWL2 Constructs:</strong> Classes, properties, restrictions</li>
+                    <li><strong>Description Logic:</strong> Basic syntax and reasoning</li>
+                    <li><strong>Ontology Engineering:</strong> Process and evaluation</li>
+                    <li><strong>Design Patterns:</strong> Common modeling approaches</li>
+                </ul>
+
+                <h3>Practice Areas</h3>
+                <div class="example">
+                    <ul>
+                        <li>Convert between RDF serializations</li>
+                        <li>Write SPARQL queries for given scenarios</li>
+                        <li>Design ontologies for specific domains</li>
+                        <li>Identify appropriate OWL2 constructs</li>
+                        <li>Evaluate ontology quality</li>
+                        <li>Apply design patterns</li>
+                    </ul>
+                </div>
+
+                <h3>Common Exam Questions</h3>
+                <ul>
+                    <li>Model a domain using OWL2</li>
+                    <li>Write SPARQL queries to extract information</li>
+                    <li>Convert between RDF formats</li>
+                    <li>Identify reasoning inferences</li>
+                    <li>Evaluate ontology design choices</li>
+                    <li>Suggest improvements to existing ontologies</li>
+                </ul>
+
+                <h3>Tools to Practice With</h3>
+                <ul>
+                    <li><strong>Protégé:</strong> Ontology development environment</li>
+                    <li><strong>Apache Jena:</strong> Java framework for Semantic Web</li>
+                    <li><strong>RDF validators:</strong> Check syntax and semantics</li>
+                    <li><strong>SPARQL endpoints:</strong> Practice querying real data</li>
+                    <li><strong>Ontology reasoners:</strong> HermiT, Pellet, FaCT++</li>
+                </ul>
+
+                <div class="definition">
+                    <p><strong>Remember:</strong> The Semantic Web is about making data meaningful and interoperable. Focus on understanding how different technologies work together to achieve this vision!</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // Navigation functionality
+        const navToggle = document.getElementById('navToggle');
+        const nav = document.getElementById('nav');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.section');
+        const progressBar = document.getElementById('progressBar');
+        const searchInput = document.getElementById('searchInput');
+
+        // Toggle mobile navigation
+        navToggle.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+
+        // Smooth scrolling for navigation links
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                if (targetSection) {
+                    targetSection.scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+
+                // Close mobile nav after click
+                nav.classList.remove('active');
+            });
+        });
+
+        // Update active navigation link and progress bar
+        function updateNavigation() {
+            const scrollPosition = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            
+            // Update progress bar
+            const progress = (scrollPosition / (documentHeight - windowHeight)) * 100;
+            progressBar.style.width = `${Math.min(progress, 100)}%`;
+
+            // Update active navigation link
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.offsetHeight;
+                
+                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                    current = '#' + section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === current) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Search functionality
+        function performSearch(query) {
+            const searchTerm = query.toLowerCase();
+            const allElements = document.querySelectorAll('.section h2, .section h3, .section h4, .section p, .section li');
+            
+            // Clear previous highlights
+            allElements.forEach(el => {
+                el.innerHTML = el.innerHTML.replace(/<mark>/g, '').replace(/<\/mark>/g, '');
+            });
+
+            if (searchTerm.length < 2) return;
+
+            // Highlight matching terms
+            let found = false;
+            allElements.forEach(el => {
+                const text = el.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    const regex = new RegExp(`(${searchTerm})`, 'gi');
+                    el.innerHTML = el.innerHTML.replace(regex, '<mark style="background: #fbbf24; color: #1f2937; padding: 0.125rem 0.25rem; border-radius: 0.25rem;">$1</mark>');
+                    
+                    if (!found) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        found = true;
+                    }
+                }
+            });
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            performSearch(e.target.value);
+        });
+
+        // Event listeners
+        window.addEventListener('scroll', updateNavigation);
+        window.addEventListener('load', updateNavigation);
+
+        // Close mobile nav when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!nav.contains(e.target) && !navToggle.contains(e.target)) {
+                nav.classList.remove('active');
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+            
+            if (e.key === 'Escape') {
+                searchInput.blur();
+                nav.classList.remove('active');
+            }
+        });
+
+        // Add some interactive animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(section);
+        });
+
+        // Initialize
+        updateNavigation();
+    </script>
+</body>
+</html>
