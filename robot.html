@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robotics & Embedded Systems - Study Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .nav-container {
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            margin-bottom: 30px;
+        }
+
+        .table-of-contents {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .toc-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #4a5568;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+        }
+
+        .toc-item {
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .toc-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .section h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #2d3748;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .section h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        .section h3 {
+            font-size: 1.8em;
+            margin: 25px 0 15px 0;
+            color: #4a5568;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            border-left: 4px solid #f093fb;
+        }
+
+        .section h4 {
+            font-size: 1.4em;
+            margin: 20px 0 10px 0;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .section p {
+            margin-bottom: 15px;
+            text-align: justify;
+            color: #4a5568;
+        }
+
+        .section ul, .section ol {
+            margin: 15px 0 15px 30px;
+            color: #4a5568;
+        }
+
+        .section li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+            border: 1px solid #4a5568;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .formula {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            text-align: center;
+            border: 1px solid #f6ad55;
+            font-weight: bold;
+        }
+
+        .definition {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 5px solid #4fd1c7;
+            font-weight: 500;
+        }
+
+        .definition strong {
+            color: #2d3748;
+            font-size: 1.1em;
+        }
+
+        .key-concepts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .concept-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .concept-card:hover {
+            transform: scale(1.05);
+        }
+
+        .concept-card h4 {
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .glossary {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 40px;
+        }
+
+        .glossary h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .glossary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .glossary-item {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #f6ad55;
+        }
+
+        .glossary-term {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            .toc-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Robotics & Embedded Systems</h1>
+            <p>Complete Study Guide - Bachelor in Data Science & AI</p>
+            <p><strong>Maastricht University</strong></p>
+        </div>
+
+        <div class="nav-container">
+            <div class="table-of-contents">
+                <div class="toc-title">📚 Table of Contents</div>
+                <div class="toc-grid">
+                    <a href="#section1" class="toc-item">1. Robotics Fundamentals</a>
+                    <a href="#section2" class="toc-item">2. Embedded Systems</a>
+                    <a href="#section3" class="toc-item">3. Real-Time Control</a>
+                    <a href="#section4" class="toc-item">4. Sensors & Actuators</a>
+                    <a href="#section5" class="toc-item">5. Communication Standards</a>
+                    <a href="#section6" class="toc-item">6. Control Methods</a>
+                    <a href="#section7" class="toc-item">7. Kinematics & Motion</a>
+                    <a href="#section8" class="toc-item">8. Learning Mechanisms</a>
+                    <a href="#section9" class="toc-item">9. Programming</a>
+                    <a href="#section10" class="toc-item">10. Integration & Apps</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <section id="section1" class="section">
+                <h2>🤖 1. Robotics Fundamentals</h2>
+                
+                <h3>1.1 Definition and Core Concepts</h3>
+                <div class="definition">
+                    <strong>Robot</strong>: An autonomous or semi-autonomous machine capable of sensing its environment, processing information, and performing physical actions to achieve specific goals.
+                </div>
+                
+                <h4>Key Characteristics of Robots:</h4>
+                <div class="key-concepts">
+                    <div class="concept-card">
+                        <h4>👁️ Sensing</h4>
+                        <p>Ability to perceive the environment through sensors</p>
+                    </div>
+                    <div class="concept-card">
+                        <h4>🧠 Processing</h4>
+                        <p>Computational capability to analyze data and make decisions</p>
+                    </div>
+                    <div class="concept-card">
+                        <h4>🦾 Acting</h4>
+                        <p>Physical interaction with the environment through actuators</p>
+                    </div>
+                    <div class="concept-card">
+                        <h4>🔄 Autonomy</h4>
+                        <p>Degree of independent operation without human intervention</p>
+                    </div>
+                </div>
+
+                <h3>1.2 Types of Robots</h3>
+                <h4>Industrial Robots</h4>
+                <ul>
+                    <li>Fixed-base manipulators in manufacturing</li>
+                    <li>High precision and repeatability</li>
+                    <li>Examples: Welding robots, assembly line robots</li>
+                </ul>
+
+                <h4>Mobile Robots</h4>
+                <ul>
+                    <li>Capable of locomotion</li>
+                    <li>Examples: Autonomous vehicles, cleaning robots, delivery drones</li>
+                </ul>
+
+                <h4>Service Robots</h4>
+                <ul>
+                    <li>Designed to assist humans</li>
+                    <li>Examples: Medical robots, domestic assistants</li>
+                </ul>
+
+                <h4>Humanoid Robots</h4>
+                <ul>
+                    <li>Human-like appearance and capabilities</li>
+                    <li>Examples: Research platforms, entertainment robots</li>
+                </ul>
+
+                <h3>1.3 Robot Components</h3>
+                <h4>Mechanical Structure:</h4>
+                <ul>
+                    <li><strong>Links</strong>: Rigid body segments</li>
+                    <li><strong>Joints</strong>: Connections allowing relative motion</li>
+                    <li><strong>End-effector</strong>: Tool or gripper at the robot's end</li>
+                </ul>
+
+                <h4>Control System:</h4>
+                <ul>
+                    <li><strong>Controller</strong>: Processes sensor data and generates control commands</li>
+                    <li><strong>Actuators</strong>: Convert electrical signals to mechanical motion</li>
+                    <li><strong>Sensors</strong>: Provide feedback about robot state and environment</li>
+                </ul>
+
+                <h4>Software Architecture:</h4>
+                <ul>
+                    <li><strong>Perception</strong>: Processing sensor data</li>
+                    <li><strong>Planning</strong>: Determining actions to achieve goals</li>
+                    <li><strong>Control</strong>: Executing planned actions</li>
+                </ul>
+            </section>
+
+            <section id="section2" class="section">
+                <h2>💻 2. Embedded Systems Fundamentals</h2>
+                
+                <h3>2.1 Definition and Characteristics</h3>
+                <div class="definition">
+                    <strong>Embedded System</strong>: A computer system with a dedicated function within a larger mechanical or electrical system, often with real-time computing constraints.
+                </div>
+
+                <h4>Key Characteristics:</h4>
+                <ul>
+                    <li><strong>Dedicated Purpose</strong>: Designed for specific applications</li>
+                    <li><strong>Real-time Operation</strong>: Must respond within strict timing constraints</li>
+                    <li><strong>Resource Constraints</strong>: Limited memory, processing power, and energy</li>
+                    <li><strong>Reliability</strong>: Must operate continuously without failure</li>
+                    <li><strong>Integration</strong>: Tightly coupled with hardware components</li>
+                </ul>
+
+                <h3>2.2 Embedded System Components</h3>
+                <h4>Microcontroller/Microprocessor:</h4>
+                <ul>
+                    <li>Central processing unit of the embedded system</li>
+                    <li>Examples: ARM Cortex, Arduino microcontrollers, Raspberry Pi</li>
+                </ul>
+
+                <h4>Memory Systems:</h4>
+                <ul>
+                    <li><strong>ROM (Read-Only Memory)</strong>: Stores firmware and boot code</li>
+                    <li><strong>RAM (Random Access Memory)</strong>: Temporary data storage</li>
+                    <li><strong>Flash Memory</strong>: Non-volatile storage for programs and data</li>
+                </ul>
+
+                <h4>Input/Output Interfaces:</h4>
+                <ul>
+                    <li><strong>GPIO (General Purpose Input/Output)</strong>: Digital pins for basic I/O</li>
+                    <li><strong>ADC (Analog-to-Digital Converter)</strong>: Converts analog signals to digital</li>
+                    <li><strong>PWM (Pulse Width Modulation)</strong>: Controls analog outputs using digital signals</li>
+                </ul>
+
+                <h3>2.3 Real-Time Systems</h3>
+                <h4>Hard Real-Time:</h4>
+                <ul>
+                    <li>Missing deadlines causes system failure</li>
+                    <li>Example: Airbag deployment systems</li>
+                </ul>
+
+                <h4>Soft Real-Time:</h4>
+                <ul>
+                    <li>Missing occasional deadlines is acceptable but degrades performance</li>
+                    <li>Example: Video streaming</li>
+                </ul>
+
+                <h4>Real-Time Operating Systems (RTOS):</h4>
+                <ul>
+                    <li>Provide deterministic task scheduling</li>
+                    <li>Examples: FreeRTOS, RT-Thread, QNX</li>
+                </ul>
+            </section>
+
+            <section id="section3" class="section">
+                <h2>⚡ 3. Real-Time Control Systems</h2>
+                
+                <h3>3.1 Control System Fundamentals</h3>
+                <div class="definition">
+                    <strong>Control System</strong>: A system that manages and regulates the behavior of other systems using control loops.
+                </div>
+
+                <h4>Open-Loop Control:</h4>
+                <ul>
+                    <li>No feedback from output to input</li>
+                    <li>Simple but less accurate</li>
+                    <li>Example: Microwave timer</li>
+                </ul>
+
+                <h4>Closed-Loop Control:</h4>
+                <ul>
+                    <li>Uses feedback to adjust control actions</li>
+                    <li>More accurate and robust</li>
+                    <li>Example: Thermostat</li>
+                </ul>
+
+                <h3>3.2 Control Loop Components</h3>
+                <ul>
+                    <li><strong>Plant</strong>: The system being controlled (robot, motor, etc.)</li>
+                    <li><strong>Controller</strong>: Processes error signal and generates control action</li>
+                    <li><strong>Sensor</strong>: Measures system output and provides feedback</li>
+                    <li><strong>Reference Input</strong>: Desired system behavior or setpoint</li>
+                    <li><strong>Error Signal</strong>: Difference between reference and actual output</li>
+                </ul>
+
+                <h3>3.3 System Stability and Performance</h3>
+                <h4>Stability:</h4>
+                <p>System's ability to return to equilibrium after disturbance</p>
+
+                <h4>Performance Metrics:</h4>
+                <ul>
+                    <li><strong>Rise Time</strong>: Time to reach steady-state value</li>
+                    <li><strong>Settling Time</strong>: Time to stay within acceptable error band</li>
+                    <li><strong>Overshoot</strong>: Maximum deviation beyond setpoint</li>
+                    <li><strong>Steady-State Error</strong>: Permanent difference between setpoint and output</li>
+                </ul>
+            </section>
+
+            <section id="section4" class="section">
+                <h2>🔍 4. Sensors and Actuators</h2>
+                
+                <h3>4.1 Sensor Types and Principles</h3>
+                <h4>Position Sensors:</h4>
+                <ul>
+                    <li><strong>Encoders</strong>: Measure rotational or linear position
+                        <ul>
+                            <li>Optical encoders: Use light interruption</li>
+                            <li>Magnetic encoders: Use magnetic field changes</li>
+                        </ul>
+                    </li>
+                    <li><strong>Potentiometers</strong>: Measure angular position through resistance</li>
+                    <li><strong>LVDT</strong>: Linear Variable Differential Transformer for precise linear position</li>
+                </ul>
+
+                <h4>Velocity Sensors:</h4>
+                <ul>
+                    <li><strong>Tachometers</strong>: Measure rotational speed</li>
+                    <li><strong>Doppler Sensors</strong>: Use frequency shift to measure velocity</li>
+                </ul>
+
+                <h4>Force/Torque Sensors:</h4>
+                <ul>
+                    <li><strong>Load Cells</strong>: Measure force using strain gauges</li>
+                    <li><strong>Torque Sensors</strong>: Measure rotational force</li>
+                </ul>
+
+                <h4>Proximity and Distance Sensors:</h4>
+                <ul>
+                    <li><strong>Ultrasonic Sensors</strong>: Use sound waves (HC-SR04)</li>
+                    <li><strong>LiDAR</strong>: Laser-based distance measurement</li>
+                    <li><strong>IR Sensors</strong>: Infrared light detection</li>
+                </ul>
+
+                <h4>Environmental Sensors:</h4>
+                <ul>
+                    <li><strong>IMU</strong>: Inertial Measurement Unit - acceleration and angular velocity</li>
+                    <li><strong>GPS</strong>: Global positioning</li>
+                    <li><strong>Camera Systems</strong>: Visual information</li>
+                </ul>
+
+                <h3>4.2 Sensor Characteristics</h3>
+                <div class="key-concepts">
+                    <div class="concept-card">
+                        <h4>🎯 Accuracy</h4>
+                        <p>How close measurement is to true value</p>
+                    </div>
+                    <div class="concept-card">
+                        <h4>🔄 Precision</h4>
+                        <p>Repeatability of measurements</p>
+                    </div>
+                    <div class="concept-card">
+                        <h4>📏 Resolution</h4>
+                        <p>Smallest detectable change</p>
+                    </div>
+                    <div class="concept-card">
+                        <h4>📊 Range</h4>
+                        <p>Min and max measurable values</p>
+                    </div>
+                    <div class="concept-card">
+                        <h4>⏱️ Response Time</h4>
+                        <p>How quickly sensor responds</p>
+                    </div>
+                    <div class="concept-card">
+                        <h4>📡 Noise</h4>
+                        <p>Unwanted variations in output</p>
+                    </div>
+                </div>
+
+                <h3>4.3 Actuator Types</h3>
+                <h4>Electric Motors:</h4>
+                <ul>
+                    <li><strong>DC Motors</strong>: Simple speed control, high torque at low speeds</li>
+                    <li><strong>AC Motors</strong>: Efficient, good for high-power applications</li>
+                    <li><strong>Stepper Motors</strong>: Precise position control, open-loop operation</li>
+                    <li><strong>Servo Motors</strong>: Closed-loop position control, high accuracy</li>
+                </ul>
+
+                <h4>Pneumatic Actuators:</h4>
+                <ul>
+                    <li>Use compressed air for linear or rotary motion</li>
+                    <li>High power-to-weight ratio</li>
+                    <li>Good for pick-and-place operations</li>
+                </ul>
+
+                <h4>Hydraulic Actuators:</h4>
+                <ul>
+                    <li>Use pressurized fluid for high-force applications</li>
+                    <li>Common in heavy machinery and industrial robots</li>
+                </ul>
+            </section>
+
+            <section id="section5" class="section">
+                <h2>📡 5. Communication Standards</h2>
+                
+                <h3>5.1 Serial Communication Protocols</h3>
+                <h4>UART (Universal Asynchronous Receiver-Transmitter):</h4>
+                <ul>
+                    <li>Asynchronous serial communication</li>
+                    <li>No clock signal required</li>
+                    <li>Common baud rates: 9600, 115200 bps</li>
+                </ul>
+
+                <h4>SPI (Serial Peripheral Interface):</h4>
+                <ul>
+                    <li>Synchronous serial communication</li>
+                    <li>Master-slave architecture</li>
+                    <li>Four-wire interface: MOSI, MISO, SCLK, CS</li>
+                </ul>
+
+                <h4>I2C (Inter-Integrated Circuit):</h4>
+                <ul>
+                    <li>Two-wire serial protocol</li>
+                    <li>Multi-master, multi-slave capability</li>
+                    <li>Address-based device selection</li>
+                </ul>
+
+                <h3>5.2 Fieldbus Protocols</h3>
+                <h4>CAN Bus (Controller Area Network):</h4>
+                <ul>
+                    <li>Robust communication for automotive and industrial applications</li>
+                    <li>Message-based protocol with priority arbitration</li>
+                    <li>Error detection and handling capabilities</li>
+                </ul>
+
+                <h4>Modbus:</h4>
+                <ul>
+                    <li>Industrial communication protocol</li>
+                    <li>Master-slave architecture</li>
+                    <li>ASCII and RTU variants</li>
+                </ul>
+
+                <h4>Ethernet-based Protocols:</h4>
+                <ul>
+                    <li><strong>EtherCAT</strong>: Real-time Ethernet for automation</li>
+                    <li><strong>PROFINET</strong>: Industrial Ethernet standard</li>
+                    <li><strong>Ethernet/IP</strong>: Industrial protocol using TCP/IP</li>
+                </ul>
+
+                <h3>5.3 Wireless Communication</h3>
+                <h4>WiFi (IEEE 802.11):</h4>
+                <ul>
+                    <li>High bandwidth, medium range</li>
+                    <li>TCP/IP compatibility</li>
+                    <li>Power consumption considerations</li>
+                </ul>
+
+                <h4>Bluetooth/BLE:</h4>
+                <ul>
+                    <li>Low power consumption</li>
+                    <li>Short-range communication</li>
+                    <li>Suitable for sensor networks</li>
+                </ul>
+
+                <h4>Zigbee (IEEE 802.15.4):</h4>
+                <ul>
+                    <li>Low power, low data rate</li>
+                    <li>Mesh networking capability</li>
+                    <li>IoT applications</li>
+                </ul>
+            </section>
+
+            <section id="section6" class="section">
+                <h2>🎛️ 6. Control Methods</h2>
+                
+                <h3>6.1 PID Control</h3>
+                <div class="definition">
+                    <strong>Proportional-Integral-Derivative (PID) Controller</strong>: Most common industrial controller combining three control actions.
+                </div>
+
+                <div class="formula">
+                    PID Equation: u(t) = Kp*e(t) + Ki*∫e(t)dt + Kd*de(t)/dt
+                </div>
+
+                <p><strong>Where:</strong></p>
+                <ul>
+                    <li>u(t) = control output</li>
+                    <li>e(t) = error signal</li>
+                    <li>Kp = proportional gain</li>
+                    <li>Ki = integral gain</li>
+                    <li>Kd = derivative gain</li>
+                </ul>
+
+                <h4>Proportional Control (P):</h4>
+                <ul>
+                    <li>Output proportional to current error</li>
+                    <li>Fast response but steady-state error</li>
+                    <li>Higher Kp = faster response, more overshoot</li>
+                </ul>
+
+                <h4>Integral Control (I):</h4>
+                <ul>
+                    <li>Output based on accumulated error</li>
+                    <li>Eliminates steady-state error</li>
+                    <li>Can cause oscillations if Ki too high</li>
+                </ul>
+
+                <h4>Derivative Control (D):</h4>
+                <ul>
+                    <li>Output based on rate of error change</li>
+                    <li>Improves stability and reduces overshoot</li>
+                    <li>Sensitive to noise</li>
+                </ul>
+
+                <h4>PID Tuning Methods:</h4>
+                <ul>
+                    <li><strong>Ziegler-Nichols</strong>: Empirical method using ultimate gain and frequency</li>
+                    <li><strong>Manual Tuning</strong>: Systematic adjustment of parameters</li>
+                    <li><strong>Auto-tuning</strong>: Automated parameter optimization</li>
+                </ul>
+
+                <h3>6.2 Advanced Control Methods</h3>
+                <h4>Adaptive Control:</h4>
+                <ul>
+                    <li>Controller parameters adjust to plant changes</li>
+                    <li>Self-tuning and model reference adaptive control</li>
+                </ul>
+
+                <h4>Robust Control:</h4>
+                <ul>
+                    <li>Maintains performance despite uncertainties</li>
+                    <li>H-infinity and mu-synthesis methods</li>
+                </ul>
+
+                <h4>Model Predictive Control (MPC):</h4>
+                <ul>
+                    <li>Uses plant model to predict future behavior</li>
+                    <li>Optimizes control actions over prediction horizon</li>
+                </ul>
+            </section>
+
+            <section id="section7" class="section">
+                <h2>🔧 7. Kinematics and Motion Control</h2>
+                
+                <h3>7.1 Robot Kinematics Fundamentals</h3>
+                <div class="definition">
+                    <strong>Kinematics</strong>: Study of motion without considering forces causing the motion.
+                </div>
+
+                <h4>Degrees of Freedom (DOF):</h4>
+                <ul>
+                    <li>Number of independent parameters defining robot configuration</li>
+                    <li>6 DOF needed for arbitrary position and orientation in 3D space</li>
+                </ul>
+
+                <h4>Coordinate Systems:</h4>
+                <ul>
+                    <li><strong>World/Base Frame</strong>: Fixed reference coordinate system</li>
+                    <li><strong>End-effector Frame</strong>: Attached to robot's end-effector</li>
+                    <li><strong>Joint Frames</strong>: Local coordinates for each joint</li>
+                </ul>
+
+                <h3>7.2 Forward Kinematics</h3>
+                <div class="definition">
+                    <strong>Forward Kinematics</strong>: Determining end-effector position and orientation given joint angles.
+                </div>
+
+                <h4>Denavit-Hartenberg (DH) Parameters:</h4>
+                <p>Standard method for describing robot geometry:</p>
+                <ul>
+                    <li><strong>a</strong>: Link length</li>
+                    <li><strong>α</strong>: Link twist</li>
+                    <li><strong>d</strong>: Link offset</li>
+                    <li><strong>θ</strong>: Joint angle</li>
+                </ul>
+
+                <div class="formula">
+                    Transformation Matrix: T = [R  p]<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[0  1]
+                </div>
+                <p>Where R is 3x3 rotation matrix and p is 3x1 position vector.</p>
+
+                <div class="code-block">
+Homogeneous Transformation:
+T_i^(i-1) = [cos(θ)  -sin(θ)cos(α)   sin(θ)sin(α)   a*cos(θ)]
+            [sin(θ)   cos(θ)cos(α)  -cos(θ)sin(α)   a*sin(θ)]
+            [0        sin(α)         cos(α)          d       ]
+            [0        0              0               1       ]
+                </div>
+
+                <h3>7.3 Inverse Kinematics</h3>
+                <div class="definition">
+                    <strong>Inverse Kinematics</strong>: Determining joint angles required for desired end-effector pose.
+                </div>
+
+                <h4>Analytical Solutions:</h4>
+                <ul>
+                    <li>Closed-form mathematical solutions</li>
+                    <li>Fast computation but limited to specific geometries</li>
+                    <li>Example: 6-DOF manipulator with spherical wrist</li>
+                </ul>
+
+                <h4>Numerical Solutions:</h4>
+                <ul>
+                    <li><strong>Jacobian-based methods</strong>: Use velocity relationships</li>
+                    <li><strong>Newton-Raphson</strong>: Iterative root-finding method</li>
+                    <li><strong>Optimization-based</strong>: Minimize error function</li>
+                </ul>
+
+                <div class="formula">
+                    Jacobian Matrix: v = J(q) * q̇
+                </div>
+                <p><strong>Where:</strong></p>
+                <ul>
+                    <li>v = end-effector velocity vector</li>
+                    <li>J(q) = Jacobian matrix (function of joint positions)</li>
+                    <li>q̇ = joint velocity vector</li>
+                </ul>
+
+                <h3>7.4 Trajectory Planning</h3>
+                <h4>Path Planning:</h4>
+                <p>Determining sequence of configurations from start to goal.</p>
+
+                <h4>Trajectory Generation:</h4>
+                <p>Adding time dimension to create smooth motion.</p>
+
+                <h4>Interpolation Methods:</h4>
+                <ul>
+                    <li><strong>Linear Interpolation</strong>: Straight-line paths in joint or Cartesian space</li>
+                    <li><strong>Polynomial Interpolation</strong>: Smooth trajectories using cubic or quintic polynomials</li>
+                    <li><strong>Spline Interpolation</strong>: Piecewise polynomial curves</li>
+                </ul>
+
+                <h4>Constraints:</h4>
+                <ul>
+                    <li><strong>Velocity Limits</strong>: Maximum joint and end-effector speeds</li>
+                    <li><strong>Acceleration Limits</strong>: Smooth motion requirements</li>
+                    <li><strong>Obstacle Avoidance</strong>: Collision-free paths</li>
+                </ul>
+
+                <h3>7.5 Locomotion Control</h3>
+                <h4>Wheeled Robots:</h4>
+                <ul>
+                    <li><strong>Differential Drive</strong>: Two independently controlled wheels</li>
+                    <li><strong>Ackermann Steering</strong>: Car-like steering mechanism</li>
+                    <li><strong>Omnidirectional</strong>: Holonomic motion using omniwheels or mecanum wheels</li>
+                </ul>
+
+                <div class="formula">
+                    Differential Drive Kinematics:<br>
+                    ẋ = (v_r + v_l)/2 * cos(θ)<br>
+                    ẏ = (v_r + v_l)/2 * sin(θ)<br>
+                    θ̇ = (v_r - v_l)/L
+                </div>
+
+                <h4>Path Following Controllers:</h4>
+                <ul>
+                    <li><strong>Pure Pursuit</strong>: Geometric path following algorithm</li>
+                    <li><strong>Stanley Controller</strong>: Uses cross-track error and heading error</li>
+                    <li><strong>Model Predictive Control</strong>: Optimal control approach</li>
+                </ul>
+            </section>
+
+            <section id="section8" class="section">
+                <h2>🧠 8. Learning Mechanisms</h2>
+                
+                <h3>8.1 Central Pattern Generators (CPGs)</h3>
+                <div class="definition">
+                    <strong>Central Pattern Generators</strong>: Neural circuits that produce rhythmic motor patterns without sensory input.
+                </div>
+
+                <h4>Biological Inspiration:</h4>
+                <ul>
+                    <li>Found in spinal cords of vertebrates</li>
+                    <li>Control locomotion patterns (walking, swimming, flying)</li>
+                    <li>Can operate without brain input</li>
+                </ul>
+
+                <h4>Mathematical Models:</h4>
+                <ul>
+                    <li><strong>Oscillator Networks</strong>: Coupled nonlinear oscillators</li>
+                    <li><strong>Phase Relationships</strong>: Coordination between different body segments</li>
+                </ul>
+
+                <h4>CPG Characteristics:</h4>
+                <div class="key-concepts">
+                    <div class="concept-card">
+                        <h4>🔄 Rhythmic Output</h4>
+                        <p>Periodic patterns</p>
+                    </div>
+                    <div class="concept-card">
+                        <h4>🎛️ Modulation</h4>
+                        <p>Parameters adjustable for different behaviors</p>
+                    </div>
+                    <div class="concept-card">
+                        <h4>💪 Robustness</h4>
+                        <p>Stable operation despite disturbances</p>
+                    </div>
+                    <div class="concept-card">
+                        <h4>📈 Adaptability</h4>
+                        <p>Can learn and modify patterns</p>
+                    </div>
+                </div>
+
+                <h3>8.2 Oscillator Models</h3>
+                <div class="formula">
+                    Kuramoto Oscillator:<br>
+                    θ̇_i = ω_i + (K/N) * Σ sin(θ_j - θ_i)
+                </div>
+
+                <div class="formula">
+                    Hopf Oscillator:<br>
+                    ẋ = (μ - r²)x - ωy<br>
+                    ẏ = (μ - r²)y + ωx
+                </div>
+
+                <h3>8.3 Learning in Robotics</h3>
+                <h4>Supervised Learning:</h4>
+                <ul>
+                    <li>Learn from input-output examples</li>
+                    <li>Applications: Object recognition, grasping</li>
+                </ul>
+
+                <h4>Reinforcement Learning:</h4>
+                <ul>
+                    <li>Learn through interaction and rewards</li>
+                    <li>Applications: Navigation, manipulation skills</li>
+                </ul>
+
+                <h4>Imitation Learning:</h4>
+                <ul>
+                    <li>Learn by observing demonstrations</li>
+                    <li>Applications: Complex manipulation tasks</li>
+                </ul>
+
+                <h4>Online Learning:</h4>
+                <ul>
+                    <li>Continuous adaptation during operation</li>
+                    <li>Important for changing environments</li>
+                </ul>
+
+                <h3>8.4 Adaptive Control</h3>
+                <h4>Model Reference Adaptive Control (MRAC):</h4>
+                <ul>
+                    <li>Robot follows reference model behavior</li>
+                    <li>Controller parameters adapt to minimize tracking error</li>
+                </ul>
+
+                <h4>Self-Tuning Controllers:</h4>
+                <ul>
+                    <li>Estimate plant parameters online</li>
+                    <li>Update controller parameters based on estimates</li>
+                </ul>
+
+                <h4>Neural Network Control:</h4>
+                <ul>
+                    <li>Use neural networks as controllers or plant models</li>
+                    <li>Can learn nonlinear relationships</li>
+                </ul>
+            </section>
+
+            <section id="section9" class="section">
+                <h2>💻 9. Programming Embedded Systems</h2>
+                
+                <h3>9.1 Embedded Programming Concepts</h3>
+                <h4>Memory Management:</h4>
+                <ul>
+                    <li><strong>Stack</strong>: Local variables and function calls</li>
+                    <li><strong>Heap</strong>: Dynamic memory allocation (use sparingly)</li>
+                    <li><strong>Static</strong>: Global variables and constants</li>
+                </ul>
+
+                <h4>Real-Time Programming:</h4>
+                <ul>
+                    <li><strong>Deterministic Execution</strong>: Predictable timing behavior</li>
+                    <li><strong>Interrupt Handling</strong>: Responding to external events</li>
+                    <li><strong>Priority Scheduling</strong>: Managing multiple tasks</li>
+                </ul>
+
+                <h4>Resource Constraints:</h4>
+                <ul>
+                    <li>Limited RAM and ROM</li>
+                    <li>Power consumption considerations</li>
+                    <li>Processing speed limitations</li>
+                </ul>
+
+                <h3>9.2 Common Programming Patterns</h3>
+                <h4>State Machines:</h4>
+                <div class="code-block">
+typedef enum {
+    IDLE,
+    MOVING,
+    ERROR
+} robot_state_t;
+
+void update_robot_state() {
+    switch(current_state) {
+        case IDLE:
+            if(start_command) current_state = MOVING;
+            break;
+        case MOVING:
+            if(obstacle_detected) current_state = ERROR;
+            if(goal_reached) current_state = IDLE;
+            break;
+        case ERROR:
+            if(error_cleared) current_state = IDLE;
+            break;
+    }
+}
+                </div>
+
+                <h4>Interrupt Service Routines (ISR):</h4>
+                <div class="code-block">
+void timer_isr() {
+    // Keep ISR short and fast
+    control_flag = true;
+    // Signal main loop to execute control algorithm
+}
+                </div>
+
+                <h4>Periodic Tasks:</h4>
+                <div class="code-block">
+void control_loop() {
+    while(1) {
+        if(control_flag) {
+            read_sensors();
+            compute_control();
+            update_actuators();
+            control_flag = false;
+        }
+        // Other non-critical tasks
+    }
+}
+                </div>
+
+                <h3>9.3 Hardware Abstraction</h3>
+                <h4>GPIO Control:</h4>
+                <div class="code-block">
+// Set pin as output
+gpio_set_direction(PIN_MOTOR_ENABLE, GPIO_OUTPUT);
+// Set pin high
+gpio_set_level(PIN_MOTOR_ENABLE, 1);
+                </div>
+
+                <h4>PWM Control:</h4>
+                <div class="code-block">
+// Initialize PWM channel
+pwm_init(PWM_CHANNEL_0, 1000); // 1kHz frequency
+// Set duty cycle (0-100%)
+pwm_set_duty(PWM_CHANNEL_0, 50);
+                </div>
+
+                <h4>ADC Reading:</h4>
+                <div class="code-block">
+// Read sensor value
+uint16_t sensor_value = adc_read(ADC_CHANNEL_0);
+float voltage = (sensor_value * 3.3) / 4095; // Convert to voltage
+                </div>
+
+                <h3>9.4 Communication Implementation</h3>
+                <h4>UART Communication:</h4>
+                <div class="code-block">
+void send_sensor_data() {
+    char buffer[100];
+    sprintf(buffer, "Sensor: %.2f\n", sensor_reading);
+    uart_send_string(buffer);
+}
+                </div>
+
+                <h4>I2C Communication:</h4>
+                <div class="code-block">
+// Read from I2C device
+uint8_t data;
+i2c_read_byte(DEVICE_ADDRESS, REGISTER_ADDRESS, &data);
+                </div>
+            </section>
+
+            <section id="section10" class="section">
+                <h2>🔧 10. Integration and Applications</h2>
+                
+                <h3>10.1 System Integration Challenges</h3>
+                <h4>Timing Synchronization:</h4>
+                <ul>
+                    <li>Coordinate multiple sensors and actuators</li>
+                    <li>Ensure real-time performance</li>
+                    <li>Handle communication delays</li>
+                </ul>
+
+                <h4>Sensor Fusion:</h4>
+                <ul>
+                    <li>Combine data from multiple sensors</li>
+                    <li>Kalman filtering for state estimation</li>
+                    <li>Handle sensor noise and uncertainties</li>
+                </ul>
+
+                <h4>Fault Tolerance:</h4>
+                <ul>
+                    <li>Detect and handle component failures</li>
+                    <li>Graceful degradation of performance</li>
+                    <li>Safety-critical system design</li>
+                </ul>
+
+                <h3>10.2 Application Examples</h3>
+                <div class="key-concepts">
+                    <div class="concept-card">
+                        <h4>🚗 Autonomous Vehicles</h4>
+                        <p>Sensor fusion, path planning, real-time control</p>
+                    </div>
+                    <div class="concept-card">
+                        <h4>🏭 Industrial Robots</h4>
+                        <p>Precise positioning, force control, safety systems</p>
+                    </div>
+                    <div class="concept-card">
+                        <h4>🚁 Drones/UAVs</h4>
+                        <p>Flight control, navigation, payload management</p>
+                    </div>
+                    <div class="concept-card">
+                        <h4>🏠 Smart Home</h4>
+                        <p>Environmental monitoring, energy management</p>
+                    </div>
+                </div>
+
+                <h3>10.3 Design Methodology</h3>
+                <h4>Requirements Analysis:</h4>
+                <ul>
+                    <li>Functional requirements</li>
+                    <li>Performance specifications</li>
+                    <li>Safety and reliability requirements</li>
+                    <li>Cost and power constraints</li>
+                </ul>
+
+                <h4>System Architecture:</h4>
+                <ul>
+                    <li>Hardware/software partitioning</li>
+                    <li>Communication interfaces</li>
+                    <li>Real-time constraints</li>
+                    <li>Modularity and maintainability</li>
+                </ul>
+
+                <h4>Testing and Validation:</h4>
+                <ul>
+                    <li>Unit testing of components</li>
+                    <li>Integration testing</li>
+                    <li>System-level validation</li>
+                    <li>Field testing and deployment</li>
+                </ul>
+
+                <h3>10.4 Competition Preparation</h3>
+                <h4>Robot Competition Strategy:</h4>
+                <ul>
+                    <li>Understand competition rules and scoring</li>
+                    <li>Identify key performance requirements</li>
+                    <li>Design modular and reliable systems</li>
+                    <li>Plan testing and iteration cycles</li>
+                </ul>
+
+                <h4>Common Competition Tasks:</h4>
+                <ul>
+                    <li><strong>Navigation</strong>: Autonomous movement through environment</li>
+                    <li><strong>Object Manipulation</strong>: Picking, placing, sorting objects</li>
+                    <li><strong>Line Following</strong>: Following marked paths</li>
+                    <li><strong>Obstacle Avoidance</strong>: Navigate around barriers</li>
+                    <li><strong>Target Recognition</strong>: Identify and interact with specific objects</li>
+                </ul>
+
+                <h4>Debugging and Troubleshooting:</h4>
+                <ul>
+                    <li>Systematic problem identification</li>
+                    <li>Use of debugging tools and techniques</li>
+                    <li>Data logging and analysis</li>
+                    <li>Performance optimization</li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2>📐 Key Formulas Reference</h2>
+                <div class="key-concepts">
+                    <div class="concept-card">
+                        <h4>🎛️ Control Systems</h4>
+                        <div class="formula">u(t) = Kp*e(t) + Ki*∫e(t)dt + Kd*de(t)/dt</div>
+                        <div class="formula">G(s) = Y(s)/X(s)</div>
+                    </div>
+                    <div class="concept-card">
+                        <h4>🔧 Kinematics</h4>
+                        <div class="formula">θ̇ = (v_r - v_l)/L</div>
+                        <div class="formula">v = J(q) * q̇</div>
+                    </div>
+                    <div class="concept-card">
+                        <h4>🧠 CPG Models</h4>
+                        <div class="formula">θ̇_i = ω_i + (K/N) * Σ sin(θ_j - θ_i)</div>
+                        <div class="formula">ẋ = (μ - r²)x - ωy</div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="glossary">
+                <h2>📖 Glossary of Key Terms</h2>
+                <div class="glossary-grid">
+                    <div class="glossary-item">
+                        <div class="glossary-term">Actuator</div>
+                        <div>Device that converts control signals into physical motion</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">CPG</div>
+                        <div>Central Pattern Generator - neural circuit producing rhythmic patterns</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">DOF</div>
+                        <div>Degrees of Freedom - number of independent motion parameters</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">End-effector</div>
+                        <div>Tool or device at the end of a robot arm</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">Forward Kinematics</div>
+                        <div>Computing end-effector pose from joint angles</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">GPIO</div>
+                        <div>General Purpose Input/Output pins on microcontrollers</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">IMU</div>
+                        <div>Inertial Measurement Unit combining accelerometer and gyroscope</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">Inverse Kinematics</div>
+                        <div>Computing joint angles for desired end-effector pose</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">Jacobian</div>
+                        <div>Matrix relating joint velocities to end-effector velocities</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">PID</div>
+                        <div>Proportional-Integral-Derivative controller</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">Real-time</div>
+                        <div>System with strict timing requirements</div>
+                    </div>
+                    <div class="glossary-item">
+                        <div class="glossary-term">RTOS</div>
+                        <div>Real-Time Operating System</div>
+                    </div>
+                </div>
+            </section>
+
+            <div style="text-align: center; padding: 40px; background: rgba(255, 255, 255, 0.1); border-radius: 15px; margin-top: 40px; color: white;">
+                <h3>🎓 Study Guide Complete</h3>
+                <p>This study guide covers the theoretical foundations for the Robotics and Embedded Systems course at Maastricht University. Focus on understanding the concepts and their interconnections, as practical applications will build upon this theoretical knowledge during hands-on sessions and the robot competition.</p>
+                <p><strong>Good luck with your studies! 🚀</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <a href="#" class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">↑</a>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('.toc-item').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Show/hide back to top button
+        window.addEventListener('scroll', function() {
+            const backToTop = document.querySelector('.back-to-top');
+            if (window.pageYOffset > 300) {
+                backToTop.style.opacity = '1';
+            } else {
+                backToTop.style.opacity = '0.5';
+            }
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('.section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
