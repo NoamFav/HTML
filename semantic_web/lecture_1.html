@@ -778,4 +778,299 @@ ex:RDF rdfs:label "Resource Description Framework"@en .</code>
                     </div>
 
                     <h4>Schema.org Example</h4>
-                    <p>Instead of creating custom predic
+                    <p>Instead of creating custom predicates, reuse established ones:</p>
+                    <div class="code-block" data-lang="Turtle">
+<code>&lt;http://example.org/person&gt; schema:jobTitle "Professor" .</code>
+                    </div>
+                </section>
+            </article>
+
+            <article id="lecture3" class="lecture fade-in">
+                <header class="lecture-header">
+                    <span class="lecture-number">Lecture 3</span>
+                    <h2>RDF Schema (RDFS)</h2>
+                </header>
+
+                <section class="section">
+                    <h3>📝 RDFS Overview</h3>
+                    <div class="highlight-box">
+                        <p><strong>RDF Schema</strong> is a vocabulary that enhances RDF with:</p>
+                        <ul>
+                            <li>Human-readable annotations</li>
+                            <li>Machine-interpretable semantics</li>
+                            <li>Class and property hierarchies</li>
+                            <li>Domain and range constraints</li>
+                        </ul>
+                    </div>
+
+                    <h4>🌐 Namespaces</h4>
+                    <div class="code-block" data-lang="Namespaces">
+<code>rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</code>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>🏷️ Classes and Instances</h3>
+                    <h4>Class Definition</h4>
+                    <div class="code-block" data-lang="Turtle">
+<code>:Human rdf:type rdfs:Class .
+:Human a rdfs:Class .  # shorthand for rdf:type</code>
+                    </div>
+
+                    <h4>Instance Definition</h4>
+                    <div class="code-block" data-lang="Turtle">
+<code>:anna rdf:type :Human .
+:anna a :Human .  # shorthand</code>
+                    </div>
+
+                    <h4>Built-in RDFS Classes</h4>
+                    <div class="list-enhanced">
+                        <ul>
+                            <li><code>rdfs:Resource</code> - class of all resources</li>
+                            <li><code>rdfs:Class</code> - class of all classes</li>
+                            <li><code>rdfs:Literal</code> - class of all literals</li>
+                            <li><code>rdfs:Property</code> - class of all properties</li>
+                            <li><code>rdf:Statement</code> - class of all reified statements</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>🏗️ Class Hierarchies</h3>
+                    <h4>Subclass Relationships</h4>
+                    <div class="code-block" data-lang="Turtle">
+<code>:Human rdfs:subClassOf :Mammal .
+:Mammal rdfs:subClassOf :Animal .</code>
+                    </div>
+
+                    <div class="highlight-box">
+                        <p><strong>Interpretation:</strong> All instances of Human are instances of Mammal, and transitively, instances of Animal.</p>
+                    </div>
+
+                    <h4>🧠 Reasoning Rules</h4>
+                    <div class="list-enhanced">
+                        <ul>
+                            <li>If <code>C rdfs:subClassOf B</code> and <code>B rdfs:subClassOf A</code>, then <code>C rdfs:subClassOf A</code> (transitivity)</li>
+                            <li>If <code>anna rdf:type Human</code> and <code>Human rdfs:subClassOf Mammal</code>, then <code>anna rdf:type Mammal</code></li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>🔗 Property Hierarchies</h3>
+                    <h4>Subproperty Relationships</h4>
+                    <div class="code-block" data-lang="Turtle">
+<code>:hasSibling rdfs:subPropertyOf :hasFamilyMember .</code>
+                    </div>
+
+                    <h4>🔍 Inference</h4>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h5>Given</h5>
+                            <p><code>:anna :hasSibling :johan</code></p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>Infer</h5>
+                            <p><code>:anna :hasFamilyMember :johan</code></p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>🎯 Domain and Range Constraints</h3>
+                    <h4>Domain (rdfs:domain)</h4>
+                    <p>Specifies the class of the subject in a property relationship.</p>
+                    <div class="code-block" data-lang="Turtle">
+<code>:hasSibling rdfs:domain :Human .</code>
+                    </div>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h5>Given</h5>
+                            <p><code>:anna :hasSibling :johan</code></p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>Infer</h5>
+                            <p><code>:anna a :Human</code></p>
+                        </div>
+                    </div>
+
+                    <h4>Range (rdfs:range)</h4>
+                    <p>Specifies the class of the object in a property relationship.</p>
+                    <div class="code-block" data-lang="Turtle">
+<code>:hasSibling rdfs:range :Human .</code>
+                    </div>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h5>Given</h5>
+                            <p><code>:anna :hasSibling :johan</code></p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>Infer</h5>
+                            <p><code>:johan a :Human</code></p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>📝 Annotation Properties</h3>
+                    <h4>For Human Readability</h4>
+                    <div class="list-enhanced">
+                        <ul>
+                            <li><code>rdfs:label</code> - human-friendly labels</li>
+                            <li><code>rdfs:comment</code> - descriptive comments</li>
+                        </ul>
+                    </div>
+
+                    <div class="code-block" data-lang="Turtle">
+<code>:anna rdfs:label "Anna" .
+:anna rdfs:comment "Anna is awesome" .</code>
+                    </div>
+
+                    <h4>For Documentation</h4>
+                    <div class="list-enhanced">
+                        <ul>
+                            <li><code>rdfs:seeAlso</code> - links to related resources</li>
+                            <li><code>rdfs:isDefinedBy</code> - links to definition location (subproperty of rdfs:seeAlso)</li>
+                        </ul>
+                    </div>
+
+                    <div class="code-block" data-lang="Turtle">
+<code>:anna rdfs:seeAlso &lt;http://anna.org/me#&gt; .
+:anna rdfs:isDefinedBy &lt;http://anna.org/foaf.rdf&gt; .</code>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>💎 RDF Value and Structured Values</h3>
+                    <p><strong>rdf:value</strong> enables description of structured values:</p>
+                    <div class="code-block" data-lang="Turtle">
+<code>&lt;http://www.example.com/2002/04/products#item10245&gt;
+  &lt;http://www.example.org/terms/weight&gt; [
+    rdf:value 2.4 ;
+    &lt;http://www.example.org/terms/units&gt; &lt;http://www.example.org/units/kilograms&gt;
+  ] .</code>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>🔄 RDF Reification</h3>
+                    <div class="highlight-box">
+                        <p><strong>Purpose:</strong> Making statements about statements (metadata, modal operators, provenance)</p>
+                    </div>
+
+                    <h4>Reification Pattern</h4>
+                    <div class="code-block" data-lang="Turtle">
+<code>:statement1 rdf:type rdf:Statement .
+:statement1 rdf:subject :Kubrick .
+:statement1 rdf:predicate :influencedBy .
+:statement1 rdf:object :Welles .
+:statement1 :statedIn "Rolling Stone Magazine" .</code>
+                    </div>
+
+                    <h4>🎯 Use Cases</h4>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h5>Metadata</h5>
+                            <p>Creation date, creator, license</p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>Modal Operators</h5>
+                            <p>Believes, supports</p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>Provenance</h5>
+                            <p>Source information</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>🧮 RDFS Inference System</h3>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h5>Sound</h5>
+                            <p>Cannot prove anything false</p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>Complete</h5>
+                            <p>Can prove anything that should be true</p>
+                        </div>
+                    </div>
+
+                    <h4>Example Rule</h4>
+                    <div class="highlight-box">
+                        <p>If graph G contains <code>(?x, ?p, ?y)</code> and <code>(?p, rdfs:range, ?u)</code>, then G should also contain <code>(?y, rdf:type, ?u)</code></p>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>🎯 Key Takeaways</h3>
+                    <div class="list-enhanced">
+                        <ul>
+                            <li><strong>RDFS enhances RDF</strong> with semantic relationships and constraints</li>
+                            <li><strong>Class hierarchies</strong> enable inheritance and classification</li>
+                            <li><strong>Property hierarchies</strong> allow refinement of relationships</li>
+                            <li><strong>Domain/Range constraints</strong> provide automatic type inference</li>
+                            <li><strong>Reification</strong> enables statements about statements</li>
+                            <li><strong>Inference rules</strong> derive implicit knowledge from explicit statements</li>
+                        </ul>
+                    </div>
+                </section>
+            </article>
+        </main>
+
+        <a href="#" class="back-to-top">↑</a>
+    </div>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Back to top functionality
+        document.querySelector('.back-to-top').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationDelay = Math.random() * 0.3 + 's';
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        });
+
+        document.querySelectorAll('.lecture, .section').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Highlight active navigation item
+        window.addEventListener('scroll', () => {
+            let current = '';
+            document.querySelectorAll('article[id]').forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
