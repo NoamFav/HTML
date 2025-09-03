@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Web Course Notes - KEN3140</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #475569;
+            --code-bg: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 2px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        .nav {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border-color);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+
+        .nav h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .nav ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .nav a:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .lecture {
+            background: rgba(51, 65, 85, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lecture::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--success-color), var(--accent-color));
+        }
+
+        .lecture-header {
+            margin-bottom: 2rem;
+        }
+
+        .lecture-number {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .lecture h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section {
+            margin-bottom: 2.5rem;
+        }
+
+        .section h3 {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .section h3::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .section h4 {
+            color: var(--success-color);
+            font-size: 1.2rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        .instructor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .instructor-card {
+            background: rgba(30, 41, 59, 0.8);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .instructor-card h5 {
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 0.5rem;
+            right: 1rem;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .code-block code {
+            color: #e2e8f0;
+            font-family: 'JetBrains Mono', 'Monaco', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(245, 158, 11, 0.1));
+            border-left: 4px solid var(--primary-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .quote {
+            font-style: italic;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            border-left: 3px solid var(--accent-color);
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 1.5rem;
+            border-radius: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card h5 {
+            color: var(--success-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .tag {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.2);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+        }
+
+        .list-enhanced {
+            background: rgba(30, 41, 59, 0.4);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+        }
+
+        .list-enhanced ul {
+            list-style: none;
+        }
+
+        .list-enhanced li {
+            position: relative;
+            padding: 0.5rem 0 0.5rem 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .list-enhanced li::before {
+            content: '⭐';
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+        }
+
+        .evaluation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .eval-item {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(37, 99, 235, 0.1));
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .eval-percentage {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent-color);
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .lecture h2 {
+                font-size: 1.8rem;
+            }
+            
+            .nav {
+                position: relative;
+                top: 0;
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .syntax-highlight {
+            color: #64748b;
+        }
+        .syntax-keyword { color: #3b82f6; }
+        .syntax-string { color: #10b981; }
+        .syntax-comment { color: #6b7280; }
+        .syntax-operator { color: #f59e0b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header fade-in">
+            <h1>Semantic Web</h1>
+            <p>Course Notes - KEN3140</p>
+        </header>
+
+        <nav class="nav fade-in">
+            <h3>📚 Course Contents</h3>
+            <ul>
+                <li><a href="#lecture1">Introduction to Semantic Web</a></li>
+                <li><a href="#lecture2">Resource Description Framework (RDF)</a></li>
+                <li><a href="#lecture3">RDF Schema (RDFS)</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <article id="lecture1" class="lecture fade-in">
+                <header class="lecture-header">
+                    <span class="lecture-number">Lecture 1</span>
+                    <h2>Introduction to Semantic Web</h2>
+                </header>
+
+                <section class="section">
+                    <h3>Course Overview</h3>
+                    <h4>👥 Instructors</h4>
+                    <div class="instructor-grid">
+                        <div class="instructor-card">
+                            <h5>Coordinator</h5>
+                            <p>Dr. Remzi Celebi<br>
+                            <small>remzi.celebi@maastrichtuniversity.nl</small></p>
+                        </div>
+                        <div class="instructor-card">
+                            <h5>Guest Lecturer</h5>
+                            <p>Dr. Christopher Brewster<br>
+                            <small>Christopher.Brewster@maastrichtuniversity.nl</small></p>
+                        </div>
+                        <div class="instructor-card">
+                            <h5>Teaching Assistants</h5>
+                            <p>Omer Durukan KILIC<br>Rishabh Jakhar</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>🌟 The Vision for a Semantic Web</h3>
+                    <div class="quote">
+                        "I have a dream for the Web [in which computers] become capable of analyzing all the data on the Web – the content, links, and transactions between people and computers. A 'Semantic Web', which makes this possible, has yet to emerge, but when it does, the day-to-day mechanisms of trade, bureaucracy and our daily lives will be handled by machines talking to machines."
+                        <br><strong>— Tim Berners-Lee (2001)</strong>
+                    </div>
+
+                    <h4>🎯 Key Goals</h4>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h5>Global Standards</h5>
+                            <p>Create formal representation of computable knowledge</p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>Web Extension</h5>
+                            <p>Leverage the Web for knowledge publication and discovery</p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>Distributed Collection</h5>
+                            <p>Create computable data and knowledge repositories</p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>Interoperability</h5>
+                            <p>Facilitate intelligent agent ecosystems</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>🌐 From Web 2.0 to Semantic Web (Web 3.0)</h3>
+                    <div class="highlight-box">
+                        <p><strong>Web 2.0:</strong> Makes it easier for <em>humans to find meaning</em> on the web</p>
+                        <p><strong>Semantic Web:</strong> Enables <em>machines to find meaning</em> in web-based data</p>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>🔗 Linked Data Principles (2006)</h3>
+                    <p>Tim Berners-Lee defined four core principles:</p>
+                    <div class="list-enhanced">
+                        <ul>
+                            <li><strong>Use URIs</strong> (Uniform Resource Identifiers) as names for things</li>
+                            <li><strong>Use HTTP URIs</strong> so that people can look up those names</li>
+                            <li><strong>Provide useful information</strong> using standards (RDF, OWL, SPARQL) when URIs are looked up</li>
+                            <li><strong>Include links to other URIs</strong> so that they can discover more things</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>⚡ Key Technologies and Standards</h3>
+                    <p><strong>Core Technologies:</strong> 
+                        <span class="tag">Linked Data</span>
+                        <span class="tag">Vocabularies</span>
+                        <span class="tag">Query</span>
+                        <span class="tag">Inference</span>
+                        <span class="tag">Applications</span>
+                    </p>
+                    <p><strong>Standards:</strong>
+                        <span class="tag">RDF</span>
+                        <span class="tag">OWL</span>
+                        <span class="tag">SPARQL</span>
+                        <span class="tag">RDFa</span>
+                        <span class="tag">JSON-LD</span>
+                        <span class="tag">SKOS</span>
+                        <span class="tag">RDFS</span>
+                        <span class="tag">SHACL</span>
+                    </p>
+                </section>
+
+                <section class="section">
+                    <h3>🏢 Real-World Applications</h3>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h5>Google</h5>
+                            <p>Search disambiguation (schema.org), Voice Assistant</p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>NXP</h5>
+                            <p>Data integration (26,000+ products)</p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>BBC</h5>
+                            <p>Content publication (14 ontologies)</p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>BestBuy</h5>
+                            <p>Search engine optimization</p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>Uber</h5>
+                            <p>Query expansion for food understanding</p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>Airbnb</h5>
+                            <p>Knowledge access and retrieval</p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>Thomson Reuters</h5>
+                            <p>2 billion relationships linking securities, people, organizations</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>📊 Course Structure</h3>
+                    <h4>🎓 Learning Objectives</h4>
+                    <p>Students will be able to:</p>
+                    <div class="list-enhanced">
+                        <ul>
+                            <li>Explain history and foundations of Semantic Web</li>
+                            <li>Create valid structured representations using Semantic Web formalisms</li>
+                            <li>Construct OWL ontologies and perform reasoning</li>
+                            <li>Execute SPARQL queries</li>
+                            <li>Judge appropriateness of semantic web technologies for specific problems</li>
+                        </ul>
+                    </div>
+
+                    <h4>📈 Evaluation</h4>
+                    <div class="evaluation-grid">
+                        <div class="eval-item">
+                            <div class="eval-percentage">30%</div>
+                            <p>3 Group Assignments<br>(10% each)</p>
+                        </div>
+                        <div class="eval-item">
+                            <div class="eval-percentage">15%</div>
+                            <p>Individual Participation</p>
+                        </div>
+                        <div class="eval-item">
+                            <div class="eval-percentage">55%</div>
+                            <p>Final Exam</p>
+                        </div>
+                    </div>
+                </section>
+            </article>
+
+            <article id="lecture2" class="lecture fade-in">
+                <header class="lecture-header">
+                    <span class="lecture-number">Lecture 2</span>
+                    <h2>Resource Description Framework (RDF)</h2>
+                </header>
+
+                <section class="section">
+                    <h3>📋 RDF Overview</h3>
+                    <div class="highlight-box">
+                        <p><strong>Resource Description Framework (RDF)</strong> is a W3C standard framework for representing information on the Web, developed to enable machine-readable data representation.</p>
+                    </div>
+
+                    <h4>✨ Key Features</h4>
+                    <div class="list-enhanced">
+                        <ul>
+                            <li>Framework to represent information on the Web</li>
+                            <li>Graph formalism for describing interconnected entities</li>
+                            <li>Highly versatile for describing digital objects, real-world objects, and concepts</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>🔺 The RDF Data Model</h3>
+                    <p><strong>Triple Structure:</strong> The fundamental unit is a <em>triple</em> consisting of:</p>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h5>Subject</h5>
+                            <p>The resource being described</p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>Predicate</h5>
+                            <p>The relationship/property</p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>Object</h5>
+                            <p>The value or related resource</p>
+                        </div>
+                    </div>
+
+                    <div class="code-block" data-lang="Example">
+<code>Subject → Predicate → Object
+Tim Berners-Lee → loves → Semantic Web</code>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>🔗 RDF Nodes</h3>
+                    <p>Three types of nodes:</p>
+
+                    <h4>1. IRIs (International Resource Identifiers)</h4>
+                    <div class="list-enhanced">
+                        <ul>
+                            <li>Extend URIs to support international characters</li>
+                            <li>Used for subjects and predicates</li>
+                            <li>Example: <code>http://dbpedia.org/page/Tim_Berners-Lee</code></li>
+                        </ul>
+                    </div>
+
+                    <h4>2. Literals</h4>
+                    <p>Values with up to 3 parts:</p>
+                    <div class="list-enhanced">
+                        <ul>
+                            <li><strong>Lexical form:</strong> Unicode string in quotes</li>
+                            <li><strong>Datatype IRI:</strong> determines how lexical form maps to value</li>
+                            <li><strong>Language tag:</strong> for language-specific strings</li>
+                        </ul>
+                    </div>
+
+                    <div class="code-block" data-lang="Examples">
+<code>"1.01"^^xsd:decimal
+"Maastricht University"@en
+"Universiteit Maastricht"@nl</code>
+                    </div>
+
+                    <h4>3. Blank Nodes</h4>
+                    <div class="highlight-box">
+                        <p>Nodes without persistent identifiers. Generally considered bad practice - assign IRIs instead.</p>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>🌐 URI Structure and Namespaces</h3>
+                    <h4>URI Components</h4>
+                    <div class="code-block" data-lang="Structure">
+<code>scheme:[//authority]path[?query][#fragment]
+https://springer.com/gp/book#9783030123741</code>
+                    </div>
+
+                    <h4>Namespace Prefixes</h4>
+                    <div class="code-block" data-lang="Turtle">
+<code>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;</code>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>🏷️ RDF Predicates</h3>
+                    <h4>Types</h4>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h5>Data Properties</h5>
+                            <p>Object is a literal value</p>
+                        </div>
+                        <div class="feature-card">
+                            <h5>Object Properties</h5>
+                            <p>Object is an IRI</p>
+                        </div>
+                    </div>
+
+                    <h4>Built-in Predicates</h4>
+                    <div class="list-enhanced">
+                        <ul>
+                            <li><code>rdf:type</code> - specifies class membership ("is a" relation)</li>
+                            <li><code>rdfs:label</code> - provides human-readable labels</li>
+                        </ul>
+                    </div>
+
+                    <h4>External Predicates</h4>
+                    <p>From vocabularies like Schema.org. Browse at: <a href="https://lov.linkeddata.es/" target="_blank">https://lov.linkeddata.es/</a></p>
+                </section>
+
+                <section class="section">
+                    <h3>💻 RDF Syntaxes</h3>
+                    
+                    <h4>1. N-Triples</h4>
+                    <div class="code-block" data-lang="N-Triples">
+<code>&lt;http://example.org/RDF&gt; &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; "Resource Description Framework"@en .</code>
+                    </div>
+
+                    <h4>2. Turtle (Terse RDF Triple Language)</h4>
+                    <div class="code-block" data-lang="Turtle">
+<code>@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+@prefix ex: &lt;http://example.org/&gt;
+
+ex:RDF rdfs:label "Resource Description Framework"@en .</code>
+                    </div>
+
+                    <h4>3. RDF/XML</h4>
+                    <div class="code-block" data-lang="XML">
+<code>&lt;?xml version="1.0"?&gt;
+&lt;rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"&gt;
+  &lt;rdf:Description rdf:about="http://example.org/RDF"&gt;
+    &lt;rdfs:label xml:lang="en"&gt;Resource Description Framework&lt;/rdfs:label&gt;
+  &lt;/rdf:Description&gt;
+&lt;/rdf:RDF&gt;</code>
+                    </div>
+
+                    <h4>4. JSON-LD</h4>
+                    <div class="code-block" data-lang="JSON-LD">
+<code>{
+  "@context": {
+    "ex": "http://example.org/",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@id": "ex:RDF",
+  "rdfs:label": "Resource Description Framework"
+}</code>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>⚡ Turtle Shortcuts</h3>
+                    <h4>Multiple values for one property</h4>
+                    <div class="code-block" data-lang="Turtle">
+<code>&lt;http://maastrichtuniversity.nl&gt; ex:location ex:Maastricht, ex:Netherlands .</code>
+                    </div>
+
+                    <h4>Multiple properties for one resource</h4>
+                    <div class="code-block" data-lang="Turtle">
+<code>UM: rdfs:label "Maastricht University";
+    rdf:type ex:University;
+    ex:location ex:Maastricht, ex:Netherlands.</code>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>📊 RDF Graphs</h3>
+                    <div class="highlight-box">
+                        <p>An <strong>RDF Graph</strong> is a labeled, directed multigraph where:</p>
+                        <ul>
+                            <li>Nodes are subjects and objects</li>
+                            <li>Edges are predicates</li>
+                            <li>Multiple triples can share nodes, creating connections</li>
+                        </ul>
+                    </div>
+
+                    <h4>Named Graphs</h4>
+                    <div class="list-enhanced">
+                        <ul>
+                            <li>RDF graphs can be identified by URIs</li>
+                            <li>Serialized using TriG, N-Quads, or JSON-LD formats</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h3>♻️ Vocabulary Reuse</h3>
+                    <div class="highlight-box">
+                        <p><strong>Importance:</strong> Reusing existing vocabularies ensures interoperability and shared understanding.</p>
+                    </div>
+
+                    <h4>Schema.org Example</h4>
+                    <p>Instead of creating custom predic
