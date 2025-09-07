@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSAI Must Learn</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 40px 0;
+        }
+        
+        .header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .phase {
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+        
+        .phase:hover {
+            transform: translateY(-5px);
+        }
+        
+        .phase-header {
+            padding: 25px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .phase-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .phase-1 { background: linear-gradient(135deg, #ff6b6b, #ee5a52); }
+        .phase-2 { background: linear-gradient(135deg, #4ecdc4, #44a08d); }
+        .phase-3 { background: linear-gradient(135deg, #45b7d1, #96c93d); }
+        .phase-4 { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .phase-5 { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .phase-6 { background: linear-gradient(135deg, #a8edea, #fed6e3); }
+        
+        .phase-header h2 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .phase-header .phase-number {
+            font-size: 1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .phase-content {
+            padding: 30px;
+        }
+        
+        .category {
+            margin-bottom: 25px;
+        }
+        
+        .category h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            border-left: 4px solid #3498db;
+            padding-left: 12px;
+        }
+        
+        .resources {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        
+        .resource {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .resource:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            transform: translateX(5px);
+        }
+        
+        .resource-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .resource-link {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+        
+        .resource-link:hover {
+            text-decoration: underline;
+        }
+        
+        .example {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .example-title {
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 8px;
+        }
+        
+        .example-content {
+            color: #856404;
+            font-size: 0.95rem;
+        }
+        
+        .icon {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+        }
+        
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            margin: 0 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-dot.active {
+            background: white;
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 DSAI Must Learn</h1>
+            <p>Your complete roadmap to Data Science & AI mastery</p>
+            <div class="progress-indicator">
+                <div class="progress-dot active"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+            </div>
+        </div>
+
+        <!-- Phase 1: Foundation -->
+        <div class="phase">
+            <div class="phase-header phase-1">
+                <div class="phase-number">Phase 1</div>
+                <h2>🏗️ Foundation & Environment Setup</h2>
+            </div>
+            <div class="phase-content">
+                <div class="category">
+                    <h3>Development Environment</h3>
+                    <div class="resources">
+                        <div class="resource">
+                            <div class="resource-name">🖥️ VS Code</div>
+                            <a href="https://code.visualstudio.com/" class="resource-link" target="_blank">https://code.visualstudio.com/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">⚡ Zed Editor</div>
+                            <a href="https://zed.dev/" class="resource-link" target="_blank">https://zed.dev/</a><br>
+                            <a href="https://zed.dev/docs" class="resource-link" target="_blank">📚 Docs</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">🔧 Neovim</div>
+                            <a href="https://neovim.io/" class="resource-link" target="_blank">https://neovim.io/</a><br>
+                            <a href="https://neovim.io/doc/user/quickstart.html" class="resource-link" target="_blank">🚀 Quickstart</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category">
+                    <h3>Terminal & Command Line</h3>
+                    <div class="resources">
+                        <div class="resource">
+                            <div class="resource-name">🖲️ iTerm2</div>
+                            <a href="https://iterm2.com/" class="resource-link" target="_blank">https://iterm2.com/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">⌨️ Vim Motions</div>
+                            <a href="https://vim.rtorr.com/" class="resource-link" target="_blank">https://vim.rtorr.com/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">📜 Bash Guide</div>
+                            <a href="https://tldp.org/HOWTO/Bash-Prog-Intro-HOWTO.html" class="resource-link" target="_blank">https://tldp.org/HOWTO/Bash-Prog-Intro-HOWTO.html</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">🐧 Linux Basics</div>
+                            <a href="https://www.youtube.com/watch?v=iwolPf6kN-k" class="resource-link" target="_blank">📹 Video Tutorial</a><br>
+                            <a href="https://cheatography.com/davechild/cheat-sheets/linux-command-line/" class="resource-link" target="_blank">📋 Cheat Sheet</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example">
+                    <div class="example-title">🎯 Phase 1 Goal:</div>
+                    <div class="example-content">Set up your development environment and get comfortable with the terminal. Start with VS Code, practice basic Linux commands like `ls`, `cd`, `grep`, and learn to navigate files efficiently. Master basic vim motions for faster editing.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase 2: Version Control -->
+        <div class="phase">
+            <div class="phase-header phase-2">
+                <div class="phase-number">Phase 2</div>
+                <h2>🔄 Version Control Mastery</h2>
+            </div>
+            <div class="phase-content">
+                <div class="category">
+                    <h3>Git & GitHub</h3>
+                    <div class="resources">
+                        <div class="resource">
+                            <div class="resource-name">📹 Git Video Tutorial</div>
+                            <a href="https://www.youtube.com/watch?v=USjZcfj8yxE" class="resource-link" target="_blank">https://www.youtube.com/watch?v=USjZcfj8yxE</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">🎮 Interactive Practice</div>
+                            <a href="https://learngitbranching.js.org/" class="resource-link" target="_blank">https://learngitbranching.js.org/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">📖 GitHub Docs</div>
+                            <a href="https://docs.github.com/en" class="resource-link" target="_blank">https://docs.github.com/en</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">👤 Example Profile</div>
+                            <a href="https://github.com/NoamFav" class="resource-link" target="_blank">https://github.com/NoamFav</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example">
+                    <div class="example-title">🎯 Phase 2 Goal:</div>
+                    <div class="example-content">Master essential Git commands: `git add`, `git commit`, `git push`, `git pull`, `git branch`, `git merge`. Create your first repository, make commits with meaningful messages, and learn branching strategies. Practice with the interactive Git tutorial until merging feels natural.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase 3: Programming Languages -->
+        <div class="phase">
+            <div class="phase-header phase-3">
+                <div class="phase-number">Phase 3</div>
+                <h2>💻 Core Programming Languages</h2>
+            </div>
+            <div class="phase-content">
+                <div class="category">
+                    <h3>Essential Languages</h3>
+                    <div class="resources">
+                        <div class="resource">
+                            <div class="resource-name">🐍 Python</div>
+                            <a href="https://docs.python.org/3/tutorial/" class="resource-link" target="_blank">https://docs.python.org/3/tutorial/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">☕ Java</div>
+                            <a href="https://docs.oracle.com/javase/tutorial/" class="resource-link" target="_blank">https://docs.oracle.com/javase/tutorial/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">🔧 C</div>
+                            <a href="https://www.learn-c.org/" class="resource-link" target="_blank">https://www.learn-c.org/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">⚡ C++</div>
+                            <a href="https://cplusplus.com/doc/tutorial/" class="resource-link" target="_blank">https://cplusplus.com/doc/tutorial/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">🦀 Rust</div>
+                            <a href="https://doc.rust-lang.org/book/" class="resource-link" target="_blank">https://doc.rust-lang.org/book/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">🗄️ SQL</div>
+                            <a href="https://sqlbolt.com/" class="resource-link" target="_blank">https://sqlbolt.com/</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example">
+                    <div class="example-title">🎯 Phase 3 Goal:</div>
+                    <div class="example-content">Start with Python - build a simple calculator, web scraper, or data analyzer. Learn variables, functions, loops, and OOP concepts. For SQL, practice with real datasets: write queries to filter, group, and join data. Example project: Analyze a CSV file with Python and store results in a SQL database.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase 4: Data Science & ML Libraries -->
+        <div class="phase">
+            <div class="phase-header phase-4">
+                <div class="phase-number">Phase 4</div>
+                <h2>📊 Data Science & ML Frameworks</h2>
+            </div>
+            <div class="phase-content">
+                <div class="category">
+                    <h3>Data Science Stack</h3>
+                    <div class="resources">
+                        <div class="resource">
+                            <div class="resource-name">🔢 NumPy</div>
+                            <a href="https://numpy.org/doc/stable/user/quickstart.html" class="resource-link" target="_blank">https://numpy.org/doc/stable/user/quickstart.html</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">🐼 Pandas</div>
+                            <a href="https://pandas.pydata.org/docs/" class="resource-link" target="_blank">https://pandas.pydata.org/docs/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">📈 Matplotlib</div>
+                            <a href="https://matplotlib.org/stable/users/getting_started/" class="resource-link" target="_blank">https://matplotlib.org/stable/users/getting_started/</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category">
+                    <h3>Machine Learning</h3>
+                    <div class="resources">
+                        <div class="resource">
+                            <div class="resource-name">🔥 PyTorch</div>
+                            <a href="https://pytorch.org/tutorials/" class="resource-link" target="_blank">https://pytorch.org/tutorials/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">🧠 TensorFlow</div>
+                            <a href="https://www.tensorflow.org/learn" class="resource-link" target="_blank">https://www.tensorflow.org/learn</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category">
+                    <h3>Application Frameworks</h3>
+                    <div class="resources">
+                        <div class="resource">
+                            <div class="resource-name">🎨 JavaFX</div>
+                            <a href="https://openjfx.io/" class="resource-link" target="_blank">https://openjfx.io/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">🍃 Spring</div>
+                            <a href="https://spring.io/guides" class="resource-link" target="_blank">https://spring.io/guides</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">⚛️ React</div>
+                            <a href="https://react.dev/" class="resource-link" target="_blank">https://react.dev/</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example">
+                    <div class="example-title">🎯 Phase 4 Goal:</div>
+                    <div class="example-content">Build an end-to-end ML project: Load data with Pandas, explore with Matplotlib, preprocess with NumPy, train a model with PyTorch/TensorFlow. Example: Stock price prediction using historical data, or image classification with neural networks. Deploy with a React frontend.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase 5: Professional Tools -->
+        <div class="phase">
+            <div class="phase-header phase-5">
+                <div class="phase-number">Phase 5</div>
+                <h2>🛠️ Professional Development Tools</h2>
+            </div>
+            <div class="phase-content">
+                <div class="category">
+                    <h3>Development & Documentation</h3>
+                    <div class="resources">
+                        <div class="resource">
+                            <div class="resource-name">🐳 Docker</div>
+                            <a href="https://docs.docker.com/get-started/" class="resource-link" target="_blank">https://docs.docker.com/get-started/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">📓 Jupyter</div>
+                            <a href="https://jupyter.org/" class="resource-link" target="_blank">https://jupyter.org/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">📄 Overleaf (LaTeX)</div>
+                            <a href="https://www.overleaf.com/learn" class="resource-link" target="_blank">https://www.overleaf.com/learn</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">📝 Markdown</div>
+                            <a href="https://www.markdownguide.org/" class="resource-link" target="_blank">https://www.markdownguide.org/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">🔢 Math Reference</div>
+                            <a href="https://math.meta.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference" class="resource-link" target="_blank">MathJax Tutorial</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example">
+                    <div class="example-title">🎯 Phase 5 Goal:</div>
+                    <div class="example-content">Create a containerized ML application with Docker. Document your code with Markdown and LaTeX for academic papers. Use Jupyter for data exploration and prototyping. Example: Package your ML model in a Docker container, create API documentation, and write a technical report in LaTeX.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase 6: Mastery & Practice -->
+        <div class="phase">
+            <div class="phase-header phase-6">
+                <div class="phase-number">Phase 6</div>
+                <h2>🚀 Mastery & Continuous Learning</h2>
+            </div>
+            <div class="phase-content">
+                <div class="category">
+                    <h3>Essential Books</h3>
+                    <div class="resources">
+                        <div class="resource">
+                            <div class="resource-name">🐍 Think Python</div>
+                            <a href="https://greenteapress.com/wp/think-python-2e/" class="resource-link" target="_blank">https://greenteapress.com/wp/think-python-2e/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">🤖 Automate the Boring Stuff</div>
+                            <a href="https://automatetheboringstuff.com/" class="resource-link" target="_blank">https://automatetheboringstuff.com/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">☕ Effective Java</div>
+                            <a href="https://learning.oreilly.com/library/view/effective-java-3rd/9780134686097/" class="resource-link" target="_blank">O'Reilly Link</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">🧹 Clean Code</div>
+                            <a href="https://learning.oreilly.com/library/view/clean-code/9780136083238/" class="resource-link" target="_blank">O'Reilly Link</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">📚 Introduction to Algorithms (CLRS)</div>
+                            <a href="https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/" class="resource-link" target="_blank">MIT Press</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">🧠 Deep Learning</div>
+                            <a href="https://www.deeplearningbook.org/" class="resource-link" target="_blank">https://www.deeplearningbook.org/</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category">
+                    <h3>Practice Platforms</h3>
+                    <div class="resources">
+                        <div class="resource">
+                            <div class="resource-name">💪 LeetCode</div>
+                            <a href="https://leetcode.com/" class="resource-link" target="_blank">https://leetcode.com/</a>
+                        </div>
+                        <div class="resource">
+                            <div class="resource-name">🎓 DSAI Wiki (Incognito)</div>
+                            <a href="https://msvincognito.nl/wiki/" class="resource-link" target="_blank">https://msvincognito.nl/wiki/</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example">
+                    <div class="example-title">🎯 Phase 6 Goal:</div>
+                    <div class="example-content">Solve 3 LeetCode problems weekly, read one technical book per month, contribute to open source projects. Build a portfolio of 5-10 substantial projects covering different areas: web scraping, ML models, data visualization, APIs, and mobile apps. Start writing technical blog posts to teach others.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            const phases = document.querySelectorAll('.phase');
+            const progressDots = document.querySelectorAll('.progress-dot');
+            
+            // Update progress indicator based on scroll
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset;
+                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const scrollPercent = (scrollTop / docHeight) * 100;
+                
+                const activePhase = Math.min(Math.floor((scrollPercent / 100) * 6), 5);
+                
+                progressDots.forEach((dot, index) => {
+                    if (index <= activePhase) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            });
+            
+            // Add click animation to resources
+            const resources = document.querySelectorAll('.resource');
+            resources.forEach(resource => {
+                resource.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
