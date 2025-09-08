@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Theory Concepts Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 300;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .bankruptcy { --accent: #e74c3c; }
+        .cooperative { --accent: #3498db; }
+        .extensive { --accent: #2ecc71; }
+        .bimatrix { --accent: #f39c12; }
+
+        .bankruptcy .section-title::after { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .cooperative .section-title::after { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .extensive .section-title::after { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .bimatrix .section-title::after { background: linear-gradient(135deg, #f39c12, #e67e22); }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .concept-card {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid var(--accent, #667eea);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .concept-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .concept-card:hover::before {
+            opacity: 1;
+        }
+
+        .concept-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .concept-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            position: relative;
+        }
+
+        .concept-description {
+            color: #666;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        .intro-text {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 25px;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .concept-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-circle:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-circle:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .floating-circle:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Game Theory Concepts</h1>
+            <p>A comprehensive guide to bankruptcy problems, cooperative games, and strategic interactions</p>
+        </div>
+
+        <section class="section bankruptcy">
+            <h2 class="section-title">Bankruptcy Problems</h2>
+            <p class="intro-text">Exploring fair distribution methods when resources are insufficient to meet all claims</p>
+            
+            <div class="concept-grid">
+                <div class="concept-card">
+                    <h3 class="concept-title">Contested Garment Principle (CGP)</h3>
+                    <p class="concept-description">A fundamental principle from the Talmud that addresses how to divide a contested asset when multiple parties have claims. This principle forms the foundation for understanding fair division in situations of scarcity and provides insights into <span class="highlight">proportional reasoning</span> in conflict resolution.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Talmud Rule (TAL)</h3>
+                    <p class="concept-description">A sophisticated rule derived from Talmudic sources that combines both proportional and equal treatment principles. The rule operates differently depending on whether the estate is above or below half the total claims, implementing a <span class="highlight">coalitional procedure</span> for fair distribution.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Axioms of Rules</h3>
+                    <p class="concept-description">Mathematical properties that bankruptcy rules should satisfy, including <span class="highlight">anonymity</span>, <span class="highlight">claims boundedness</span>, <span class="highlight">estate monotonicity</span>, and <span class="highlight">composition</span>. These axioms help evaluate and compare different distribution methods.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Constrained Equal Award (CEA)</h3>
+                    <p class="concept-description">A rule that distributes the estate by giving each claimant an equal amount, subject to the constraint that no one receives more than their claim. This approach prioritizes <span class="highlight">equality</span> while respecting individual claim limits.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Constrained Equal Loss (CEL)</h3>
+                    <p class="concept-description">A complementary rule to CEA that equalizes losses rather than awards. Each claimant suffers the same loss, constrained so that no one's award becomes negative. This method focuses on <span class="highlight">equal sacrifice</span> principles.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Proportional Rule (PROP)</h3>
+                    <p class="concept-description">The most intuitive bankruptcy rule that distributes the estate in proportion to claims. If the estate is E and total claims are C, each claimant with claim c_i receives <span class="highlight">(c_i/C) × E</span>. This maintains the relative ranking of claims.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Hydraulic Rationing</h3>
+                    <p class="concept-description">A dynamic approach to rationing that models the distribution process as water flowing through containers of different heights, representing different claim levels. This provides an intuitive <span class="highlight">physical interpretation</span> of fair division.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Bilateral Consistency</h3>
+                    <p class="concept-description">An important axiom requiring that when some claimants leave with their allocated shares, the remaining problem should be solved the same way. This ensures <span class="highlight">procedural stability</span> and prevents manipulation through strategic departures.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section cooperative">
+            <h2 class="section-title">Cooperative Games</h2>
+            <p class="intro-text">Analyzing situations where players can form binding coalitions and share benefits</p>
+            
+            <div class="concept-grid">
+                <div class="concept-card">
+                    <h3 class="concept-title">Game Definitions</h3>
+                    <p class="concept-description">A cooperative game consists of a set of <span class="highlight">players N</span> and a <span class="highlight">characteristic function v</span> that assigns a value to each possible coalition. The function v: 2^N → ℝ represents the total payoff that coalition S can achieve independently.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">The Core</h3>
+                    <p class="concept-description">The set of allocations that no coalition can improve upon by deviating. An allocation x is in the core if the sum equals v(N) and for every coalition S, the sum of payoffs to S's members is at least v(S). The core represents <span class="highlight">stable solutions</span>.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Core Axioms</h3>
+                    <p class="concept-description">Key properties including <span class="highlight">efficiency</span> (full distribution of value), <span class="highlight">individual rationality</span> (players get at least their standalone value), and <span class="highlight">coalitional rationality</span> (no coalition has incentive to deviate).</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Shapley Value</h3>
+                    <p class="concept-description">A unique solution concept that assigns to each player their expected marginal contribution across all possible orders of coalition formation. The Shapley value φ_i(v) considers all <span class="highlight">permutations</span> and averages each player's contribution.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Shapley Axioms</h3>
+                    <p class="concept-description">Four axioms uniquely characterize the Shapley value: <span class="highlight">efficiency</span>, <span class="highlight">symmetry</span>, <span class="highlight">dummy</span>, and <span class="highlight">additivity</span>. These properties ensure fair and consistent allocation of cooperative gains.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Nucleolus</h3>
+                    <p class="concept-description">A solution concept that minimizes the maximum complaint (excess) of any coalition. The nucleolus lexicographically minimizes the vector of excesses arranged in decreasing order, providing a <span class="highlight">compromise solution</span> when the core is empty.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Applications</h3>
+                    <p class="concept-description">Cooperative game theory applies to <span class="highlight">cost sharing</span> (utilities, transportation), <span class="highlight">resource allocation</span> (airport runway costs, joint ventures), <span class="highlight">voting power</span> analysis, and <span class="highlight">market regulation</span> problems.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section extensive">
+            <h2 class="section-title">Extensive Form Games</h2>
+            <p class="intro-text">Sequential decision-making with perfect and imperfect information</p>
+            
+            <div class="concept-grid">
+                <div class="concept-card">
+                    <h3 class="concept-title">Rationality & Common Knowledge</h3>
+                    <p class="concept-description">Players are assumed to be <span class="highlight">rational</span> (maximizing expected utility) and this rationality is <span class="highlight">common knowledge</span> - everyone knows everyone is rational, everyone knows that everyone knows, and so on infinitely.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Game Theory Puzzles</h3>
+                    <p class="concept-description">Classic puzzles like the <span class="highlight">Centipede Game</span>, <span class="highlight">Chain Store Paradox</span>, and <span class="highlight">Backward Induction Paradox</span> illustrate the tension between theoretical predictions and observed behavior in sequential games.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Actions vs Strategies</h3>
+                    <p class="concept-description"><span class="highlight">Actions</span> are choices available at specific decision nodes, while <span class="highlight">strategies</span> are complete plans specifying what action to take at every possible information set. A strategy is a function from information sets to actions.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Nash Equilibria</h3>
+                    <p class="concept-description">A profile of strategies where no player can unilaterally deviate and improve their payoff. In extensive form games, we can have <span class="highlight">multiple equilibria</span> that may rely on non-credible threats at unreached information sets.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Subgame Perfect Equilibria</h3>
+                    <p class="concept-description">A refinement of Nash equilibrium requiring that strategies constitute a Nash equilibrium in every <span class="highlight">subgame</span>. This eliminates non-credible threats and ensures rational play throughout the entire game tree.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Backward Induction</h3>
+                    <p class="concept-description">The solution method for finding subgame perfect equilibria in games with perfect information. Start from the <span class="highlight">terminal nodes</span> and work backward, determining optimal actions at each decision node assuming rational play thereafter.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section bimatrix">
+            <h2 class="section-title">Bimatrix Games</h2>
+            <p class="intro-text">Strategic interactions between two players with simultaneous decision-making</p>
+            
+            <div class="concept-grid">
+                <div class="concept-card">
+                    <h3 class="concept-title">Pure vs Mixed Actions</h3>
+                    <p class="concept-description"><span class="highlight">Pure strategies</span> involve choosing a single action with certainty. <span class="highlight">Mixed strategies</span> are probability distributions over pure strategies, allowing players to randomize their choices to keep opponents uncertain.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Dominated Actions</h3>
+                    <p class="concept-description">An action is <span class="highlight">strictly dominated</span> if another action always yields higher payoffs regardless of opponent's choice. <span class="highlight">Weakly dominated</span> actions never do better and sometimes do worse. Rational players never use dominated strategies.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Best Reply Correspondences</h3>
+                    <p class="concept-description">For each of opponent's strategies, the <span class="highlight">best reply</span> is the set of strategies that maximize a player's expected payoff. The best reply correspondence BR_i(s_{-i}) maps opponent strategies to optimal responses.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">2×2 Game Equilibria</h3>
+                    <p class="concept-description">Every 2×2 game has at least one Nash equilibrium (possibly in mixed strategies). Games may have <span class="highlight">pure strategy equilibria</span>, <span class="highlight">mixed strategy equilibria</span>, or both. Common examples include Prisoner's Dilemma and Coordination games.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">2×3 and 3×2 Games</h3>
+                    <p class="concept-description">Asymmetric games where players have different numbers of strategies. Analysis involves checking for <span class="highlight">pure equilibria</span> first, then computing mixed equilibria by making players indifferent between their available strategies.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3 class="concept-title">Correlated Equilibria</h3>
+                    <p class="concept-description">A generalization of Nash equilibrium where players condition their actions on signals from a <span class="highlight">correlation device</span>. Players have no incentive to deviate from recommended actions given the information provided by the device.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
