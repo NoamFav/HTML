@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDMO Pipeline Structure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 50%, #1a202c 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+        }
+
+        .title-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(to right, #60a5fa, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #9ca3af;
+            margin-top: 0.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: #2d3748;
+            border: 1px solid #4a5568;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #9ca3af;
+            margin-top: 0.25rem;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: #2d3748;
+            border: 1px solid #4a5568;
+            border-radius: 0.5rem;
+            color: #e5e7eb;
+            font-size: 1rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .search-input::placeholder {
+            color: #6b7280;
+        }
+
+        .clear-button {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        .clear-button:hover {
+            color: white;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tab-button {
+            padding: 0.5rem 1rem;
+            background: #2d3748;
+            color: #9ca3af;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-button:hover {
+            background: #374151;
+        }
+
+        .tab-button.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .tree-container {
+            background: #2d3748;
+            border: 1px solid #4a5568;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            max-height: 600px;
+            overflow: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+
+        .tree-node {
+            user-select: none;
+        }
+
+        .tree-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .tree-item:hover {
+            background: #374151;
+        }
+
+        .tree-item.highlight {
+            background: rgba(146, 64, 14, 0.3);
+        }
+
+        .chevron {
+            width: 1rem;
+            height: 1rem;
+            color: #9ca3af;
+            flex-shrink: 0;
+        }
+
+        .icon {
+            width: 1rem;
+            height: 1rem;
+            flex-shrink: 0;
+        }
+
+        .folder-icon { color: #3b82f6; }
+        .py-icon { color: #60a5fa; }
+        .go-icon { color: #22d3ee; }
+        .cpp-icon { color: #a78bfa; }
+        .sh-icon { color: #4ade80; }
+        .yaml-icon { color: #fb923c; }
+        .json-icon { color: #facc15; }
+        .txt-icon { color: #9ca3af; }
+        .docker-icon { color: #3b82f6; }
+        .make-icon { color: #f87171; }
+        .file-icon { color: #9ca3af; }
+
+        .node-name {
+            font-size: 0.875rem;
+        }
+
+        .node-name.folder {
+            color: #93c5fd;
+            font-weight: 500;
+        }
+
+        .node-name.file {
+            color: #d1d5db;
+        }
+
+        .description {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-left: 0.5rem;
+        }
+
+        .children {
+            display: none;
+        }
+
+        .children.expanded {
+            display: block;
+        }
+
+        .legend {
+            margin-top: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #9ca3af;
+        }
+
+        .features-grid {
+            margin-top: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .feature-card {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid;
+        }
+
+        .feature-card.audio {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.3), rgba(30, 64, 175, 0.3));
+            border-color: rgba(29, 78, 216, 0.5);
+        }
+
+        .feature-card.robot {
+            background: linear-gradient(135deg, rgba(88, 28, 135, 0.3), rgba(107, 33, 168, 0.3));
+            border-color: rgba(126, 34, 206, 0.5);
+        }
+
+        .feature-card.analysis {
+            background: linear-gradient(135deg, rgba(20, 83, 45, 0.3), rgba(22, 101, 52, 0.3));
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+
+        .feature-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card.audio .feature-title { color: #93c5fd; }
+        .feature-card.robot .feature-title { color: #c4b5fd; }
+        .feature-card.analysis .feature-title { color: #86efac; }
+
+        .feature-description {
+            font-size: 0.875rem;
+            color: #d1d5db;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title-section">
+                <div>
+                    <h1 class="title">EDMO Pipeline Structure</h1>
+                    <p class="subtitle">Communication & Collaboration Analysis for Educational Robotics</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #60a5fa;">58</div>
+                    <div class="stat-label">Directories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #4ade80;">47</div>
+                    <div class="stat-label">Files</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #a78bfa;">6</div>
+                    <div class="stat-label">Microservices</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #fb923c;">4</div>
+                    <div class="stat-label">Languages</div>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search files and directories...">
+                <button id="clearButton" class="clear-button" style="display: none;">✕</button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" data-view="full">📦 Full Structure</button>
+            <button class="tab-button" data-view="src">💻 Source Code</button>
+            <button class="tab-button" data-view="services">🚀 Microservices</button>
+            <button class="tab-button" data-view="docs">📚 Documentation</button>
+        </div>
+
+        <div id="treeContainer" class="tree-container"></div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <span class="icon py-icon">●</span>
+                <span>Python Files</span>
+            </div>
+            <div class="legend-item">
+                <span class="icon go-icon">●</span>
+                <span>Go Files</span>
+            </div>
+            <div class="legend-item">
+                <span class="icon cpp-icon">●</span>
+                <span>C++ Files</span>
+            </div>
+            <div class="legend-item">
+                <span class="icon sh-icon">●</span>
+                <span>Shell Scripts</span>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card audio">
+                <h3 class="feature-title">🎤 Audio Pipeline</h3>
+                <p class="feature-description">ASR, Diarization, Emotion Detection, Prosody Analysis</p>
+            </div>
+            <div class="feature-card robot">
+                <h3 class="feature-title">🤖 Robot Integration</h3>
+                <p class="feature-description">Log parsing, Movement metrics, Action analysis</p>
+            </div>
+            <div class="feature-card analysis">
+                <h3 class="feature-title">📊 Analysis & Viz</h3>
+                <p class="feature-description">Clustering, Timeline graphs, Teacher feedback</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const structure = {
+            name: 'edmo-pipeline',
+            children: [
+                { name: '.editorconfig', description: 'Editor configuration' },
+                { name: '.env.example', description: 'Environment template' },
+                { name: '.gitattributes' },
+                {
+                    name: '.github',
+                    children: [
+                        { name: 'CODEOWNERS' },
+                        { name: 'dependabot.yml' },
+                        {
+                            name: 'ISSUE_TEMPLATE',
+                            children: [
+                                { name: 'bug_report.yml' },
+                                { name: 'feature_request.yml' }
+                            ]
+                        },
+                        { name: 'pull_request_template.md' },
+                        {
+                            name: 'workflows',
+                            children: [
+                                { name: 'ci.yml' },
+                                { name: 'codeql.yml' }
+                            ]
+                        }
+                    ]
+                },
+                { name: '.gitignore' },
+                { name: 'CHANGELOG.md' },
+                { name: 'CODE_OF_CONDUCT.md' },
+                {
+                    name: 'config',
+                    description: 'Configuration files',
+                    children: [
+                        {
+                            name: 'dev',
+                            children: [{ name: 'config.yaml', description: 'Dev settings' }]
+                        },
+                        {
+                            name: 'prod',
+                            children: [{ name: 'config.yaml', description: 'Production settings' }]
+                        },
+                        { name: 'test' }
+                    ]
+                },
+                { name: 'CONTRIBUTING.md' },
+                {
+                    name: 'data',
+                    description: 'Data storage (gitignored)',
+                    children: [
+                        { name: '.gitkeep' },
+                        {
+                            name: 'features',
+                            description: 'Extracted features',
+                            children: [{ name: '.gitkeep' }]
+                        },
+                        {
+                            name: 'models',
+                            description: 'Model weights',
+                            children: [{ name: '.gitkeep' }]
+                        },
+                        {
+                            name: 'outputs',
+                            description: 'Results & visualizations',
+                            children: [{ name: '.gitkeep' }]
+                        },
+                        {
+                            name: 'processed',
+                            description: 'Preprocessed data',
+                            children: [{ name: '.gitkeep' }]
+                        },
+                        {
+                            name: 'raw',
+                            description: 'Original data',
+                            children: [{ name: '.gitkeep' }]
+                        },
+                        { name: 'README.md' }
+                    ]
+                },
+                { name: 'docker-compose.yml' },
+                { name: 'Dockerfile' },
+                {
+                    name: 'docs',
+                    description: 'Documentation',
+                    children: [
+                        { name: 'agenda.md' },
+                        {
+                            name: 'api',
+                            children: [{ name: 'services.md', description: 'API docs' }]
+                        },
+                        {
+                            name: 'architecture',
+                            children: [{ name: 'overview.md', description: 'System design' }]
+                        },
+                        {
+                            name: 'guides',
+                            children: [
+                                { name: 'development' },
+                                {
+                                    name: 'setup',
+                                    children: [{ name: 'installation.md' }]
+                                },
+                                {
+                                    name: 'usage',
+                                    children: [{ name: 'quickstart.md' }]
+                                }
+                            ]
+                        },
+                        { name: 'PROJECT_SUMMARY.md' },
+                        { name: 'research' }
+                    ]
+                },
+                {
+                    name: 'experiments',
+                    description: 'Research experiments',
+                    children: [
+                        { name: 'exploratory' },
+                        { name: 'prototypes' },
+                        { name: 'README.md' },
+                        { name: 'validation' }
+                    ]
+                },
+                { name: 'LICENSE' },
+                { name: 'Makefile' },
+                {
+                    name: 'notebooks',
+                    description: 'Jupyter notebooks',
+                    children: [
+                        { name: 'clustering' },
+                        { name: 'eda', description: 'Exploratory analysis' },
+                        { name: 'feature_analysis' },
+                        { name: 'README.md' }
+                    ]
+                },
+                { name: 'README.md' },
+                { name: 'requirements-dev.txt' },
+                { name: 'requirements.txt' },
+                {
+                    name: 'scripts',
+                    description: 'Utility scripts',
+                    children: [
+                        { name: 'analysis' },
+                        {
+                            name: 'deployment',
+                            children: [{ name: 'start_services.sh' }]
+                        },
+                        {
+                            name: 'preprocessing',
+                            children: [{ name: 'download_models.sh' }]
+                        },
+                        {
+                            name: 'setup',
+                            children: [{ name: 'run_tests.sh' }]
+                        }
+                    ]
+                },
+                { name: 'SECURITY.md' },
+                {
+                    name: 'src',
+                    description: 'Source code',
+                    children: [
+                        {
+                            name: 'cpp_native',
+                            description: 'C++ modules',
+                            children: [
+                                { name: 'audio' },
+                                { name: 'CMakeLists.txt' },
+                                { name: 'video' },
+                                { name: 'video_tools.cpp' },
+                                { name: 'video_tools.hpp' },
+                                { name: 'whisper' },
+                                { name: 'whisper_runner.cpp' },
+                                { name: 'whisper_runner.hpp' }
+                            ]
+                        },
+                        {
+                            name: 'data_pipeline',
+                            children: [
+                                { name: 'convert_audio.sh', description: 'Audio normalization' },
+                                { name: 'extract_frames.sh', description: 'Video processing' },
+                                { name: 'preprocess.py' }
+                            ]
+                        },
+                        {
+                            name: 'go_core',
+                            description: 'Pipeline orchestrator',
+                            children: [
+                                { name: 'audio.go' },
+                                { name: 'go.mod' },
+                                { name: 'main.go', description: 'Entry point' },
+                                { name: 'orchestrator' },
+                                { name: 'pipeline' },
+                                { name: 'pipeline.go' },
+                                { name: 'sync' },
+                                { name: 'utils' },
+                                { name: 'utils.go' },
+                                { name: 'video.go' }
+                            ]
+                        },
+                        {
+                            name: 'interfaces',
+                            children: [
+                                { name: 'data_format.md' },
+                                { name: 'nlp_api.md' }
+                            ]
+                        },
+                        { name: 'main.py' },
+                        {
+                            name: 'nlp',
+                            description: 'Legacy NLP service',
+                            children: [
+                                { name: 'app.py' },
+                                { name: 'processor.py' },
+                                { name: 'requirements.txt' },
+                                { name: 'strategies.py' }
+                            ]
+                        },
+                        {
+                            name: 'python_services',
+                            description: 'Microservices',
+                            children: [
+                                {
+                                    name: 'asr',
+                                    description: 'Speech-to-text',
+                                    children: [
+                                        { name: 'app.py' },
+                                        { name: 'requirements.txt' },
+                                        { name: 'utils' },
+                                        { name: 'whisper_integration' }
+                                    ]
+                                },
+                                {
+                                    name: 'clustering',
+                                    description: 'Pattern discovery',
+                                    children: [
+                                        { name: 'algorithms' },
+                                        { name: 'app.py' },
+                                        { name: 'requirements.txt' },
+                                        { name: 'utils' }
+                                    ]
+                                },
+                                {
+                                    name: 'diarization',
+                                    description: 'Speaker identification',
+                                    children: [
+                                        { name: 'app.py' },
+                                        { name: 'pyannote_integration' },
+                                        { name: 'requirements.txt' },
+                                        { name: 'utils' }
+                                    ]
+                                },
+                                {
+                                    name: 'emotion',
+                                    description: 'Emotion detection',
+                                    children: [
+                                        { name: 'app.py' },
+                                        { name: 'models' },
+                                        { name: 'requirements.txt' },
+                                        { name: 'utils' }
+                                    ]
+                                },
+                                {
+                                    name: 'nlp',
+                                    description: 'Language processing',
+                                    children: [
+                                        { name: 'models' },
+                                        { name: 'requirements.txt' },
+                                        { name: 'utils' }
+                                    ]
+                                },
+                                {
+                                    name: 'visualization',
+                                    description: 'Reports & graphs',
+                                    children: [
+                                        { name: 'app.py' },
+                                        { name: 'graphs' },
+                                        { name: 'reports' },
+                                        { name: 'utils' }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            name: 'shared',
+                            description: 'Shared resources',
+                            children: [
+                                { name: 'config.yaml' },
+                                { name: 'constants.go' },
+                                { name: 'schema.json' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: 'tests',
+                    description: 'Test suite',
+                    children: [
+                        { name: 'e2e', description: 'End-to-end tests' },
+                        {
+                            name: 'fixtures',
+                            children: [
+                                { name: 'audio' },
+                                { name: 'video' }
+                            ]
+                        },
+                        {
+                            name: 'integration',
+                            children: [
+                                { name: 'pipeline' },
+                                { name: 'services' }
+                            ]
+                        },
+                        {
+                            name: 'unit',
+                            children: [
+                                { name: 'cpp' },
+                                { name: 'go' },
+                                { name: 'python' }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        let currentView = 'full';
+        let searchTerm = '';
+        let expandedNodes = new Set();
+
+        function getIconClass(name, isFolder) {
+            if (isFolder) return 'folder-icon';
+            const ext = name.split('.').pop();
+            const iconMap = {
+                'py': 'py-icon',
+                'go': 'go-icon',
+                'cpp': 'cpp-icon',
+                'hpp': 'cpp-icon',
+                'sh': 'sh-icon',
+                'md': 'txt-icon',
+                'yaml': 'yaml-icon',
+                'yml': 'yaml-icon',
+                'json': 'json-icon',
+                'txt': 'txt-icon',
+                'Dockerfile': 'docker-icon',
+                'Makefile': 'make-icon'
+            };
+            return iconMap[ext] || iconMap[name] || 'file-icon';
+        }
+
+        function matchesSearch(node, term) {
+            if (term === '') return true;
+            return node.name.toLowerCase().includes(term.toLowerCase());
+        }
+
+        function hasMatchingChildren(node, term) {
+            if (!node.children) return false;
+            return node.children.some(child => 
+                matchesSearch(child, term) || hasMatchingChildren(child, term)
+            );
+        }
+
+        function shouldDisplay(node, term) {
+            if (term === '') return true;
+            return matchesSearch(node, term) || hasMatchingChildren(node, term);
+        }
+
+        function renderNode(node, level, term) {
+            if (!shouldDisplay(node, term)) return '';
+
+            const isFolder = !!node.children;
+            const nodeId = `node-${Math.random().toString(36).substr(2, 9)}`;
+            const isExpanded = level < 2 || expandedNodes.has(nodeId);
+            const highlight = matchesSearch(node, term) && term !== '';
+            const paddingLeft = level * 1.5 + 0.5;
+
+            let html = '<div class="tree-node">';
+            html += `<div class="tree-item ${highlight ? 'highlight' : ''}" style="padding-left: ${paddingLeft}rem;" data-node-id="${nodeId}" data-has-children="${isFolder}">`;
+            
+            if (isFolder) {
+                html += `<span class="chevron">${isExpanded ? '▼' : '▶'}</span>`;
+            } else {
+                html += '<span style="width: 1rem; display: inline-block;"></span>';
+            }
+
+            html += `<span class="icon ${getIconClass(node.name, isFolder)}">●</span>`;
+            html += `<span class="node-name ${isFolder ? 'folder' : 'file'}">${node.name}</span>`;
+            
+            if (node.description) {
+                html += `<span class="description">// ${node.description}</span>`;
+            }
+            
+            html += '</div>';
+
+            if (isFolder && node.children) {
+                html += `<div class="children ${isExpanded ? 'expanded' : ''}" data-parent="${nodeId}">`;
+                node.children.forEach(child => {
+                    html += renderNode(child, level + 1, term);
+                });
+                html += '</div>';
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        function getViewData(view) {
+            if (view === 'full') return structure;
+            if (view === 'src') return structure.children.find(n => n.name === 'src');
+            if (view === 'services') {
+                const src = structure.children.find(n => n.name === 'src');
+                return src.children.find(n => n.name === 'python_services');
+            }
+            if (view === 'docs') return structure.children.find(n => n.name === 'docs');
+            return structure;
+        }
+
+        function render() {
+            const container = document.getElementById('treeContainer');
+            const data = getViewData(currentView);
+            container.innerHTML = renderNode(data, 0, searchTerm);
+
+            document.querySelectorAll('.tree-item[data-has-children="true"]').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const nodeId = this.dataset.nodeId;
+                    const childrenDiv = document.querySelector(`.children[data-parent="${nodeId}"]`);
+                    const chevron = this.querySelector('.chevron');
+                    
+                    if (childrenDiv.classList.contains('expanded')) {
+                        childrenDiv.classList.remove('expanded');
+                        chevron.textContent = '▶';
+                        expandedNodes.delete(nodeId);
+                    } else {
+                        childrenDiv.classList.add('expanded');
+                        chevron.textContent = '▼';
+                        expandedNodes.add(nodeId);
+                    }
+                });
+            });
+        }
+
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            searchTerm = e.target.value;
+            document.getElementById('clearButton').style.display = searchTerm ? 'block' : 'none';
+            render();
+        });
+
+        document.getElementById('clearButton').addEventListener('click', function() {
+            searchTerm = '';
+            document.getElementById('searchInput').value = '';
+            this.style.display = 'none';
+            render();
+        });
+
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentView = this.dataset.view;
+                render();
+            });
+        });
+
+        render();
+    </script>
+</body>
+</html>
