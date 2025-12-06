@@ -684,6 +684,10 @@
 
         const panel = document.getElementById("workflowPanel");
         panel.classList.add("show");
+        
+        // Scroll up to make room for panel
+        terminal.scrollTop = Math.max(0, terminal.scrollHeight - terminal.clientHeight - 250);
+        
         await new Promise((r) => setTimeout(r, 200));
 
         panel.querySelectorAll(".workflow-item").forEach((item, i) => {
@@ -701,11 +705,16 @@
         await addResponse("You're welcome.");
         await new Promise((r) => setTimeout(r, 700));
 
-        document.getElementById("musicPlayer").classList.add("show");
-        await new Promise((r) => setTimeout(r, 2500));
-
+        // Hide panel before showing music player
         panel.classList.remove("show");
-        await new Promise((r) => setTimeout(r, 600));
+        await new Promise((r) => setTimeout(r, 400));
+        
+        document.getElementById("musicPlayer").classList.add("show");
+        
+        // Scroll up to make room for music player
+        terminal.scrollTop = Math.max(0, terminal.scrollHeight - terminal.clientHeight - 150);
+        
+        await new Promise((r) => setTimeout(r, 2500));
 
         // Scene 4: You know me too well
         addPromptLine();
