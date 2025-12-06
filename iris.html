@@ -30,6 +30,15 @@
         position: relative;
         overflow: hidden;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        margin: 0 auto;
+      }
+      
+      @media (max-width: 430px) {
+        .phone-frame {
+          max-width: 100vw;
+          max-height: 100vh;
+          border-radius: 0;
+        }
       }
 
       .status-bar {
@@ -45,13 +54,27 @@
 
       .terminal-container {
         height: calc(100% - 36px);
-        padding: 20px;
+        padding: 16px;
         overflow-y: auto;
         background: #0d1117;
+        scroll-behavior: smooth;
+      }
+      
+      .terminal-container::-webkit-scrollbar {
+        width: 4px;
+      }
+      
+      .terminal-container::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      
+      .terminal-container::-webkit-scrollbar-thumb {
+        background: #30363d;
+        border-radius: 2px;
       }
 
       .terminal-line {
-        margin-bottom: 16px;
+        margin-bottom: 12px;
         opacity: 0;
         animation: fadeIn 0.3s ease forwards;
       }
@@ -125,19 +148,19 @@
       /* Weather Widget */
       .weather-widget {
         position: fixed;
-        top: 50%;
+        top: 45%;
         left: 50%;
         transform: translate(-50%, -50%) scale(0.9);
         background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
-        padding: 30px;
+        padding: 24px;
         border-radius: 20px;
         box-shadow: 0 20px 60px rgba(74, 144, 226, 0.5);
         opacity: 0;
         pointer-events: none;
         transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1000;
-        width: 85%;
-        max-width: 350px;
+        width: 82%;
+        max-width: 340px;
         font-family:
           "SF Pro Display",
           -apple-system,
@@ -204,12 +227,12 @@
       /* Workflow Panel */
       .workflow-panel {
         position: fixed;
-        bottom: 80px;
+        bottom: 70px;
         left: 50%;
         transform: translateX(-50%) translateY(100%);
-        background: rgba(22, 27, 34, 0.95);
+        background: rgba(22, 27, 34, 0.98);
         backdrop-filter: blur(10px);
-        padding: 20px;
+        padding: 18px;
         border-radius: 16px 16px 0 0;
         border: 1px solid #30363d;
         border-bottom: none;
@@ -220,6 +243,8 @@
         z-index: 999;
         width: 100%;
         max-width: 430px;
+        max-height: 50vh;
+        overflow-y: auto;
       }
 
       .workflow-panel.show {
@@ -285,21 +310,21 @@
       /* Music Player */
       .music-player {
         position: fixed;
-        bottom: 80px;
+        bottom: 70px;
         left: 50%;
         transform: translateX(-50%) translateY(20px);
         background: linear-gradient(135deg, #1db954 0%, #1ed760 100%);
-        padding: 16px 22px;
-        border-radius: 16px;
+        padding: 14px 20px;
+        border-radius: 14px;
         box-shadow: 0 10px 40px rgba(29, 185, 84, 0.5);
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 12px;
         opacity: 0;
         transition: all 0.4s ease;
         z-index: 1000;
-        width: 85%;
-        max-width: 360px;
+        width: 82%;
+        max-width: 340px;
         font-family:
           "SF Pro Display",
           -apple-system,
@@ -530,13 +555,27 @@
                 currentTypingElement.textContent += text[i];
               }
               i++;
-              terminal.scrollTop = terminal.scrollHeight;
+              ensureVisible();
             } else {
               clearInterval(interval);
               resolve();
             }
           }, speed);
         });
+      }
+      
+      function ensureVisible() {
+        const terminalRect = terminal.getBoundingClientRect();
+        const lastLine = terminal.lastElementChild;
+        if (lastLine) {
+          const lineRect = lastLine.getBoundingClientRect();
+          const bottomSpace = terminalRect.bottom - lineRect.bottom;
+          
+          // Scroll if content is getting too close to bottom
+          if (bottomSpace < 100) {
+            terminal.scrollTop = terminal.scrollHeight;
+          }
+        }
       }
 
       function addPromptLine() {
@@ -549,7 +588,7 @@
                 </div>
             `;
         terminal.appendChild(line);
-        terminal.scrollTop = terminal.scrollHeight;
+        ensureVisible();
       }
 
       function addInput(text) {
