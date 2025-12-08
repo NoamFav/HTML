@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iskra - Coming Soon</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #000;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .phone-frame {
+            width: 390px;
+            height: 844px;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+            border-radius: 40px;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #000;
+            padding: 40px;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .bg-animated {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.4), transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.3), transparent 50%),
+                        radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.3), transparent 50%);
+            animation: bgMove 8s ease-in-out infinite;
+            filter: blur(60px);
+        }
+
+        @keyframes bgMove {
+            0%, 100% { transform: translate(-25%, -25%) rotate(0deg); }
+            50% { transform: translate(-25%, -25%) rotate(180deg); }
+        }
+
+        /* Slide 1 - HERO */
+        .hero-logo {
+            font-size: 100px;
+            font-weight: 900;
+            background: linear-gradient(45deg, #6366f1, #ec4899, #8b5cf6, #6366f1);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -4px;
+            animation: gradientMove 3s ease infinite, explode 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            filter: drop-shadow(0 0 40px rgba(99, 102, 241, 0.8));
+        }
+
+        @keyframes explode {
+            0% { transform: scale(0) rotate(-10deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .tagline {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 600;
+        }
+
+        /* Slide 2 - PROBLEM */
+        .problem-text {
+            font-size: 44px;
+            font-weight: 900;
+            color: #fff;
+            text-align: center;
+            line-height: 1.2;
+            margin-bottom: 30px;
+            animation: shake 0.3s ease-in-out infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(-6px) rotate(-1deg); }
+            75% { transform: translateX(6px) rotate(1deg); }
+        }
+
+        .repo-mess {
+            display: grid;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .repo-box {
+            background: rgba(239, 68, 68, 0.15);
+            border: 2px solid #ef4444;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            color: #fff;
+            font-weight: 600;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        .repo-box:nth-child(1) { animation-delay: 0s; }
+        .repo-box:nth-child(2) { animation-delay: 0.3s; }
+        .repo-box:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Slide 3 - SYNC COMMAND */
+        .command-showcase {
+            width: 100%;
+        }
+
+        .cmd-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #22d3ee;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .terminal-box {
+            background: rgba(20, 20, 20, 0.95);
+            border: 2px solid rgba(99, 102, 241, 0.5);
+            border-radius: 16px;
+            padding: 24px;
+            font-family: 'SF Mono', monospace;
+            animation: cmdPulse 2s ease-in-out infinite;
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.4);
+        }
+
+        @keyframes cmdPulse {
+            0%, 100% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.4); }
+            50% { box-shadow: 0 0 60px rgba(236, 72, 153, 0.6); }
+        }
+
+        .cmd-line {
+            font-size: 20px;
+            color: #22d3ee;
+            margin-bottom: 12px;
+            opacity: 0;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .cmd-line:nth-child(1) { animation-delay: 0.3s; }
+
+        .cmd-output {
+            font-size: 16px;
+            color: #10b981;
+            margin-left: 20px;
+            opacity: 0;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .cmd-output:nth-child(2) { animation-delay: 0.6s; }
+        .cmd-output:nth-child(3) { animation-delay: 0.9s; }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Slide 4 - COMMIT COMMAND */
+        .slide-4 .cmd-line {
+            color: #a78bfa;
+        }
+
+        /* Slide 5 - GITHUB INTEGRATION */
+        .integration-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .integration-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(236, 72, 153, 0.1));
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .integration-card:nth-child(1) { animation-delay: 0.2s; }
+        .integration-card:nth-child(2) { animation-delay: 0.4s; }
+        .integration-card:nth-child(3) { animation-delay: 0.6s; }
+        .integration-card:nth-child(4) { animation-delay: 0.8s; }
+
+        @keyframes popIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .integration-icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .integration-label {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Slide 6 - AI POWER */
+        .ai-container {
+            text-align: center;
+        }
+
+        .ai-badge {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            padding: 40px 50px;
+            border-radius: 25px;
+            margin-bottom: 30px;
+            animation: rotate3d 3s ease-in-out infinite;
+            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.6);
+        }
+
+        @keyframes rotate3d {
+            0%, 100% { transform: perspective(600px) rotateY(-8deg) rotateX(4deg); }
+            50% { transform: perspective(600px) rotateY(8deg) rotateX(-4deg); }
+        }
+
+        .ai-icon {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+
+        .ai-text {
+            font-size: 48px;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -2px;
+        }
+
+        .ai-features {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .ai-tag {
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid #8b5cf6;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #fff;
+            font-weight: 600;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .ai-tag:nth-child(1) { animation-delay: 0s; }
+        .ai-tag:nth-child(2) { animation-delay: 0.3s; }
+        .ai-tag:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Slide 7 - MULTI-REPO */
+        .repo-grid {
+            width: 100%;
+        }
+
+        .repo-title {
+            font-size: 32px;
+            font-weight: 900;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .repo-card {
+            background: rgba(20, 20, 20, 0.8);
+            border: 2px solid rgba(16, 185, 129, 0.4);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 12px;
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        .repo-card:nth-child(2) { animation-delay: 0.2s; }
+        .repo-card:nth-child(3) { animation-delay: 0.4s; }
+        .repo-card:nth-child(4) { animation-delay: 0.6s; }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .repo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .repo-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .repo-status {
+            font-size: 12px;
+            color: #10b981;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Slide 8 - SPEED */
+        .speed-container {
+            text-align: center;
+        }
+
+        .speed-big {
+            font-size: 64px;
+            font-weight: 900;
+            background: linear-gradient(90deg, #10b981, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+            animation: speedPulse 1s ease-in-out infinite;
+            line-height: 1.1;
+        }
+
+        @keyframes speedPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .speed-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .speed-line {
+            height: 8px;
+            background: linear-gradient(90deg, transparent, #22d3ee, transparent);
+            border-radius: 4px;
+            animation: lineMove 1s ease-in-out infinite;
+        }
+
+        .speed-line:nth-child(1) { width: 300px; animation-delay: 0s; }
+        .speed-line:nth-child(2) { width: 250px; animation-delay: 0.2s; }
+        .speed-line:nth-child(3) { width: 280px; animation-delay: 0.4s; }
+
+        @keyframes lineMove {
+            0% { transform: translateX(-50%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(50%); opacity: 0; }
+        }
+
+        /* Slide 9 - COMING SOON */
+        .finale-container {
+            text-align: center;
+        }
+
+        .finale-logo {
+            font-size: 90px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #6366f1, #ec4899, #8b5cf6, #6366f1);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientMove 3s ease infinite, finalPulse 2s ease-in-out infinite;
+            letter-spacing: -3px;
+            margin-bottom: 20px;
+        }
+
+        @keyframes finalPulse {
+            0%, 100% { 
+                transform: scale(1); 
+                filter: drop-shadow(0 0 40px rgba(99, 102, 241, 0.8)); 
+            }
+            50% { 
+                transform: scale(1.05); 
+                filter: drop-shadow(0 0 80px rgba(236, 72, 153, 1)); 
+            }
+        }
+
+        .coming-text {
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+        }
+
+        .stars {
+            font-size: 40px;
+            animation: twinkle 1.5s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.3) rotate(180deg); opacity: 0.6; }
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="bg-animated"></div>
+
+        <!-- Slide 1: HERO -->
+        <div class="slide slide-1 active">
+            <div class="hero-logo">ISKRA</div>
+            <div class="tagline">Git Automation</div>
+        </div>
+
+        <!-- Slide 2: PROBLEM -->
+        <div class="slide slide-2">
+            <div class="problem-text">Managing 10+ repos?</div>
+            <div class="repo-mess">
+                <div class="repo-box">❌ Manual commits everywhere</div>
+                <div class="repo-box">❌ Outdated branches</div>
+                <div class="repo-box">❌ Hours wasted daily</div>
+            </div>
+        </div>
+
+        <!-- Slide 3: SYNC -->
+        <div class="slide slide-3">
+            <div class="command-showcase">
+                <div class="cmd-title">Sync Everything</div>
+                <div class="terminal-box">
+                    <div class="cmd-line">$ iskra sync</div>
+                    <div class="cmd-output">✓ 15 repos synced</div>
+                    <div class="cmd-output">✓ All up to date</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: COMMIT -->
+        <div class="slide slide-4">
+            <div class="command-showcase">
+                <div class="cmd-title">Auto Commit</div>
+                <div class="terminal-box">
+                    <div class="cmd-line">$ iskra commit</div>
+                    <div class="cmd-output">✓ AI messages generated</div>
+                    <div class="cmd-output">✓ All changes committed</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: INTEGRATIONS -->
+        <div class="slide slide-5">
+            <div class="integration-grid">
+                <div class="integration-card">
+                    <div class="integration-icon">🐙</div>
+                    <div class="integration-label">GitHub</div>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-icon">📦</div>
+                    <div class="integration-label">Git</div>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-icon">🔄</div>
+                    <div class="integration-label">Auto Sync</div>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-icon">🚀</div>
+                    <div class="integration-label">Auto Push</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: AI POWER -->
+        <div class="slide slide-6">
+            <div class="ai-container">
+                <div class="ai-badge">
+                    <div class="ai-icon">🤖</div>
+                    <div class="ai-text">AI POWERED</div>
+                </div>
+                <div class="ai-features">
+                    <div class="ai-tag">Smart Commits</div>
+                    <div class="ai-tag">Auto Messages</div>
+                    <div class="ai-tag">Context Aware</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: MULTI-REPO -->
+        <div class="slide slide-7">
+            <div class="repo-grid">
+                <div class="repo-title">All Repos. One Command.</div>
+                <div class="repo-card">
+                    <div class="repo-header">
+                        <div class="repo-name">frontend-app</div>
+                        <div class="repo-status">
+                            <div class="status-dot"></div>
+                            synced
+                        </div>
+                    </div>
+                </div>
+                <div class="repo-card">
+                    <div class="repo-header">
+                        <div class="repo-name">api-service</div>
+                        <div class="repo-status">
+                            <div class="status-dot"></div>
+                            synced
+                        </div>
+                    </div>
+                </div>
+                <div class="repo-card">
+                    <div class="repo-header">
+                        <div class="repo-name">mobile-app</div>
+                        <div class="repo-status">
+                            <div class="status-dot"></div>
+                            synced
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: SPEED -->
+        <div class="slide slide-8">
+            <div class="speed-container">
+                <div class="speed-big">LIGHTNING<br>FAST ⚡</div>
+                <div class="speed-lines">
+                    <div class="speed-line"></div>
+                    <div class="speed-line"></div>
+                    <div class="speed-line"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: COMING SOON -->
+        <div class="slide slide-9">
+            <div class="finale-container">
+                <div class="finale-logo">ISKRA</div>
+                <div class="coming-text">Coming Soon</div>
+                <div class="stars">✨</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+        const slideDurations = [1800, 2000, 2200, 2200, 2000, 2200, 2200, 1800, 2500];
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+        }
+
+        function nextSlide() {
+            const nextIndex = (currentSlide + 1) % slides.length;
+            showSlide(nextIndex);
+            
+            setTimeout(() => {
+                currentSlide = nextIndex;
+                nextSlide();
+            }, slideDurations[nextIndex]);
+        }
+
+        setTimeout(() => {
+            currentSlide = 0;
+            nextSlide();
+        }, slideDurations[0]);
+
+        document.querySelector('.phone-frame').addEventListener('click', () => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        });
+    </script>
+</body>
+</html>
