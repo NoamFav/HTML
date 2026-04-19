@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Manifesto of Seven Sins</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Bebas+Neue&family=Space+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blood: #8B0000;
+    --ash: #1a1a1a;
+    --bone: #e8e0d0;
+    --ember: #c0392b;
+    --gold: #b8860b;
+    --smoke: #2d2d2d;
+    --pale: #f5f0e8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: var(--ash);
+    color: var(--bone);
+    font-family: 'Cormorant Garamond', serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    padding: 4rem 2rem;
+    background: radial-gradient(ellipse at center, #2a0a0a 0%, var(--ash) 70%);
+    border-bottom: 1px solid #3a1a1a;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--blood), transparent);
+  }
+
+  .roman-numeral {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    letter-spacing: 0.8em;
+    color: var(--blood);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.3s;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 12vw, 9rem);
+    line-height: 0.9;
+    letter-spacing: 0.05em;
+    color: var(--bone);
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.6s;
+  }
+
+  .hero-title span {
+    color: var(--blood);
+    display: block;
+  }
+
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    color: #888;
+    margin-top: 2rem;
+    letter-spacing: 0.1em;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.9s;
+    max-width: 600px;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 3rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: #444;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 1.4s;
+    text-transform: uppercase;
+  }
+
+  /* Sin sections */
+  .sin {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    position: relative;
+    border-bottom: 1px solid #222;
+    overflow: hidden;
+  }
+
+  .sin:nth-child(even) {
+    grid-template-columns: 2fr 1fr;
+  }
+
+  .sin:nth-child(even) .sin-label {
+    order: 2;
+    border-left: 1px solid #2a2a2a;
+    border-right: none;
+  }
+
+  .sin:nth-child(even) .sin-content {
+    order: 1;
+  }
+
+  .sin-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 2rem;
+    border-right: 1px solid #2a2a2a;
+    position: relative;
+    background: linear-gradient(180deg, #111 0%, #0d0d0d 100%);
+  }
+
+  .sin-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 15vw, 12rem);
+    line-height: 1;
+    color: #1e1e1e;
+    position: absolute;
+    user-select: none;
+  }
+
+  .sin-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.8rem, 5vw, 3.5rem);
+    letter-spacing: 0.15em;
+    color: var(--blood);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+
+  .sin-latin {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: #444;
+    letter-spacing: 0.2em;
+    margin-top: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .sin-content {
+    padding: clamp(3rem, 6vw, 6rem) clamp(2rem, 5vw, 5rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
+
+  .sin-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 0;
+    background: var(--blood);
+    transition: height 0.8s ease;
+  }
+
+  .sin:hover .sin-content::before {
+    height: 100%;
+  }
+
+  .sin-heading {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    letter-spacing: 0.08em;
+    color: var(--bone);
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+  }
+
+  .sin-heading em {
+    color: var(--blood);
+    font-style: normal;
+  }
+
+  .sin-body {
+    font-size: clamp(1rem, 1.8vw, 1.2rem);
+    line-height: 1.9;
+    color: #b0a898;
+    font-weight: 300;
+    max-width: 65ch;
+  }
+
+  .sin-body strong {
+    color: var(--bone);
+    font-weight: 600;
+  }
+
+  .sin-verdict {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #2a2a2a;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--blood);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-style: italic;
+  }
+
+  /* Alternating backgrounds */
+  .sin:nth-child(2) { background: #111; }
+  .sin:nth-child(3) { background: #0f0f0f; }
+  .sin:nth-child(4) { background: #111; }
+  .sin:nth-child(5) { background: #0d0d0d; }
+  .sin:nth-child(6) { background: #111; }
+  .sin:nth-child(7) { background: #0f0f0f; }
+  .sin:nth-child(8) { background: #111; }
+
+  /* Closing */
+  .closing {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 6rem 2rem;
+    background: radial-gradient(ellipse at center, #1a0505 0%, #0a0a0a 70%);
+    position: relative;
+  }
+
+  .closing::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--blood), transparent);
+  }
+
+  .closing-line {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    color: #888;
+    max-width: 700px;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+  }
+
+  .closing-line strong {
+    color: var(--bone);
+  }
+
+  .closing-sig {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    letter-spacing: 0.5em;
+    color: var(--blood);
+  }
+
+  /* Divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #333);
+  }
+
+  .divider::after {
+    background: linear-gradient(90deg, #333, transparent);
+  }
+
+  .divider-symbol {
+    color: var(--blood);
+    font-size: 1rem;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .sin, .sin:nth-child(even) {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+    }
+
+    .sin-label, .sin:nth-child(even) .sin-label {
+      order: 0;
+      border-right: none;
+      border-left: none;
+      border-bottom: 1px solid #2a2a2a;
+      padding: 2rem;
+      flex-direction: row;
+      justify-content: flex-start;
+      gap: 1.5rem;
+    }
+
+    .sin-name {
+      writing-mode: horizontal-tb;
+    }
+
+    .sin:nth-child(even) .sin-content {
+      order: 2;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="roman-numeral">A · M A N I F E S T O</div>
+  <h1 class="hero-title">
+    Seven<span>Sins</span>
+  </h1>
+  <p class="hero-subtitle">On the many ways a species with every gift chose every wrong</p>
+  <div class="scroll-hint">↓ · read if you dare · ↓</div>
+</section>
+
+<!-- SIN I: PRIDE -->
+<section class="sin">
+  <div class="sin-label">
+    <div class="sin-number">I</div>
+    <div class="sin-name">Pride</div>
+    <div class="sin-latin">Superbia</div>
+  </div>
+  <div class="sin-content">
+    <h2 class="sin-heading">King of the <em>Ashes</em></h2>
+    <p class="sin-body">
+      We call ourselves the apex species. We engrave it in textbooks, broadcast it in documentaries, repeat it to our children as though repetition makes it virtue. We are the most intelligent, the most complex, the most capable life form this planet has ever produced — and we say this while maintaining enough nuclear warheads to render the surface of the earth uninhabitable seventeen times over. <strong>Apex predator. King of nothing.</strong> The title was not earned through wisdom or restraint. It was inherited by accident of evolution and defended with the most spectacular capacity for self-destruction the animal kingdom has ever witnessed.
+      <br><br>
+      Consider what the nuclear deterrent actually is, stripped of its diplomatic language. It is a collective suicide pact dressed as a security strategy. The logic goes: we will not attack you because if we do, you will destroy us, and if you destroy us, we will destroy you, and therefore neither of us will move. This is called stability. This is called peace. What it actually is, is two men standing in a room full of gasoline, each holding a lit match, congratulating themselves on their restraint. The moment one of them sneezes, everyone dies — including every uninvited guest on the planet who had no vote in the matter. <strong>We built a weapon we cannot use and called it a solution.</strong> We spent trillions maintaining it. We pointed it at each other across generations. We taught our children to practice hiding under desks in case of its arrival, as if a school desk offered protection from a thermonuclear event. The absurdity is total. The pride that sustains it is bottomless.
+      <br><br>
+      And then there are the borders. We drew lines on maps — some in treaties, some in blood, most in pure arbitrary colonial convenience — and decided those lines defined the moral boundaries of human obligation. Your suffering matters if it happens on my side of the line. Your death is a statistic if it happens on the other. A human being born in Dakar and a human being born in Oslo are, biologically, the same animal. They share 99.9% of their genetic material. They feel the same cold. They grieve the same losses. They love their children with identical ferocity. <strong>The melanin content of their skin is a function of their ancestors' proximity to the equator.</strong> That is the entirety of the physical difference. Everything else — the language, the food, the architecture of daily life — is culture. And culture is not a hierarchy. It is a collection of human answers to the same human questions: how do we eat, how do we mourn, how do we celebrate, how do we explain the darkness.
+      <br><br>
+      No culture's answers are superior enough to justify conquest. No civilization's calendar is advanced enough to excuse the erasure of another. The colonialist project — which did not end in the nineteenth century, it simply changed uniforms — was built entirely on the pride of one group of humans who looked at another group of humans and decided the difference in custom constituted a difference in worth. Centuries of extraordinary violence followed from that single act of catastrophic arrogance. We are still living in its aftermath. We will be living in its aftermath for generations more. <strong>The wound is not healed. It is merely no longer televised.</strong>
+      <br><br>
+      In an ideal arrangement — one that requires no magic, only the political will we perpetually claim to lack — humans would move freely. They would share languages not as conquests but as tools. The three most widely spoken languages in the world, learned by every child on earth, would unlock the possibility of genuine global conversation. No more customs queues designed to sort humans by the accident of their birth. No more fanatic willing to crash a plane into a tower because his grievance found no other audience. The radicalization pipeline begins, almost without exception, with a person who felt erased by a border — literal or metaphorical — that told them their life mattered less. <strong>We are one species.</strong> Every structure we have built to deny that fact has cost us in blood.
+    </p>
+    <div class="sin-verdict">→ We did not earn the title. We merely outlasted everything else — and we are working hard to fix that.</div>
+  </div>
+</section>
+
+<!-- SIN II: WRATH -->
+<section class="sin">
+  <div class="sin-label">
+    <div class="sin-number">II</div>
+    <div class="sin-name">Wrath</div>
+    <div class="sin-latin">Ira</div>
+  </div>
+  <div class="sin-content">
+    <h2 class="sin-heading">Two Point Seven <em>Trillion</em> Dollars of Rage</h2>
+    <p class="sin-body">
+      In a single calendar year, the nations of earth collectively spend <strong>$2.7 trillion</strong> on military expenditure. Say it slowly. Two point seven trillion dollars. Annually. Not a wartime emergency measure. Not a temporary crisis budget. A standing, recurring, annually renewed global consensus that the machinery of killing deserves more sustained investment than the machinery of living. Every school that closes for lack of funding, every hospital that turns away the uninsured, every bridge that collapses, every scientist who cannot get a grant — all of it exists in the shadow of that number. We chose this. Every year, we choose it again.
+      <br><br>
+      Do the arithmetic on what else that money could be. Ending world hunger — not reducing it, ending it — costs an estimated $40 to $50 billion per year. That is less than two percent of the global military budget. Clean drinking water for every human being on earth is a one-time infrastructure investment of roughly $150 billion. The full transition to renewable energy, globally, over a decade, runs between one and two trillion dollars total. A permanent crewed lunar base. Free university education for an entire generation. The eradication of malaria, tuberculosis, and every other disease that kills millions annually not because we lack the medical knowledge to cure it, but because the patients cannot afford to be profitable. <strong>All of it fits, with room to spare, inside the budget we allocate each year to making sure we can kill each other faster.</strong>
+      <br><br>
+      And what do we get for it? The United States — the single largest military spender on the planet, outpacing the next ten countries combined — has not won a war of its own deliberate choosing, arguably ever. World War II, the last conflict they claim as a clear victory, was won by an alliance in which the British held the Western front for years before America arrived, and the Soviets absorbed the majority of German military force on the Eastern front at a cost of twenty million lives. Vietnam. Afghanistan. Iraq. Each one entered with confidence, prosecuted with staggering expense, and exited in some combination of defeat, stalemate, and chaos. The lesson drawn from each failure was not to reconsider the strategy. The lesson drawn was to spend more. More jets. More doctrine. More surveillance. More contractors. More funerals. <strong>The definition of insanity, executed at a budget of a trillion dollars a year, and called national security.</strong>
+      <br><br>
+      The men who make these decisions are largely men who will not fight. They will not send their own children. They sit in rooms with good lighting and expensive furniture and move populations on maps like abstract resources, and the cost of their errors is paid in the bodies of twenty-two-year-olds from towns no one in that room has ever visited. The war machine is not impartial. It recruits from poverty. It promises education and opportunity and delivers instead the specific education of learning what a person looks like when they are no longer alive. <strong>We have industrialized the production of trauma and called it service.</strong>
+      <br><br>
+      NASA — the single most interesting governmental organization the United States has ever produced — receives less than half a percent of the federal budget. With that fraction, they have landed on the moon, launched telescopes that see to the edge of the observable universe, and sent machines to the surface of Mars. Imagine, for one moment, what they could do with one percent. With five. With the cost of a single aircraft carrier group. The answer is probably a permanent human presence beyond this planet. A species-level insurance policy. The beginning of something that actually matters. Instead, the money goes to maintaining twenty different variants of fighter aircraft to dominate an air superiority competition that has not been seriously contested since the Cold War ended. <strong>We are building elaborate weapons for a world that no longer exists, at the expense of building anything for the world that might.</strong>
+    </p>
+    <div class="sin-verdict">→ We are not protecting civilization. We are financing its demolition, at scale, on a subscription model.</div>
+  </div>
+</section>
+
+<!-- SIN III: GREED -->
+<section class="sin">
+  <div class="sin-label">
+    <div class="sin-number">III</div>
+    <div class="sin-name">Greed</div>
+    <div class="sin-latin">Avaritia</div>
+  </div>
+  <div class="sin-content">
+    <h2 class="sin-heading">The <em>Corporation</em> Does Not Sleep</h2>
+    <p class="sin-body">
+      We did not notice when we became the product. It happened gradually, then completely — one notification, one algorithm update, one interface redesign engineered by a team of behavioral psychologists whose job title was something innocuous like "engagement optimization." The platforms that now mediate most of human social life were not built for human connection. They were built for retention. For the maximization of time-on-app. For the harvesting of attention and its conversion into advertising revenue. <strong>Every scroll is a revenue event. Every minute of your life spent staring at a feed is a minute being sold to someone who wants to sell you something.</strong> You are not the customer. You are the inventory.
+      <br><br>
+      They made us more anxious, more reactive, more tribal, and more susceptible to manipulation — and they did it on purpose, with full knowledge of the consequences, because an agitated user is an engaged user, and an engaged user is a profitable user. Internal research at multiple major platforms showed, years before the public knew, that their products were causing measurable psychological harm — particularly to adolescent girls. The documents were suppressed. The products shipped. The quarterly earnings reports were excellent. <strong>This is not negligence. Negligence implies they did not know. They knew.</strong> They ran the numbers, weighed the harm against the profit, and chose the profit. That is not a bug in the system. That is the system working exactly as designed.
+      <br><br>
+      We handed children smartphones at twelve and expressed shock when the mental health statistics went vertical. We watched suicide rates among teenage girls climb in direct correlation with social media adoption and formed committees. We watched boys construct identities around the most extreme, algorithmically amplified versions of masculinity the platform could surface — because rage performs, because contempt gets clicks, because the algorithm does not care what emotion it generates as long as it generates one — and we called it a culture war instead of what it actually was: a product defect with a body count. <strong>We let corporations run a psychological experiment on an entire generation, without consent, without oversight, and without consequences.</strong>
+      <br><br>
+      Then there is the longer game. Oil companies possessed internal climate research in the 1970s that accurately predicted the trajectory we are now living through. They did not publish it. They funded counter-research. They hired lobbyists. They sponsored politicians. They manufactured public uncertainty about a scientific consensus they privately held to be correct, because uncertainty was worth billions more than honesty. Cigarette manufacturers did the same thing for decades with cancer research. The pharmaceutical industry does it now with addiction data. The playbook is identical across industries and across centuries: <strong>extract maximum value, distribute the harm as broadly as possible so no single person bears enough of it to act, and ensure that by the time the consequences arrive, the profits are already in an offshore account.</strong> No amount of money is worth a human life. That is not a sentiment. That is arithmetic. They failed the calculation deliberately.
+      <br><br>
+      And the money itself — let us discuss the money. Countries run trillions in debt, but the honest question is: to whom? When the United States owes thirty-three trillion dollars, to whom does it owe it? Much of it is owed to itself, in the form of government bonds held by government agencies. Much of the rest is held by institutional investors and foreign governments who are themselves in debt. The global financial system is, at its core, a vast network of IOUs that mostly cancel out — and yet the fiction of debt is used to justify every cut to every social program, every refusal to fund medicine or housing or education, every time a government says it simply cannot afford to help its own population. <strong>The money exists. It is a question of who it is allowed to move toward.</strong> And the answer, consistently, across decades and administrations and continents, is: upward.
+    </p>
+    <div class="sin-verdict">→ We are not consumers. We are inventory. And the warehouse is on fire.</div>
+  </div>
+</section>
+
+<!-- SIN IV: SLOTH -->
+<section class="sin">
+  <div class="sin-label">
+    <div class="sin-number">IV</div>
+    <div class="sin-name">Sloth</div>
+    <div class="sin-latin">Acedia</div>
+  </div>
+  <div class="sin-content">
+    <h2 class="sin-heading">The Generation That Was <em>Handed the Bill</em></h2>
+    <p class="sin-body">
+      The projections made in the 1990s were not secret documents. They were not classified. They were published in peer-reviewed journals, presented to congressional committees, handed to heads of state, reported on the front pages of major newspapers. The data was legible and the conclusions were clear: if the trajectory of carbon emissions, resource consumption, and environmental degradation continued unchanged, the planet would become measurably, demonstrably harder to live on within a generation. The warnings were issued in plain language to people with the power and resources to act on them. <strong>Nothing changed.</strong> The suburbs expanded. The SUVs got larger. The coal plants kept burning. The plastic kept flowing into the ocean. The ice kept melting. And the people who received those warnings voted themselves tax cuts and retired to Florida.
+      <br><br>
+      Generation Z did not choose any of this. They were born into a debt they did not incur, handed a crisis they did not create, and told simultaneously that they are the ones responsible for fixing it and that they are too young, too inexperienced, and too idealistic to be trusted with the tools to do so. The housing market they are trying to enter was inflated by the investment strategies of the generation that preceded them. The jobs they are competing for offer a fraction of the economic stability those jobs offered thirty years ago, at three times the credential requirement. The mental health crisis devastating their cohort is not weakness. <strong>It is a rational response to being handed a burning building and told to redecorate.</strong>
+      <br><br>
+      And yet the old men remain at the table. This is not a metaphor — it is a demographic fact. The average age of a senator in the United States Congress is well into the sixties. The leaders driving the most consequential geopolitical decisions on the planet — Putin, Kim, the rotating cast of autocrats and strongmen who treat national borders as personal property and civilian populations as strategic assets — are men who will not be alive to experience the full consequences of their choices. They are making fifty-year decisions with twenty-year personal horizons, spending futures that belong to people who had no vote. <strong>They will die in their beds. The invoice will arrive later, addressed to someone else.</strong>
+      <br><br>
+      The political class has mastered the art of performing urgency without producing change. Climate summits produce communiqués. Communiqués produce targets. Targets are missed. New targets are set. The gap between what is declared and what is done has become so normalized that cynicism is now the default posture of anyone who has paid attention for more than a decade. We are governed, in most of the world, by people whose primary skill is the management of optics — the creation of the impression of action in the absence of its substance. <strong>The planet does not read press releases.</strong> The atmosphere does not respond to strongly worded agreements. The sea level rises at exactly the rate the physics predicts, indifferent to the diplomatic calendar.
+      <br><br>
+      There is a particular cruelty in the fact that the generation being asked to save the world is also the generation being most aggressively told it has nothing worth saying. Too sensitive. Too online. Too focused on the wrong things. The dismissal is structurally convenient — it keeps the people with the longest futures away from the decisions with the longest consequences. <strong>If you want to know who benefits from the inaction, look at who controls the agenda.</strong> Look at where the money is. Look at whose children will inherit what. The sloth was never laziness. It was a calculated bet that someone else would pay.
+    </p>
+    <div class="sin-verdict">→ Inaction is also a choice. History will file it accordingly — and it files without mercy.</div>
+  </div>
+</section>
+
+<!-- SIN V: ENVY -->
+<section class="sin">
+  <div class="sin-label">
+    <div class="sin-number">V</div>
+    <div class="sin-name">Envy</div>
+    <div class="sin-latin">Invidia</div>
+  </div>
+  <div class="sin-content">
+    <h2 class="sin-heading">The Mirror That <em>Lies</em></h2>
+    <p class="sin-body">
+      The algorithm did not stumble upon comparison by accident. It was discovered through systematic experimentation on hundreds of millions of users, refined through A/B testing, and baked into the architecture of every major social platform as a foundational engagement driver. Show a person someone slightly more attractive, slightly wealthier, slightly more successful — and watch them stay online, scrolling, searching, unable to close the app because the app has become the primary site where they measure their own existence. <strong>Comparison is the engine. Inadequacy is the fuel. Your dissatisfaction is the revenue stream.</strong>
+      <br><br>
+      Consider what we did to an entire generation of young women. We handed them a device that delivered, in an infinite and personalized stream, the most curated, filtered, professionally lit, surgically enhanced images of female beauty the advertising industry could produce — and we called it a social network, as though it had anything to do with being social. The teenage girl who opens that app does not see her friends. She sees a continuous parade of people who look nothing like her and everything like what she has been told she is supposed to be. She sees it two hundred times a day. She sees it before she gets out of bed in the morning. <strong>She builds her self-image in the presence of a jury that is never satisfied, because satisfaction would mean she stops scrolling.</strong>
+      <br><br>
+      We did the same thing to young men, with different parameters. The algorithm learned what kept them engaged and served it without mercy: increasingly extreme content, increasingly narrow definitions of what a man is supposed to be, a pipeline that begins with gym motivation videos and ends, for a statistically significant number of users, in ideologies that treat half the human population as an enemy. The progression is not random. It is the natural result of an engagement-maximization system operating without ethical constraint. Outrage retains. Contempt retains. Grievance retains. <strong>Nuance does not retain. Complexity does not retain. Empathy does not retain.</strong> So the machine filters them out, quietly, at scale, over years, and we wonder why the discourse has degraded.
+      <br><br>
+      And when the consequences become impossible to ignore — when the coroner's reports arrive, when the researchers publish the correlation data, when the parents of children who died by suicide specifically cite the apps by name — the platforms issue statements. They announce safety features. They testify before committees in expensive suits and speak in the careful language of people who have been extensively prepared by lawyers. They do not change the algorithm. The algorithm is the product. <strong>The algorithm is working exactly as designed.</strong> The children are a cost of doing business, and the business is doing very well.
+      <br><br>
+      The media compounds it. A protest begins with a legitimate grievance — a genuine injustice, a real and documented harm — and the coverage focuses on the most extreme participants, the most confrontational moments, the images most likely to generate outrage in the opposing audience. The moderate majority, who showed up peacefully and went home tired, are invisible. The movement is defined by its fringe, and the fringe is defined by what performs. The cause becomes radioactive to the very people it needed to persuade. <strong>We built an information architecture that is structurally incapable of producing understanding, and we are surprised that no one understands each other.</strong> The system is not broken. It is doing exactly what the incentives reward.
+    </p>
+    <div class="sin-verdict">→ We gave children a funhouse mirror and called it a window to the world. The view from inside it is destroying them.</div>
+  </div>
+</section>
+
+<!-- SIN VI: GLUTTONY -->
+<section class="sin">
+  <div class="sin-label">
+    <div class="sin-number">VI</div>
+    <div class="sin-name">Gluttony</div>
+    <div class="sin-latin">Gula</div>
+  </div>
+  <div class="sin-content">
+    <h2 class="sin-heading">More Than We Could <em>Ever Use</em></h2>
+    <p class="sin-body">
+      We burn oil — millions of years of compressed biological material, one of the most chemically complex and scientifically valuable substances the planet has ever produced — to move a single person two kilometers to a supermarket and back. The average occupancy of a private car in a city is 1.5 people. A standard city bus, no wider than two cars side by side and perhaps four times as long, carries fifty. That is the equivalent of thirty-three cars, thirty-three engines, thirty-three sets of tyres wearing out on thirty-three stretches of asphalt that had to be laid over what was previously either farmland, forest, or someone's neighborhood. <strong>We looked at both options and chose the thirty-three cars.</strong> Then we built the cities around that choice so comprehensively that the choice became, for most people, not a choice at all.
+      <br><br>
+      The American city is the most extreme expression of this logic — a place designed, in many cases explicitly, around the assumption that every adult requires a personal automobile to participate in daily life. The percentage of urban land dedicated to car storage — parking lots, parking garages, driveways, the setback requirements that keep buildings away from the street to accommodate vehicles — runs, in many American cities, to thirty percent or more of the total developable area. Thirty percent of a city's land, in a period of housing shortage and urban crowding, given over to the storage of machines that are stationary ninety-five percent of the time. <strong>In Europe, cities are progressively reclaiming this space.</strong> Trams return. Bike lanes expand. Pedestrian zones grow. And the data, consistently, shows that people are happier, healthier, and — counterintuitively to the car lobby — that local businesses perform better. We knew. We always knew. The oil lobby simply had better lobbyists.
+      <br><br>
+      Then there is the airplane — that marvel of engineering reduced, in practice, to a class-segregated anxiety tube. Take three hundred humans. Put them in a metal cylinder traveling at nine hundred kilometers per hour at eleven thousand meters altitude. Now divide that cylinder by net worth. The front twenty percent of the aircraft — wider seats, more legroom, actual food, the experience of being treated like a person — is reserved for a fraction of the passengers at ten times the price. The remaining eighty percent are arranged in rows of shrinking pitch that have decreased, on average, by several centimeters over the past two decades, because every centimeter recovered is another seat sold. <strong>The economy cabin is not a failure of design. It is the design succeeding at its actual objective.</strong> The objective is not to transport you. It is to extract maximum revenue per square meter of fuselage.
+      <br><br>
+      Oil deserves a separate indictment from its misuse. It is genuinely one of the most remarkable raw materials in existence — the feedstock for plastics, synthetic fabrics, pharmaceuticals, lubricants, and thousands of industrial chemicals that form the substrate of modern medicine and manufacturing. As a scientific resource, it is extraordinary. Its applications in research and industry represent some of the most sophisticated chemistry humanity has ever developed. <strong>We looked at all of that, and decided the highest use was combustion.</strong> We burned it. We burned it in quantities so vast that we altered the composition of the planet's atmosphere within a century — a geological eyeblink — and built an entire civilization so dependent on the burning that stopping feels impossible. It is not impossible. It is expensive. And the people for whom it is expensive are not the same people who are paying for the consequences.
+      <br><br>
+      Cigarettes were marketed as sophistication. Carbon emissions were marketed as progress. Processed food engineered for overconsumption was marketed as convenience. The pattern is consistent across industries and across centuries: take something that harms the consumer, remove the information necessary to make an informed choice, surround it with aspirational imagery, and sell it at scale for as long as the legal system allows. <strong>The harm is the business model. The consumer is the externality.</strong> And when the externality finally becomes too large to ignore — when the cancers pile up, when the coastlines flood, when the chronic disease rates bankrupt the health systems — the industry funds a study suggesting the science is uncertain, hires a spokesperson to suggest personal responsibility, and continues exactly as before.
+    </p>
+    <div class="sin-verdict">→ We did not run out of resources. We chose to waste them — and then chose, again, not to stop.</div>
+  </div>
+</section>
+
+<!-- SIN VII: LUST -->
+<section class="sin">
+  <div class="sin-label">
+    <div class="sin-number">VII</div>
+    <div class="sin-name">Lust</div>
+    <div class="sin-latin">Luxuria</div>
+  </div>
+  <div class="sin-content">
+    <h2 class="sin-heading">The Hunger for <em>Power</em> Dressed as Faith</h2>
+    <p class="sin-body">
+      Read the texts. Not the sermons built around them, not the institutional interpretations layered over centuries of political negotiation — read the texts themselves. The Torah. The New Testament. The Quran. The Bhagavad Gita. The Dhammapada. Strip away the apparatus and the accumulated doctrine, and what you find, in every case, is a remarkably consistent set of instructions: love one another, protect the vulnerable, forgive those who wrong you, do not harm the innocent, treat others as you wish to be treated. The poetry differs. The prophets differ. The cosmologies differ. <strong>The point does not differ.</strong> Every major tradition, arrived at independently across thousands of years of human culture, converges on the same essential moral architecture. And then the institutions built to preserve that architecture spent most of recorded history doing the precise opposite of what it said.
+      <br><br>
+      The Church — the Catholic institution specifically, though it is hardly alone in this — accumulated wealth, political power, and territorial control across centuries with an appetite that would embarrass a feudal warlord. It tortured people for disagreeing with its interpretations of texts that explicitly prohibited torture. It ran the Crusades in the name of a man whose recorded instructions were to turn the other cheek. It protected predators within its ranks for decades, prioritizing institutional reputation over the safety of the children in its care — children brought to it specifically by families who trusted it with what they valued most. <strong>This is not a corruption of the faith. This is what happens when faith becomes an institution and the institution becomes a state.</strong> Power has its own gravity. It pulls everything toward itself. The message survives somewhere inside, preserved by the genuine believers who were never the ones in charge.
+      <br><br>
+      Islam — and this must be said with precision, because imprecision here has cost an enormous number of people their safety and dignity — is not the problem. One and a half billion humans practice a faith whose foundational texts are, in their original intent, no more violent than any other major religion's. The problem is what happens when political movements appropriate theological language to legitimize violence, when grievance finds a framework that sanctifies revenge, when the tools of faith are picked up by people whose actual agenda is power. The terrorist does not represent the faith any more than the Inquisitor represented Christ. <strong>But the terrorist is more useful to certain political interests, and so the terrorist gets the coverage, and the billion and a half people who prayed quietly and went to work become collateral damage in someone else's narrative war.</strong>
+      <br><br>
+      And then there is the secular religion — perhaps the most interesting development of the past two decades — which has adopted all the structural features of institutional faith while loudly rejecting the label. The orthodoxy. The heresy. The ritual denunciation. The careful management of language to signal tribal membership. The demand for doctrinal purity. The treatment of complexity as moral failure. We cannot say the word "dwarf" anymore — not because the word itself causes harm, but because the performance of offense has become a social currency, and the easiest way to accumulate it is to find something to be offended by and perform that offense loudly enough for everyone in the room to witness. <strong>This is not compassion. Compassion is harder than this and quieter than this.</strong> This is vanity wearing compassion's clothes.
+      <br><br>
+      There are real injustices. The list is long and well-documented and genuinely demands attention. Non-binary people exist and their existence costs no one anything. Gay people exist and have always existed and their love harms no one and the stones thrown at them across centuries were thrown by people who claimed divine instruction and were wrong, provably, in every possible way. Racism is real and its consequences are material and ongoing. These are not invented grievances. <strong>But the oxygen in the room — the media attention, the political energy, the cultural bandwidth — spent debating the nomenclature of dwarfism while children cannot access mental health care, while the infrastructure crumbles, while the climate burns, while the actual, structural injustices grind on undisturbed by the Twitter discourse — that is a failure of priority so profound it begins to look like a strategy.</strong> If you keep the people who might otherwise build coalitions fighting each other about language, they will not notice the building is on fire. The fire is very convenient for the people who own the building.
+    </p>
+    <div class="sin-verdict">→ We lust for righteousness more than we desire to be right. The difference between the two is everything.</div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing">
+  <p class="closing-line">
+    Perhaps the most honest thing we could say about our species is this:<br><br>
+    <strong>We knew.</strong> We knew about the climate, the weapons, the algorithms, the inequality, the children we were failing, the planet we were breaking. We had the data. We had the models. We had the scientists and the economists and the engineers who could see exactly where the trajectory led.<br><br>
+    We knew, and we did the math, and we decided the quarterly earnings report was more urgent. We decided the election cycle was more urgent. We decided our comfort, our convenience, our unwillingness to absorb any present cost for any future benefit — we decided all of it was more urgent than the survival of the conditions that make our civilization possible.<br><br>
+    There is a version of this story that ends differently. It requires nothing miraculous. No technology that does not already exist. No sacrifice that is genuinely unbearable. It requires only the collective decision to act as though the future belongs to the people who will live in it — which it does, whether we act like it or not.<br><br>
+    <strong>The earth will not mourn us. It will simply exhale — and begin again.</strong> Life will return. The forests will reclaim the parking lots. The atmosphere will clear, over geological time, of what we put into it. The animals will inherit what we abandoned. Some small group of humans in a remote place may look up one day and wonder, with genuine bewilderment, what we were so busy doing that we could not stop.<br><br>
+    <em>We had every gift. We chose every wrong.</em><br><br>
+    The question — the only question that remains — is whether we are finished choosing.
+  </p>
+  <div class="closing-sig">Written in the early years of the damage · Not yet too late · Probably</div>
+</section>
+
+</body>
+</html>
