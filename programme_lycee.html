@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programme Lycée · Maths & Physique-Chimie</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #141416;
+    --surface2: #1c1c1f;
+    --border: #2a2a2e;
+    --text: #e8e8ec;
+    --muted: #666678;
+    --math: #7ee8a2;
+    --math-dim: #2a4a35;
+    --phys: #7eb8f7;
+    --phys-dim: #1e3556;
+    --py: #ffd97d;
+    --py-dim: #3d3010;
+    --accent: #c084fc;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  header {
+    padding: 48px 40px 32px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: -80px; left: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(126,232,162,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .header-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  h1 span { color: var(--math); }
+
+  .header-meta {
+    margin-top: 16px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+  }
+
+  .pill-math { background: var(--math-dim); color: var(--math); }
+  .pill-phys { background: var(--phys-dim); color: var(--phys); }
+  .pill-py   { background: var(--py-dim);   color: var(--py);   }
+
+  /* Tab nav */
+  .tab-nav {
+    display: flex;
+    gap: 2px;
+    padding: 16px 40px 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+  }
+
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--text); border-bottom-color: var(--accent); }
+
+  /* Content */
+  .tab-content { display: none; padding: 32px 40px 80px; }
+  .tab-content.active { display: block; }
+
+  /* Year selector */
+  .year-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .year-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 8px 18px;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  .year-btn:hover { color: var(--text); border-color: #444; }
+  .year-btn.active { color: var(--bg); }
+  .year-btn.active.math { background: var(--math); border-color: var(--math); }
+  .year-btn.active.phys { background: var(--phys); border-color: var(--phys); }
+  .year-btn.active.py   { background: var(--py);   border-color: var(--py);   }
+
+  /* Year panel */
+  .year-panel { display: none; }
+  .year-panel.active { display: block; }
+
+  /* Chapter block */
+  .chapter {
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .chapter-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    cursor: pointer;
+    background: var(--surface);
+    transition: background 0.15s;
+    user-select: none;
+  }
+
+  .chapter-header:hover { background: var(--surface2); }
+
+  .chapter-num {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    opacity: 0.4;
+    min-width: 32px;
+  }
+
+  .chapter-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    flex: 1;
+  }
+
+  .chapter-arrow {
+    font-size: 10px;
+    color: var(--muted);
+    transition: transform 0.2s;
+  }
+
+  .chapter.open .chapter-arrow { transform: rotate(180deg); }
+
+  .chapter-body {
+    display: none;
+    padding: 0 18px 18px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+
+  .chapter.open .chapter-body { display: block; }
+
+  /* Section inside chapter */
+  .section {
+    margin-top: 16px;
+  }
+
+  .section-title {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-title.math { color: var(--math); border-color: var(--math-dim); }
+  .section-title.phys { color: var(--phys); border-color: var(--phys-dim); }
+  .section-title.py   { color: var(--py);   border-color: var(--py-dim);   }
+
+  .items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .items li {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    color: #b0b0c0;
+    font-size: 12.5px;
+  }
+
+  .items li::before {
+    content: '—';
+    color: var(--border);
+    flex-shrink: 0;
+    font-size: 10px;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  .tag-bac { background: rgba(192,132,252,0.15); color: var(--accent); }
+  .tag-py  { background: var(--py-dim); color: var(--py); }
+  .tag-exp { background: rgba(126,184,247,0.1); color: var(--phys); }
+
+  .note-box {
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+    border-left: 3px solid var(--border);
+    background: var(--surface2);
+  }
+
+  .note-box.math { border-left-color: var(--math); }
+  .note-box.phys { border-left-color: var(--phys); }
+  .note-box.py   { border-left-color: var(--py);   }
+
+  /* Python tab styles */
+  .py-level {
+    margin-bottom: 32px;
+  }
+
+  .py-level-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .py-level-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--py);
+  }
+
+  .py-level-sub {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .code-example {
+    background: #111115;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #c8c8d8;
+    overflow-x: auto;
+    line-height: 1.7;
+  }
+
+  .code-example .kw  { color: #c084fc; }
+  .code-example .fn  { color: #7eb8f7; }
+  .code-example .str { color: #ffd97d; }
+  .code-example .cm  { color: #555568; font-style: italic; }
+  .code-example .num { color: var(--math); }
+
+  /* Grid for overview */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .overview-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .overview-card .oc-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .overview-card .oc-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .overview-card .oc-desc {
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .overview-card.math { border-top: 3px solid var(--math); }
+  .overview-card.phys { border-top: 3px solid var(--phys); }
+  .overview-card.py   { border-top: 3px solid var(--py);   }
+  .overview-card .oc-label.math { color: var(--math); }
+  .overview-card .oc-label.phys { color: var(--phys); }
+  .overview-card .oc-label.py   { color: var(--py);   }
+  .overview-card .oc-title.math { color: var(--math); }
+  .overview-card .oc-title.phys { color: var(--phys); }
+  .overview-card .oc-title.py   { color: var(--py);   }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    header, .tab-nav, .tab-content { padding-left: 20px; padding-right: 20px; }
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-label">Référentiel officiel · Bac 2026</div>
+  <h1>Maths &amp; <span>Physique-Chimie</span><br>Lycée Général</h1>
+  <div class="header-meta">
+    <span class="pill pill-math">📐 Mathématiques</span>
+    <span class="pill pill-phys">⚗️ Physique-Chimie</span>
+    <span class="pill pill-py">🐍 Python</span>
+  </div>
+</header>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('math')">Mathématiques</button>
+  <button class="tab-btn" onclick="switchTab('phys')">Physique-Chimie</button>
+  <button class="tab-btn" onclick="switchTab('python')">Python</button>
+</nav>
+
+<!-- ═══════════════════════════ MATHS TAB ═══════════════════════════ -->
+<div id="tab-math" class="tab-content active">
+
+  <div class="year-tabs">
+    <button class="year-btn math active" onclick="switchYear('math','2de')">2nde</button>
+    <button class="year-btn math" onclick="switchYear('math','1e')">1ère Spé</button>
+    <button class="year-btn math" onclick="switchYear('math','tle')">Terminale Spé</button>
+  </div>
+
+  <!-- MATHS 2DE -->
+  <div id="math-2de" class="year-panel active">
+
+    <div class="chapter open">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 1</span>
+        <span class="chapter-title">Nombres et Calcul</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Ensembles de nombres</div>
+          <ul class="items">
+            <li>ℕ, ℤ, ℚ, ℝ — définitions et inclusions</li>
+            <li>Notation intervalle [a,b], ]a,b[, demi-ouverts</li>
+            <li>Valeur absolue |x| — définition géométrique et algébrique</li>
+            <li>Inégalités — résolution et représentation</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Calcul algébrique</div>
+          <ul class="items">
+            <li>Développement, factorisation, identités remarquables</li>
+            <li>(a+b)² · (a-b)² · (a+b)(a-b) à maîtriser par cœur</li>
+            <li>Fractions — simplification, addition, multiplication</li>
+            <li>Puissances et racines carrées — propriétés</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Équations et inéquations</div>
+          <ul class="items">
+            <li>Équations du 1er degré</li>
+            <li>Équations produit nul — factorisation obligatoire</li>
+            <li>Systèmes 2×2 — substitution, combinaison</li>
+            <li>Inéquations du 1er degré — tableau de signes <span class="tag tag-bac">bac</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 2</span>
+        <span class="chapter-title">Fonctions</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Généralités</div>
+          <ul class="items">
+            <li>Image, antécédent — lecture graphique</li>
+            <li>Ensemble de définition</li>
+            <li>Sens de variation — tableau de variations</li>
+            <li>Extremums — min, max global/local</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Fonctions de référence</div>
+          <ul class="items">
+            <li>f(x) = x, x², x³, √x, 1/x — courbes à connaître</li>
+            <li>Parité — paire, impaire</li>
+            <li>Transformations graphiques — translation, symétrie</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Lecture graphique</div>
+          <ul class="items">
+            <li>Résolution graphique d'équations f(x) = k</li>
+            <li>Résolution graphique d'inéquations f(x) > g(x)</li>
+          </ul>
+        </div>
+        <div class="note-box math">⚑ La 2de ne demande pas de dérivée — juste l'interprétation du signe de variation sur tableau.</div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 3</span>
+        <span class="chapter-title">Géométrie plane</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Vecteurs</div>
+          <ul class="items">
+            <li>Définition — direction, sens, norme</li>
+            <li>Coordonnées dans un repère — addition, multiplication scalaire</li>
+            <li>Colinéarité — condition sur coordonnées</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Droites et cercles</div>
+          <ul class="items">
+            <li>Équation cartésienne ax + by + c = 0</li>
+            <li>Équation réduite y = mx + p — pente, ordonnée à l'origine</li>
+            <li>Parallélisme, perpendicularité — conditions sur m</li>
+            <li>Équation d'un cercle (x-a)² + (y-b)² = r²</li>
+            <li>Distance entre deux points, milieu</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 4</span>
+        <span class="chapter-title">Statistiques et Probabilités</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Statistiques descriptives</div>
+          <ul class="items">
+            <li>Effectifs, fréquences, fréquences cumulées</li>
+            <li>Moyenne, médiane, quartiles Q1/Q2/Q3</li>
+            <li>Étendue, écart interquartile</li>
+            <li>Boîte à moustaches — lecture et construction</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Probabilités</div>
+          <ul class="items">
+            <li>Vocabulaire — univers Ω, événement, probabilité</li>
+            <li>P(A ∪ B) = P(A) + P(B) - P(A ∩ B)</li>
+            <li>Événement contraire P(Ā) = 1 - P(A)</li>
+            <li>Probabilités conditionnelles — P(A|B)</li>
+            <li>Indépendance de deux événements</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Algorithmique <span class="tag tag-py">Python</span></div>
+          <ul class="items">
+            <li>Simulation de lancers — random, boucles</li>
+            <li>Estimation de probabilité par fréquence</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MATHS 1ERE -->
+  <div id="math-1e" class="year-panel">
+
+    <div class="chapter open">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 1</span>
+        <span class="chapter-title">Second degré</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Forme canonique et discriminant</div>
+          <ul class="items">
+            <li>f(x) = ax² + bx + c — variations selon signe de a</li>
+            <li>Forme canonique f(x) = a(x - α)² + β</li>
+            <li>Discriminant Δ = b² - 4ac</li>
+            <li>Racines réelles, double, complexes (introduction) selon signe de Δ</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Factorisation et résolution</div>
+          <ul class="items">
+            <li>Factorisation ax² + bx + c = a(x - x₁)(x - x₂) si Δ > 0</li>
+            <li>Signe du trinôme — tableau de signe <span class="tag tag-bac">bac ★</span></li>
+            <li>Résolution d'inéquations du 2nd degré</li>
+            <li>Relations coefficients-racines : x₁ + x₂ = -b/a · x₁×x₂ = c/a</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 2</span>
+        <span class="chapter-title">Dérivation</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Définition et interprétation</div>
+          <ul class="items">
+            <li>Taux d'accroissement — f(a+h) - f(a) / h</li>
+            <li>Nombre dérivé f'(a) — limite du taux d'accroissement</li>
+            <li>Tangente à la courbe en x = a : y = f'(a)(x-a) + f(a)</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Règles de dérivation <span class="tag tag-bac">bac ★</span></div>
+          <ul class="items">
+            <li>(xⁿ)' = nxⁿ⁻¹ · (√x)' = 1/(2√x) · (1/x)' = -1/x²</li>
+            <li>(u + v)' = u' + v' · (ku)' = ku'</li>
+            <li>(uv)' = u'v + uv' · (u/v)' = (u'v - uv')/v²</li>
+            <li>Dérivée de la composée — (f∘g)' = g' × f'∘g</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Applications</div>
+          <ul class="items">
+            <li>Sens de variation — signe de f'</li>
+            <li>Extremums — f'(a) = 0 + changement de signe</li>
+            <li>Tableau de variations complet</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 3</span>
+        <span class="chapter-title">Suites numériques</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Définitions</div>
+          <ul class="items">
+            <li>Suite explicite u_n = f(n) · suite récurrente u_{n+1} = g(u_n)</li>
+            <li>Monotonie — croissante, décroissante, stationnaire</li>
+            <li>Suite bornée — majorée, minorée</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Suites arithmétiques</div>
+          <ul class="items">
+            <li>u_{n+1} = u_n + r — raison r</li>
+            <li>Terme général u_n = u_0 + nr</li>
+            <li>Somme des premiers termes S = n × (u_0 + u_{n-1})/2</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Suites géométriques</div>
+          <ul class="items">
+            <li>u_{n+1} = q × u_n — raison q</li>
+            <li>Terme général u_n = u_0 × qⁿ</li>
+            <li>Somme S = u_0 × (1 - qⁿ)/(1 - q) si q ≠ 1 <span class="tag tag-bac">bac ★</span></li>
+            <li>Comportement selon |q| — convergence si |q| < 1</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Algorithmique <span class="tag tag-py">Python</span></div>
+          <ul class="items">
+            <li>Calcul de terme u_n par boucle for/while</li>
+            <li>Recherche du 1er rang vérifiant une condition</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 4</span>
+        <span class="chapter-title">Trigonométrie</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Cercle trigonométrique</div>
+          <ul class="items">
+            <li>Mesure en radians — conversions degrés↔radians</li>
+            <li>Valeurs remarquables : 0, π/6, π/4, π/3, π/2</li>
+            <li>cos²(x) + sin²(x) = 1 — identité fondamentale</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Fonctions sin et cos</div>
+          <ul class="items">
+            <li>Parité — cos pair, sin impair</li>
+            <li>Périodicité 2π</li>
+            <li>Courbes — représentation sur [-2π, 2π]</li>
+            <li>Résolution de sin(x) = k, cos(x) = k sur [0, 2π]</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Formules</div>
+          <ul class="items">
+            <li>cos(a+b), cos(a-b) · sin(a+b), sin(a-b)</li>
+            <li>cos(2a) = cos²a - sin²a = 1 - 2sin²a = 2cos²a - 1</li>
+            <li>sin(2a) = 2sin(a)cos(a)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 5</span>
+        <span class="chapter-title">Fonction Exponentielle</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Définition et propriétés</div>
+          <ul class="items">
+            <li>exp unique telle que exp' = exp et exp(0) = 1</li>
+            <li>exp(a+b) = exp(a)·exp(b) · exp(-x) = 1/exp(x)</li>
+            <li>Notation eˣ — e ≈ 2,718</li>
+            <li>Strictement croissante sur ℝ, toujours > 0</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Étude de fonctions</div>
+          <ul class="items">
+            <li>Dérivée de eᵘ = u'eᵘ</li>
+            <li>Limites en ±∞</li>
+            <li>Comparaison exp/puissances — exp "l'emporte"</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 6</span>
+        <span class="chapter-title">Probabilités</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Probabilités conditionnelles</div>
+          <ul class="items">
+            <li>P(A|B) = P(A ∩ B) / P(B)</li>
+            <li>Formule des probabilités totales</li>
+            <li>Théorème de Bayes <span class="tag tag-bac">bac ★</span></li>
+            <li>Arbres pondérés — lecture et calcul</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Variables aléatoires</div>
+          <ul class="items">
+            <li>Loi de probabilité — tableau p(X = xᵢ)</li>
+            <li>Espérance E(X) = Σ xᵢ·pᵢ</li>
+            <li>Variance, écart-type</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-box math">⚑ Épreuve anticipée de 1ère (nouveau 2025-2026) : coeff 2, sans calculatrice, format QCM — entraîner à la vitesse de calcul mental.</div>
+
+  </div>
+
+  <!-- MATHS TERMINALE -->
+  <div id="math-tle" class="year-panel">
+
+    <div class="chapter open">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 1</span>
+        <span class="chapter-title">Limites et Continuité</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Limites de fonctions</div>
+          <ul class="items">
+            <li>Limite finie / infinie en ±∞ et en un point</li>
+            <li>Formes indéterminées — ∞-∞, 0/0, ∞/∞, 0×∞</li>
+            <li>Opérations sur les limites — somme, produit, quotient</li>
+            <li>Théorèmes de comparaison — gendarmes <span class="tag tag-bac">bac ★</span></li>
+            <li>Limites de référence : xⁿ, eˣ, ln(x)</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Continuité</div>
+          <ul class="items">
+            <li>Définition — limite = valeur en a</li>
+            <li>Théorème des valeurs intermédiaires (TVI)</li>
+            <li>Corollaire du TVI — existence d'une racine</li>
+            <li>Image d'un intervalle par une fonction continue</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Convexité</div>
+          <ul class="items">
+            <li>Courbe convexe / concave — interprétation géométrique</li>
+            <li>Lien avec f'' — signe de la dérivée seconde</li>
+            <li>Point d'inflexion — changement de convexité</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 2</span>
+        <span class="chapter-title">Fonction Logarithme Népérien</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Définition et propriétés</div>
+          <ul class="items">
+            <li>ln réciproque de exp — ln(eˣ) = x · e^(ln x) = x</li>
+            <li>ln(ab) = ln(a) + ln(b) · ln(a/b) = ln(a) - ln(b)</li>
+            <li>ln(aⁿ) = n·ln(a)</li>
+            <li>Domaine de définition : ]0, +∞[</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Dérivée et étude</div>
+          <ul class="items">
+            <li>(ln x)' = 1/x · (ln u)' = u'/u <span class="tag tag-bac">bac ★</span></li>
+            <li>Croissante sur ]0, +∞[</li>
+            <li>lim ln(x)/x = 0 quand x→+∞ (ln "vaincu" par x)</li>
+            <li>lim x·ln(x) = 0 quand x→0⁺</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 3</span>
+        <span class="chapter-title">Calcul Intégral</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Primitives</div>
+          <ul class="items">
+            <li>F' = f — ensemble des primitives : F + C</li>
+            <li>Primitives usuelles : xⁿ → xⁿ⁺¹/n+1 · eˣ → eˣ · 1/x → ln|x|</li>
+            <li>Primitive de u'eᵘ · de u'/u</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Intégrale définie <span class="tag tag-bac">bac ★</span></div>
+          <ul class="items">
+            <li>∫ₐᵇ f(x)dx = F(b) - F(a) — formule de Newton-Leibniz</li>
+            <li>Linéarité · relation de Chasles</li>
+            <li>Intégration d'une inégalité</li>
+            <li>Valeur moyenne d'une fonction sur [a,b]</li>
+            <li>Interprétation géométrique — aire algébrique</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Intégration par parties</div>
+          <ul class="items">
+            <li>∫u'v = [uv] - ∫uv' <span class="tag tag-bac">bac ★</span></li>
+            <li>Choix u'/v — stratégie selon les fonctions en jeu</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 4</span>
+        <span class="chapter-title">Équations Différentielles</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Équations du 1er ordre</div>
+          <ul class="items">
+            <li>y' = f — solution : primitive de f</li>
+            <li>y' = ay — solution générale : y = Ceᵃˣ <span class="tag tag-bac">bac ★</span></li>
+            <li>y' = ay + b — solution : particulière + homogène</li>
+            <li>Condition initiale — détermination de C</li>
+          </ul>
+        </div>
+        <div class="note-box math">⚑ Très fréquent au bac. Savoir poser la condition initiale et écrire la solution unique est attendu systématiquement.</div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 5</span>
+        <span class="chapter-title">Probabilités et Statistiques</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Combinatoire</div>
+          <ul class="items">
+            <li>Principe additif et multiplicatif</li>
+            <li>Permutations n! · arrangements A(n,k) · combinaisons C(n,k)</li>
+            <li>Triangle de Pascal — relation de Pascal</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Loi binomiale <span class="tag tag-bac">bac ★</span></div>
+          <ul class="items">
+            <li>Schéma de Bernoulli — n épreuves indép., proba p</li>
+            <li>X ~ B(n,p) · P(X=k) = C(n,k)·pᵏ·(1-p)ⁿ⁻ᵏ</li>
+            <li>E(X) = np · V(X) = np(1-p)</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Concentration et grands nombres</div>
+          <ul class="items">
+            <li>Inégalité de Bienaymé-Tchebychev</li>
+            <li>Inégalité de concentration — intervalle [np-ε, np+ε]</li>
+            <li>Loi des grands nombres — convergence fréquence→proba</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Algorithmique <span class="tag tag-py">Python</span></div>
+          <ul class="items">
+            <li>Simulation loi binomiale — random.random()</li>
+            <li>Somme de variables aléatoires indépendantes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 6</span>
+        <span class="chapter-title">Géométrie dans l'espace</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Vecteurs dans l'espace</div>
+          <ul class="items">
+            <li>Repère (O, i, j, k) — coordonnées 3D</li>
+            <li>Combinaison linéaire — indépendance linéaire</li>
+            <li>Directions de droites et de plans</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Produit scalaire <span class="tag tag-bac">bac ★</span></div>
+          <ul class="items">
+            <li>u·v = ||u||·||v||·cos(θ) · formule par coordonnées</li>
+            <li>Orthogonalité — u·v = 0</li>
+            <li>Vecteur normal à un plan — équation cartésienne ax+by+cz+d=0</li>
+            <li>Projeté orthogonal d'un point sur un plan</li>
+            <li>Représentations paramétriques de droites dans l'espace</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 7</span>
+        <span class="chapter-title">Suites et Raisonnement par Récurrence</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Récurrence <span class="tag tag-bac">bac ★</span></div>
+          <ul class="items">
+            <li>Initialisation — vérification au rang 0 (ou 1)</li>
+            <li>Hérédité — P(n) ⟹ P(n+1)</li>
+            <li>Conclusion — P(n) vraie pour tout n ∈ ℕ</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title math">Convergence de suites</div>
+          <ul class="items">
+            <li>Définition de la limite d'une suite</li>
+            <li>Suite croissante majorée → convergente (théorème)</li>
+            <li>Théorèmes de comparaison</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">CH 8</span>
+        <span class="chapter-title">Fonctions Trigonométriques (approfondissement)</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title math">Dérivées et études complètes</div>
+          <ul class="items">
+            <li>(sin x)' = cos x · (cos x)' = -sin x</li>
+            <li>Étude complète sin et cos — variations, convexité, inflexion</li>
+            <li>Résolution sin(x) = k et cos(x) = k sur ℝ — ensemble des solutions</li>
+            <li>Dérivée de sin(u) et cos(u) — règle de la composée</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-box math">⚑ Bac terminale : 3 à 5 exercices · 4h · Coeff 16. Sujets centrés sur analyse, probabilités, géométrie. Pas de formulaire fourni — tout doit être mémorisé.</div>
+
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════ PHYSIQUE TAB ═══════════════════════════ -->
+<div id="tab-phys" class="tab-content">
+
+  <div class="year-tabs">
+    <button class="year-btn phys active" onclick="switchYear('phys','2de')">2nde</button>
+    <button class="year-btn phys" onclick="switchYear('phys','1e')">1ère Spé</button>
+    <button class="year-btn phys" onclick="switchYear('phys','tle')">Terminale Spé</button>
+  </div>
+
+  <!-- PHYS 2DE -->
+  <div id="phys-2de" class="year-panel active">
+
+    <div class="chapter open">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">TH A</span>
+        <span class="chapter-title">Constitution de la matière</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title phys">Atome</div>
+          <ul class="items">
+            <li>Noyau (protons Z + neutrons N) · électrons</li>
+            <li>Numéro atomique Z · nombre de masse A</li>
+            <li>Isotopes — même Z, A différent</li>
+            <li>Ions — perte/gain d'électrons</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Molécules et corps purs</div>
+          <ul class="items">
+            <li>Formule brute vs développée vs semi-développée</li>
+            <li>Mole — n = m/M · N = n × Nₐ</li>
+            <li>Concentration molaire C = n/V</li>
+            <li>États de la matière — solide, liquide, gaz</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">TH B</span>
+        <span class="chapter-title">Mouvement et Interactions</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title phys">Cinématique</div>
+          <ul class="items">
+            <li>Système, référentiel, trajectoire</li>
+            <li>Vitesse moyenne v = d/t · vitesse instantanée</li>
+            <li>Vecteur vitesse — direction, sens, norme</li>
+            <li>Mouvement rectiligne uniforme / accéléré / ralenti</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Forces</div>
+          <ul class="items">
+            <li>Gravitation — F = G·m₁·m₂/d²</li>
+            <li>Poids P = mg · poussée d'Archimède</li>
+            <li>Réaction normale · tension d'un fil</li>
+            <li>Équilibre — somme vectorielle des forces = 0</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">TH C</span>
+        <span class="chapter-title">L'Énergie</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title phys">Formes et conversions</div>
+          <ul class="items">
+            <li>Énergie cinétique Ec = ½mv²</li>
+            <li>Énergie potentielle — gravitation, élasticité</li>
+            <li>Énergie mécanique Em = Ec + Ep</li>
+            <li>Travail d'une force W = F·d·cos(α)</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Puissance et transferts</div>
+          <ul class="items">
+            <li>Puissance P = W/t — unité watt W</li>
+            <li>Rendement η = Pₛ/Pₑ ≤ 1</li>
+            <li>Transferts thermiques — conduction, convection, rayonnement</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">TH D</span>
+        <span class="chapter-title">Ondes et Signaux</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title phys">Lumière</div>
+          <ul class="items">
+            <li>Vitesse de la lumière c = 3×10⁸ m/s dans le vide</li>
+            <li>Dispersion — spectre visible, prisme, réseau</li>
+            <li>Spectres d'émission et d'absorption</li>
+            <li>Modèle corpusculaire : photon E = hν</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Son</div>
+          <ul class="items">
+            <li>Onde mécanique — milieu nécessaire</li>
+            <li>Fréquence f, période T, longueur d'onde λ</li>
+            <li>Relation λ = v/f</li>
+            <li>Niveau sonore en dB — perception</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PHYS 1ERE -->
+  <div id="phys-1e" class="year-panel">
+
+    <div class="chapter open">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">TH A</span>
+        <span class="chapter-title">Constitution et Transformations de la matière</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title phys">Réactions chimiques</div>
+          <ul class="items">
+            <li>Équation bilan — ajustement des coefficients</li>
+            <li>Avancement x · tableau d'avancement complet <span class="tag tag-bac">bac ★</span></li>
+            <li>Réactif limitant — détermination</li>
+            <li>Transformation totale vs non-totale</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Acides-Bases</div>
+          <ul class="items">
+            <li>Couple acide/base — HA/A⁻ · demi-équation</li>
+            <li>Constante Ka · pKa = -log(Ka)</li>
+            <li>pH = -log[H₃O⁺]</li>
+            <li>pH d'acide fort, base forte, acide faible</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Oxydo-réduction</div>
+          <ul class="items">
+            <li>Couple oxydant/réducteur — Ox/Red</li>
+            <li>Demi-équation électronique</li>
+            <li>Équation de la réaction redox — combinaison des demi-éq.</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Spectroscopie <span class="tag tag-exp">TP</span></div>
+          <ul class="items">
+            <li>Spectroscopie IR — identification groupes caractéristiques</li>
+            <li>Loi de Beer-Lambert A = ε·l·c</li>
+            <li>Absorbance — mesure de concentration</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">TH B</span>
+        <span class="chapter-title">Mouvement et Interactions</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title phys">Lois de Newton <span class="tag tag-bac">bac ★</span></div>
+          <ul class="items">
+            <li>1ère loi (inertie) — Σ F = 0 ⟺ v constante</li>
+            <li>2ème loi — Σ F = m·a · vecteur</li>
+            <li>3ème loi (réciprocité des actions)</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Cinématique vectorielle</div>
+          <ul class="items">
+            <li>Vecteur position, vitesse, accélération</li>
+            <li>a = dv/dt — dérivée vectorielle</li>
+            <li>Mouvement rectiligne uniforme — équations horaires</li>
+            <li>Chute libre · tir parabolique <span class="tag tag-bac">bac ★</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">TH C</span>
+        <span class="chapter-title">Énergie — Transferts et Conversions</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title phys">Thermodynamique intro</div>
+          <ul class="items">
+            <li>Système thermodynamique · échanges Q et W</li>
+            <li>1er principe — ΔU = W + Q</li>
+            <li>Capacité thermique massique c — Q = mcΔT</li>
+            <li>Bilan enthalpique — réaction exo/endothermique</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Circuits électriques</div>
+          <ul class="items">
+            <li>Loi des mailles, loi des nœuds</li>
+            <li>Résistance, condensateur, bobine — comportements</li>
+            <li>Loi d'Ohm · puissance P = UI = RI²</li>
+            <li>Charge/décharge RC — équation différentielle</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">TH D</span>
+        <span class="chapter-title">Ondes et Signaux</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title phys">Optique géométrique</div>
+          <ul class="items">
+            <li>Lois de Snell-Descartes — réfraction n₁sinθ₁ = n₂sinθ₂</li>
+            <li>Réflexion totale interne</li>
+            <li>Lentilles convergentes — construction géométrique, foyer</li>
+            <li>Vergence D = 1/f' en dioptries</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Physique des ondes</div>
+          <ul class="items">
+            <li>Diffraction — tache centrale, frange</li>
+            <li>Interférences — interfranges i = λD/e <span class="tag tag-bac">bac ★</span></li>
+            <li>Effet Doppler — source mobile, décalage en fréquence</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PHYS TERMINALE -->
+  <div id="phys-tle" class="year-panel">
+
+    <div class="chapter open">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">TH A</span>
+        <span class="chapter-title">Chimie — Constitution et Transformations</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title phys">Équilibres chimiques</div>
+          <ul class="items">
+            <li>Constante d'équilibre K — expression, lien avec pKa/pKe</li>
+            <li>Quotient de réaction Qr — sens d'évolution spontanée <span class="tag tag-bac">bac ★</span></li>
+            <li>Taux d'avancement — lien avec Qr et K</li>
+            <li>Tampons — résistance au changement de pH</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Cinétique chimique <span class="tag tag-bac">bac ★</span></div>
+          <ul class="items">
+            <li>Suivi temporel d'une réaction — modèle macroscopique</li>
+            <li>Vitesse de réaction v = d[A]/dt</li>
+            <li>Facteurs cinétiques — température, concentration, catalyseur</li>
+            <li>Temps de demi-réaction t½</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Dosages et analyse</div>
+          <ul class="items">
+            <li>Titrage pH-métrique — courbe en S, point équivalent</li>
+            <li>Titrage conductimétrique</li>
+            <li>Spectroscopie RMN — déplacements chimiques, intégration</li>
+            <li>Spectrométrie de masse — pic moléculaire</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Chimie organique <span class="tag tag-bac">bac ★</span></div>
+          <ul class="items">
+            <li>Groupes caractéristiques — alcool, aldéhyde, cétone, acide, ester, amine, amide</li>
+            <li>Mécanismes réactionnels — addition, substitution, élimination</li>
+            <li>Protection/déprotection — stratégie de synthèse multi-étapes</li>
+            <li>Synthèse éco-responsable — bilan carbone, solvants verts</li>
+            <li>Polymères — identification du motif</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Électrochimie</div>
+          <ul class="items">
+            <li>Piles électrochimiques — anode, cathode</li>
+            <li>Force électromotrice — lien avec Qr</li>
+            <li>Électrolyse — loi de Faraday</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">TH B</span>
+        <span class="chapter-title">Mouvement — Mécanique avancée</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title phys">Dynamique — Newton approfondi <span class="tag tag-bac">bac ★</span></div>
+          <ul class="items">
+            <li>Équation différentielle du mouvement — m·a = ΣF</li>
+            <li>Résolution par intégration — v(t) puis x(t)</li>
+            <li>Conditions initiales — détermination des constantes</li>
+            <li>Forces de frottement fluide — f = -kv · f = -kv²</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Mouvements particuliers</div>
+          <ul class="items">
+            <li>Mouvement circulaire — accélération centripète a = v²/R</li>
+            <li>Satellite en orbite — loi de gravitation + Newton</li>
+            <li>Lois de Kepler — 1ère (ellipse), 2ème (aires), 3ème (T²/a³)</li>
+            <li>Fusée — poussée, masse variable (intro)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">TH C</span>
+        <span class="chapter-title">Énergie — Thermodynamique et Électricité</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title phys">Thermodynamique</div>
+          <ul class="items">
+            <li>1er principe ΔU = W + Q — applications variées</li>
+            <li>2ème principe — sens des transferts, entropie (qualitatif)</li>
+            <li>Machines thermiques — rendement de Carnot</li>
+            <li>Changements d'état — enthalpie de fusion/vaporisation</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Dipôles en régime sinusoïdal <span class="tag tag-bac">bac ★</span></div>
+          <ul class="items">
+            <li>Courant alternatif — valeur efficace Ueff = Umax/√2</li>
+            <li>Impédance — résistance R, condensateur 1/Cω, bobine Lω</li>
+            <li>Résonance en fréquence — fréquence propre f₀ = 1/(2π√LC)</li>
+            <li>Déphasage u/i — avance ou retard</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">TH D</span>
+        <span class="chapter-title">Ondes — Physique quantique et signal</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title phys">Physique quantique (intro)</div>
+          <ul class="items">
+            <li>Dualité onde-corpuscule</li>
+            <li>Effet photoélectrique — E = hν · travail d'extraction</li>
+            <li>Relation de De Broglie — λ = h/p</li>
+            <li>Niveaux d'énergie de l'atome — modèle de Bohr</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Traitement du signal <span class="tag tag-py">Python</span></div>
+          <ul class="items">
+            <li>Décomposition en série de Fourier (qualitatif)</li>
+            <li>Spectre fréquentiel — fréquence fondamentale + harmoniques</li>
+            <li>Numérisation — échantillonnage, théorème de Shannon</li>
+            <li>Transmission de données — codage, bruit</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title phys">Radioactivité</div>
+          <ul class="items">
+            <li>Noyaux instables — désintégrations α, β⁻, β⁺</li>
+            <li>Loi de décroissance N(t) = N₀·e^(-λt)</li>
+            <li>Demi-vie t₁/₂ = ln(2)/λ <span class="tag tag-bac">bac ★</span></li>
+            <li>Défaut de masse — énergie de liaison E = Δm·c²</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-box phys">⚑ Bac terminale physique-chimie : épreuve écrite 3h30 + ECE (travaux pratiques notés). Coeff 16. Les thèmes A (chimie organique) et B (mécanique) sont les plus récurrents. Attente forte sur la rédaction vectorielle et les schémas.</div>
+
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════ PYTHON TAB ═══════════════════════════ -->
+<div id="tab-python" class="tab-content">
+
+  <div class="py-level">
+    <div class="py-level-header">
+      <span class="py-level-title">Niveau 1 — Bases (Seconde)</span>
+      <span class="py-level-sub">Attendu en cours de maths et physique dès la 2de</span>
+    </div>
+
+    <div class="chapter open">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">PY 1</span>
+        <span class="chapter-title">Variables, Types, Opérateurs</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title py">Bases</div>
+          <ul class="items">
+            <li>Types : int, float, str, bool</li>
+            <li>Affectation x = 5 · opérateurs +, -, *, /, //, %, **</li>
+            <li>print() · input() · type() · int() · float() · str()</li>
+            <li>Commentaires # · docstrings (intro)</li>
+          </ul>
+        </div>
+        <div class="code-example"><span class="cm"># Calcul d'une vitesse moyenne</span>
+d = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Distance (m) : "</span>))
+t = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Temps (s) : "</span>))
+v = d / t
+<span class="fn">print</span>(<span class="str">f"Vitesse = {v:.2f} m/s"</span>)</div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">PY 2</span>
+        <span class="chapter-title">Conditions et Boucles</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title py">Structures de contrôle</div>
+          <ul class="items">
+            <li>if / elif / else — indentation obligatoire</li>
+            <li>Opérateurs booléens : and, or, not</li>
+            <li>Boucle for i in range(n) — itération numérique</li>
+            <li>Boucle while condition — condition d'arrêt</li>
+            <li>break · continue · pass</li>
+          </ul>
+        </div>
+        <div class="code-example"><span class="cm"># Recherche du 1er rang n tel que u_n > 1000</span>
+u = <span class="num">1</span>
+n = <span class="num">0</span>
+<span class="kw">while</span> u <= <span class="num">1000</span>:
+    u = u * <span class="num">1.05</span>  <span class="cm"># Suite géométrique q=1.05</span>
+    n += <span class="num">1</span>
+<span class="fn">print</span>(<span class="str">f"Rang : {n}, valeur : {u:.2f}"</span>)</div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">PY 3</span>
+        <span class="chapter-title">Fonctions</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title py">Définition et appel</div>
+          <ul class="items">
+            <li>def nom(params): · return valeur</li>
+            <li>Paramètres positionnels · valeurs par défaut</li>
+            <li>Portée des variables — locale vs globale</li>
+            <li>Fonctions récursives (intro)</li>
+          </ul>
+        </div>
+        <div class="code-example"><span class="kw">def</span> <span class="fn">discriminant</span>(a, b, c):
+    <span class="str">"""Retourne le discriminant d'un trinôme."""</span>
+    <span class="kw">return</span> b**<span class="num">2</span> - <span class="num">4</span>*a*c
+
+<span class="kw">def</span> <span class="fn">nb_solutions</span>(a, b, c):
+    delta = <span class="fn">discriminant</span>(a, b, c)
+    <span class="kw">if</span> delta > <span class="num">0</span>: <span class="kw">return</span> <span class="num">2</span>
+    <span class="kw">elif</span> delta == <span class="num">0</span>: <span class="kw">return</span> <span class="num">1</span>
+    <span class="kw">else</span>: <span class="kw">return</span> <span class="num">0</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="py-level">
+    <div class="py-level-header">
+      <span class="py-level-title">Niveau 2 — Intermédiaire (Première)</span>
+      <span class="py-level-sub">Listes, modules scientifiques, simulation</span>
+    </div>
+
+    <div class="chapter open">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">PY 4</span>
+        <span class="chapter-title">Listes et Tableaux</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title py">Manipulation</div>
+          <ul class="items">
+            <li>Création : [] · list() · [x for x in ...]</li>
+            <li>Accès lst[i] · slicing lst[a:b]</li>
+            <li>append() · remove() · pop() · len() · sum()</li>
+            <li>Parcours for x in liste · for i, x in enumerate(liste)</li>
+            <li>Listes de listes — matrices 2D</li>
+          </ul>
+        </div>
+        <div class="code-example"><span class="cm"># Calcul des termes d'une suite arithmétique</span>
+<span class="kw">def</span> <span class="fn">suite_arith</span>(u0, r, n):
+    suite = [u0]
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, n+<span class="num">1</span>):
+        suite.<span class="fn">append</span>(suite[-<span class="num">1</span>] + r)
+    <span class="kw">return</span> suite
+
+<span class="fn">print</span>(<span class="fn">suite_arith</span>(<span class="num">2</span>, <span class="num">3</span>, <span class="num">5</span>))  <span class="cm"># [2, 5, 8, 11, 14, 17]</span></div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">PY 5</span>
+        <span class="chapter-title">Modules math, random, numpy</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title py">Module math</div>
+          <ul class="items">
+            <li>math.sqrt() · math.exp() · math.log() · math.pi</li>
+            <li>math.sin() · math.cos() · math.radians()</li>
+            <li>math.floor() · math.ceil()</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title py">Module random</div>
+          <ul class="items">
+            <li>random.random() — flottant dans [0,1[</li>
+            <li>random.randint(a,b) — entier dans [a,b]</li>
+            <li>random.choice(liste)</li>
+            <li>Simulation de probabilités — loi des grands nombres</li>
+          </ul>
+        </div>
+        <div class="code-example"><span class="kw">import</span> random
+
+<span class="kw">def</span> <span class="fn">simule_binomiale</span>(n, p, nb_simul=<span class="num">10000</span>):
+    resultats = []
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(nb_simul):
+        succes = <span class="fn">sum</span>(<span class="num">1</span> <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n) <span class="kw">if</span> random.<span class="fn">random</span>() < p)
+        resultats.<span class="fn">append</span>(succes)
+    <span class="kw">return</span> resultats</div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">PY 6</span>
+        <span class="chapter-title">matplotlib — Tracé de courbes</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title py">Visualisation</div>
+          <ul class="items">
+            <li>import matplotlib.pyplot as plt</li>
+            <li>plt.plot(x, y) · plt.scatter(x, y)</li>
+            <li>plt.xlabel() · plt.ylabel() · plt.title()</li>
+            <li>plt.legend() · plt.grid() · plt.show()</li>
+          </ul>
+        </div>
+        <div class="code-example"><span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> math
+
+x = [i/<span class="num">100</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">0</span>, <span class="num">1000</span>)]
+y = [math.<span class="fn">exp</span>(-t) * math.<span class="fn">cos</span>(<span class="num">4</span>*math.pi*t) <span class="kw">for</span> t <span class="kw">in</span> x]
+
+plt.<span class="fn">plot</span>(x, y, color=<span class="str">'#7ee8a2'</span>)
+plt.<span class="fn">title</span>(<span class="str">"Oscillateur amorti"</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">"t (s)"</span>) · plt.<span class="fn">ylabel</span>(<span class="str">"x(t)"</span>)
+plt.<span class="fn">grid</span>(<span class="kw">True</span>) · plt.<span class="fn">show</span>()</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="py-level">
+    <div class="py-level-header">
+      <span class="py-level-title">Niveau 3 — Terminale Spé</span>
+      <span class="py-level-sub">Résolution numérique, scipy, simulation physique</span>
+    </div>
+
+    <div class="chapter open">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">PY 7</span>
+        <span class="chapter-title">Résolution Numérique</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title py">Méthodes numériques</div>
+          <ul class="items">
+            <li>Méthode de dichotomie — résolution approchée f(x)=0</li>
+            <li>Méthode d'Euler — résolution approchée d'équation diff.</li>
+            <li>Calcul approché d'intégrale — méthode des rectangles / trapèzes</li>
+            <li>Recherche de maximum par balayage</li>
+          </ul>
+        </div>
+        <div class="code-example"><span class="cm"># Méthode d'Euler : y' = -y · y(0) = 1</span>
+<span class="kw">def</span> <span class="fn">euler</span>(f, y0, t_max, dt=<span class="num">0.01</span>):
+    t, y = <span class="num">0</span>, y0
+    trajectory = [(t, y)]
+    <span class="kw">while</span> t < t_max:
+        y = y + dt * <span class="fn">f</span>(t, y)
+        t += dt
+        trajectory.<span class="fn">append</span>((t, y))
+    <span class="kw">return</span> trajectory
+
+<span class="cm"># f(t,y) = -y pour y' = -y</span>
+traj = <span class="fn">euler</span>(<span class="kw">lambda</span> t, y: -y, <span class="num">1</span>, <span class="num">5</span>)</div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">PY 8</span>
+        <span class="chapter-title">Simulation Physique</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title py">Applications directes du programme</div>
+          <ul class="items">
+            <li>Simulation de trajectoire (tir parabolique) — positions x(t), y(t)</li>
+            <li>Modélisation de la charge d'un condensateur</li>
+            <li>Évolution d'une concentration en titrage</li>
+            <li>Décroissance radioactive N(t) = N₀·e^(-λt)</li>
+            <li>Représentation d'un spectre Fourier</li>
+          </ul>
+        </div>
+        <div class="code-example"><span class="cm"># Tir parabolique — tableau de positions</span>
+<span class="kw">import</span> math
+
+<span class="kw">def</span> <span class="fn">tir</span>(v0, angle_deg, dt=<span class="num">0.01</span>):
+    θ = math.<span class="fn">radians</span>(angle_deg)
+    vx, vy = v0*math.<span class="fn">cos</span>(θ), v0*math.<span class="fn">sin</span>(θ)
+    x, y, t = <span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>
+    pts = []
+    <span class="kw">while</span> y >= <span class="num">0</span>:
+        pts.<span class="fn">append</span>((x, y))
+        vy -= <span class="num">9.81</span> * dt
+        x += vx * dt
+        y += vy * dt
+        t += dt
+    <span class="kw">return</span> pts</div>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <span class="chapter-num">PY 9</span>
+        <span class="chapter-title">Dictionnaires, Fichiers, numpy/scipy</span>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="section">
+          <div class="section-title py">Structures de données</div>
+          <ul class="items">
+            <li>Dictionnaires — {clé: valeur} · .keys() .values() .items()</li>
+            <li>Tuples — immuables, déstructuration</li>
+            <li>Lecture fichier CSV — open(), csv.reader()</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title py">numpy & scipy (niveau bac)</div>
+          <ul class="items">
+            <li>np.array() · np.linspace() · np.arange()</li>
+            <li>Opérations vectorisées — évite les boucles</li>
+            <li>scipy.optimize.fsolve() — résolution d'équation</li>
+            <li>scipy.integrate.quad() — intégrale numérique</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-box py">⚑ Au bac, Python est utilisé comme outil dans les exercices de maths et physique — pas évalué seul. L'objectif est de lire du code, le corriger, ou compléter une fonction. Rédiger from scratch est un plus.</div>
+  </div>
+
+</div>
+
+<script>
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function switchYear(subject, year) {
+    const panel = document.getElementById('tab-' + subject);
+    panel.querySelectorAll('.year-panel').forEach(el => el.classList.remove('active'));
+    panel.querySelectorAll('.year-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(subject + '-' + year).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function toggleChapter(header) {
+    header.parentElement.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
