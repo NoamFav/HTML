@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ma Recherche par Métier</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #16161f;
+    --border: #2a2a3a;
+    --accent: #00ff88;
+    --accent2: #ff3366;
+    --accent3: #7b61ff;
+    --accent4: #00ccff;
+    --text: #e8e8f0;
+    --muted: #6b6b88;
+    --rank: #ff8c00;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Scanline overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 60px 40px 40px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.1s;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: -1px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.25s;
+  }
+
+  h1 span {
+    color: var(--accent);
+    position: relative;
+  }
+
+  h1 span::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: 2px;
+    width: 100%; height: 3px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: lineIn 0.5s ease forwards 0.9s;
+  }
+
+  .subtitle {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 16px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.4s;
+  }
+
+  .container {
+    position: relative;
+    z-index: 10;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    animation: fadeUp 0.5s ease forwards;
+    position: relative;
+  }
+
+  .card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 30px rgba(0,255,136,0.08), 0 0 0 1px rgba(0,255,136,0.1);
+    transform: translateY(-2px);
+  }
+
+  /* Accent line top */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-color, var(--accent)), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .card:hover::before { opacity: 1; }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .rank-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--rank);
+    background: rgba(255,140,0,0.08);
+    border: 1px solid rgba(255,140,0,0.25);
+    border-radius: 3px;
+    padding: 3px 8px;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+  }
+
+  .card-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 8px rgba(255,255,255,0.2));
+    transition: transform 0.3s ease;
+  }
+  .card:hover .card-icon { transform: scale(1.15) rotate(-5deg); }
+
+  .card-title-block { flex: 1; min-width: 0; }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .card-subtitle {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .toggle-icon {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: transform 0.3s ease, color 0.2s ease;
+  }
+  .card.open .toggle-icon { transform: rotate(45deg); color: var(--accent); }
+
+  /* Card body */
+  .card-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card.open .card-body { max-height: 600px; }
+
+  .card-inner {
+    padding: 0 24px 24px;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .row:last-child { border-bottom: none; }
+
+  .row-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 14px 16px 14px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding-top: 16px;
+  }
+
+  .row-label-icon { font-size: 13px; }
+
+  .row-value {
+    font-size: 13px;
+    color: var(--text);
+    padding: 14px 0;
+    line-height: 1.6;
+    opacity: 0.9;
+  }
+
+  .salary-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+  }
+
+  .like-value { color: #a8e6cf; }
+  .dislike-value { color: #ffb3b3; }
+
+  /* Category tags for filter */
+  .tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 2px 7px;
+    border-radius: 2px;
+    margin-right: 6px;
+    margin-bottom: 2px;
+    border: 1px solid;
+    text-transform: uppercase;
+  }
+
+  /* Filter bar */
+  .filter-bar {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0 24px 32px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .filter-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 7px 16px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,255,136,0.05);
+  }
+
+  /* Progress bar for rank */
+  .rank-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0 4px;
+  }
+  .rank-bar {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .rank-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    border-radius: 2px;
+    width: 0;
+    transition: width 1s ease 0.3s;
+  }
+  .card.open .rank-bar-fill { width: var(--fill-width); }
+  .rank-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes lineIn {
+    to { transform: scaleX(1); }
+  }
+
+  /* Glitch effect on title hover */
+  h1:hover span {
+    animation: glitch 0.3s ease;
+  }
+  @keyframes glitch {
+    0%   { text-shadow: none; }
+    20%  { text-shadow: -2px 0 var(--accent2), 2px 0 var(--accent4); }
+    40%  { text-shadow: 2px 0 var(--accent2), -2px 0 var(--accent4); }
+    60%  { text-shadow: none; }
+    80%  { text-shadow: -1px 0 var(--accent3); }
+    100% { text-shadow: none; }
+  }
+
+  /* Staggered card animations */
+  .card:nth-child(1)  { animation-delay: 0.05s; }
+  .card:nth-child(2)  { animation-delay: 0.10s; }
+  .card:nth-child(3)  { animation-delay: 0.15s; }
+  .card:nth-child(4)  { animation-delay: 0.20s; }
+  .card:nth-child(5)  { animation-delay: 0.25s; }
+  .card:nth-child(6)  { animation-delay: 0.30s; }
+  .card:nth-child(7)  { animation-delay: 0.35s; }
+  .card:nth-child(8)  { animation-delay: 0.40s; }
+  .card:nth-child(9)  { animation-delay: 0.45s; }
+  .card:nth-child(10) { animation-delay: 0.50s; }
+  .card:nth-child(11) { animation-delay: 0.55s; }
+  .card:nth-child(12) { animation-delay: 0.60s; }
+  .card:nth-child(13) { animation-delay: 0.65s; }
+  .card:nth-child(14) { animation-delay: 0.70s; }
+  .card:nth-child(15) { animation-delay: 0.75s; }
+  .card:nth-child(16) { animation-delay: 0.80s; }
+  .card:nth-child(17) { animation-delay: 0.85s; }
+  .card:nth-child(18) { animation-delay: 0.90s; }
+  .card:nth-child(19) { animation-delay: 0.95s; }
+  .card:nth-child(20) { animation-delay: 1.00s; }
+
+  .card.hidden { display: none; }
+
+  footer {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-tag">// recherche_metiers.exe</div>
+  <h1>Ma Recherche par <span>Métier</span></h1>
+  <p class="subtitle">20 fiches · classées par intérêt personnel · sources : Onisep, Hellowork, Guardia, Licorne Society</p>
+</header>
+
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="all">Tous</button>
+  <button class="filter-btn" data-filter="cyber">Cyber</button>
+  <button class="filter-btn" data-filter="dev">Dev</button>
+  <button class="filter-btn" data-filter="data">Data / IA</button>
+  <button class="filter-btn" data-filter="hardware">Hardware</button>
+  <button class="filter-btn" data-filter="institutionnel">Institutionnel</button>
+</div>
+
+<div class="container" id="cards-container">
+
+  <!-- 1 -->
+  <div class="card" data-cat="cyber" style="--accent-color:#ff3366; --fill-width:100%;" >
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#01</span>
+      <span class="card-icon">🎯</span>
+      <div class="card-title-block">
+        <div class="card-title">Pentester / Hacker Éthique</div>
+        <div class="card-subtitle">Offensive Security Engineer · Red Team</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★★★★</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Pentester / Hacker Éthique / Ingénieur Sécurité Offensive</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">On est payé pour pirater légalement des systèmes. Très technique (C, OS internals, réseau, exploit dev), certifications valorisées autant que les diplômes, marché de l'emploi très porteur, esprit adversarial permanent.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Formation continue obligatoire pour rester à jour, audits de conformité répétitifs, limites légales à respecter scrupuleusement, astreintes en cas d'incident.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">École d'ingénieur ou Master cybersécurité / réseaux. Certifications OSCP, CEH, GPEN très valorisées. Les alumni de 42 sont reconnus. Les CTF sont la meilleure preuve d'entrée.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Junior : ~38–50k€/an · Confirmé : ~55–75k€/an · Freelance TJM : ~600–900€/jour</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="card" data-cat="dev" style="--accent-color:#ffcc00; --fill-width:95%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#02</span>
+      <span class="card-icon">🎮</span>
+      <div class="card-title-block">
+        <div class="card-title">Développeur Jeux Vidéo</div>
+        <div class="card-subtitle">Gameplay Programmer · Engine Dev · Game AI</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★★★★</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Développeur Jeux Vidéo / Gameplay Programmer</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Donner vie à des jeux par le code — physique, IA, rendu, mécaniques de gameplay. Utilise C++ et moteurs (Unreal, Unity). 1ère industrie culturelle en France. Créativité et profondeur technique fusionnent.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Difficile de percer dans les studios AAA. Culture du crunch encore présente. Salaires plus bas qu'en tech généraliste. Marché plus volatile.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">École spécialisée (ISART, Epitech, Ynov) ou Bac+5 informatique généraliste. Portfolio C++ et projets personnels souvent plus décisifs que le diplôme.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Junior : ~3 000€/mois · Senior Programmer : ~4 100€/mois · Directeur Technique : ~7 000€/mois</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="card" data-cat="hardware" style="--accent-color:#00ccff; --fill-width:90%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#03</span>
+      <span class="card-icon">🔧</span>
+      <div class="card-title-block">
+        <div class="card-title">Ingénieur Systèmes Embarqués</div>
+        <div class="card-subtitle">Embedded Software Engineer · IoT · Firmware</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★★★☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Ingénieur Systèmes Embarqués / Embedded Software Engineer</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Le code a des conséquences physiques — à l'intersection hardware/software. Domaines fascinants : IoT, drones, véhicules autonomes, médical, aérospatial, robotique. Beaucoup de C/C++. Pénurie de talents = sécurité de l'emploi.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Nécessite de comprendre l'électronique et l'architecture microcontrôleurs en plus du logiciel. Debug plus difficile. Cycles d'itération plus longs. Moins de remote que le dev pur.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">École d'ingénieur Bac+5 (systèmes embarqués, électronique, info). BUT Informatique + Master fonctionne aussi. 42 + C solide = entrée junior réelle.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Junior : ~35–45k€/an · Senior : ~55–75k€/an · Expert : jusqu'à 80k€+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="card" data-cat="cyber" style="--accent-color:#ff3366; --fill-width:85%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#04</span>
+      <span class="card-icon">🦠</span>
+      <div class="card-title-block">
+        <div class="card-title">Analyste Malware / Reverse Engineer</div>
+        <div class="card-subtitle">Malware Analyst · Threat Intelligence · RE</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★★★☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Analyste Malware / Reverse Engineer</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Dissèque du code malveillant pour comprendre comment fonctionnent les attaques. Un des métiers cyber les plus techniques : assembleur, C, IDA Pro, Ghidra. Travaille dans des SOC, CERT, labos de défense. Profil extrêmement rare et valorisé.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Barrière très haute : assembleur + OS internals + RE simultanément. Travail souvent en environnement isolé. Marché de niche avec moins d'offres.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">Bac+5 cybersécurité ou info + autoformation RE intensive. Certs clés : GREM (GIAC), OSCP. CTF et write-ups d'analyse malware = meilleur portfolio.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Junior : ~42k€/an · Expert : jusqu'à ~96k€/an et au-delà</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <div class="card" data-cat="hardware" style="--accent-color:#00ccff; --fill-width:80%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#05</span>
+      <span class="card-icon">🤖</span>
+      <div class="card-title-block">
+        <div class="card-title">Ingénieur Robotique</div>
+        <div class="card-subtitle">Robotics Software Engineer · ROS · Autonomous Systems</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★★★☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Ingénieur Robotique / Robotics Software Engineer</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Programme des machines physiques qui interagissent avec le monde réel : véhicules autonomes, bras industriels, robots médicaux, drones. Utilise C++, ROS, systèmes embarqués, algorithmes de perception. Un des domaines les plus interdisciplinaires.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Barrière éducative élevée (Bac+5 souvent en robotique ou embarqué). Peu d'entreprises qui recrutent (automobile, aéro, industrie). Les tests physiques ralentissent les cycles.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">École d'ingénieur spécialisée en robotique, mécatronique ou embarqué (ENSTA, INSA, UTC). Masters robotique aussi disponibles. ROS/ROS2 + C++/Python solides = indispensables.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Junior : ~38–50k€/an · Senior : ~65–85k€/an (défense/aéro paie plus)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 -->
+  <div class="card" data-cat="cyber" style="--accent-color:#7b61ff; --fill-width:75%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#06</span>
+      <span class="card-icon">🛡️</span>
+      <div class="card-title-block">
+        <div class="card-title">Ingénieur DevSecOps</div>
+        <div class="card-subtitle">DevSecOps · Security-Focused DevOps · CI/CD Sec</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★★★☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Ingénieur DevSecOps / DevOps orienté Sécurité</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Intègre la sécurité directement dans les pipelines CI/CD. Actuellement l'un des profils hybrides les plus rares et valorisés du marché tech. À l'intersection dev, ops et sécurité. Prime double-compétence massive.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Barre d'entrée haute — compétence solide dans les 3 domaines (dev + infra + sécu). Pas un premier job. Peut être politiquement délicat quand la sécu ralentit les livraisons.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">Généralement un DevOps ou ingénieur sécu expérimenté qui construit le profil hybride. Certs : CSSLP, DevSecOps Foundation, AWS Security. 5+ ans d'expérience combinée est la norme.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Junior : ~48–58k€/an · Confirmé : ~60–80k€/an · Senior : jusqu'à ~110k€/an</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7 -->
+  <div class="card" data-cat="cyber" style="--accent-color:#ff8c00; --fill-width:70%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#07</span>
+      <span class="card-icon">🔍</span>
+      <div class="card-title-block">
+        <div class="card-title">Analyste OSINT</div>
+        <div class="card-subtitle">Open Source Intelligence · Threat Intel · Dark Web</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★★★☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Analyste OSINT / Investigateur en Sources Ouvertes</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Travail de détective numérique — enquête sur des menaces, fraudes, réseaux criminels et désinformation avec uniquement des données publiques. Surveillance du dark web. Combine technique et pensée stratégique. Utilisé par forces de l'ordre, agences de renseignement, ONG.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Éthiquement sensible (frontière fine entre investigation et surveillance). Compétences multilangues nécessaires. Pas toujours un parcours défini. Bac+5 quasi-obligatoire.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">Bac+5 cybersécurité ou intelligence économique (EGE = école de référence). Certs clés : GOSI (GIAC), COSINTP. Python + OPSEC solides indispensables.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Junior : ~3 500€/mois brut · Confirmé : ~4 600–6 200€/mois brut</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8 -->
+  <div class="card" data-cat="institutionnel" style="--accent-color:#00ff88; --fill-width:65%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#08</span>
+      <span class="card-icon">🇫🇷</span>
+      <div class="card-title-block">
+        <div class="card-title">Analyste Cyberdéfense (Armée / État)</div>
+        <div class="card-subtitle">Officier Cyberdéfense · ANSSI · DGSE</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★★★☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Analyste Cyberdéfense / Officier Cyberdéfense (Armée, ANSSI, DGSE)</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Travaille sur la sécurité nationale — protection d'infrastructures militaires, opérations cyber offensives et défensives, accès à des missions classifiées et équipes d'élite (DGSE, ANSSI). Fort sens de la mission.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Salaire bien inférieur au privé (entrée militaire ~1 700€ net/mois). Contraintes d'habilitation et de mode de vie. Accès internet personnel limité sur certains postes. Mobilité hors secteur public réduite.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">École d'ingénieur ou Bac+5 info/cybersécurité. ANSSI a son propre pipeline. Parcours OSC (Officier Sous Contrat) accessible dès Bac+3, moins de 30–32 ans selon la branche.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Entrée militaire : ~1 700€ net/mois (+12%/an) · ANSSI/civil : ~35–55k€/an · Senior secteur public : ~55–70k€/an</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9 -->
+  <div class="card" data-cat="institutionnel" style="--accent-color:#00ff88; --fill-width:62%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#09</span>
+      <span class="card-icon">🔬</span>
+      <div class="card-title-block">
+        <div class="card-title">Investigateur Numérique Légal</div>
+        <div class="card-subtitle">Expert Judiciaire · Forensic · Police Nationale</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★★☆☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Investigateur Numérique / Expert Judiciaire Informatique</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Récupère et analyse des preuves numériques sur des appareils saisis pour la police, les tribunaux ou les assureurs. Combine compétences techniques profondes (forensique disque, analyse mémoire, extraction mobile) avec des cadres juridiques. Police Nationale ou expert de justice.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Exposition à du contenu perturbant dans certains contextes judiciaires. Accréditation comme expert de justice = années de pratique. Rythme plus lent que la sécurité offensive.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">Bac+5 cybersécurité ou info + formation forensique spécialisée. Certs : GCFE, GCFA (GIAC), EnCE. NTECH (Unité Cyber Police Nationale) et Gendarmerie IRCGN = options secteur public.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Junior : ~35–45k€/an · Confirmé : ~50–70k€/an · Expert judiciaire (freelance) : très variable</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10 -->
+  <div class="card" data-cat="hardware" style="--accent-color:#00ccff; --fill-width:58%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#10</span>
+      <span class="card-icon">🧬</span>
+      <div class="card-title-block">
+        <div class="card-title">Ingénieur Logiciel MedTech / Biotech</div>
+        <div class="card-subtitle">HealthTech · Dispositifs Médicaux · Biomédical</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★★☆☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Ingénieur Logiciel – MedTech / HealthTech</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Logiciel qui impacte directement la santé humaine — imagerie médicale, génomique, prothèses, implants, tech d'assistance. Travail porteur de sens. Intersection hardware/embarqué. Secteur bien financé.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Très réglementé (marquage CE, FDA, ISO 13485) = cycles de dev ralentis. Expertise domaine requise en plus du technique. Marché d'emploi plus restreint. Bac+5 quasi-obligatoire.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">École d'ingénieur spécialisée biomédical/embarqué, ou Master info + expérience domaine. Masters bioinformatique = entrée directe. Stages en startups MedTech = accélérateur fort.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Junior : ~38–50k€/an · Senior : ~60–80k€/an (niche en forte demande, tendance haussière)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11 -->
+  <div class="card" data-cat="data" style="--accent-color:#7b61ff; --fill-width:53%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#11</span>
+      <span class="card-icon">🧠</span>
+      <div class="card-title-block">
+        <div class="card-title">Ingénieur Machine Learning</div>
+        <div class="card-subtitle">ML Engineer · AI Engineer · Deep Learning</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★★☆☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Ingénieur Machine Learning (MLE) / Ingénieur IA</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Construit des systèmes qui apprennent et met les modèles de data science en production à grande échelle. À la pointe de ce que le logiciel peut faire. Excellent plafond salarial. Couvre NLP, vision par ordinateur, IA générative.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Nécessite un background math solide (algèbre linéaire, stats, probabilités). Très compétitif — dominé par les grandes écoles. Beaucoup de Python et d'infra pas glamour. Les modèles peuvent être des boîtes noires.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">Master ou école d'ingénieur info/Data Science (Bac+5), idéalement avec spécialisation ML. Python + maths solides non-négociables. Certs utiles mais ne remplacent pas le diplôme au senior.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Junior : ~45–60k€/an · Confirmé : ~65–90k€/an · Senior/Lead : ~100–150k€/an</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12 -->
+  <div class="card" data-cat="dev" style="--accent-color:#00ff88; --fill-width:48%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#12</span>
+      <span class="card-icon">🏛️</span>
+      <div class="card-title-block">
+        <div class="card-title">Architecte Logiciel</div>
+        <div class="card-subtitle">Software Architect · Solutions Architect · Tech Lead</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★★☆☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Architecte Logiciel / Solutions Architect</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Conçoit la structure technique globale de grands systèmes. Forte influence dans les équipes engineering. Combine expertise technique profonde avec leadership et communication. Parmi les meilleurs salaires en dev pur.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Nécessite de nombreuses années en dev d'abord (rarement un rôle d'entrée). Gestion des parties prenantes et documentation importante. Dérive progressive vers les réunions plutôt que le code.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">École d'ingénieur ou Bac+5 info, généralement après 7–10 ans comme dev senior. Certs : TOGAF, AWS/Azure Architect. Salaires architectes logiciels Paris +10,2% en 2025.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Confirmé : ~60–75k€/an · Senior Paris : ~80–100k€/an+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 13 -->
+  <div class="card" data-cat="dev" style="--accent-color:#00ccff; --fill-width:43%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#13</span>
+      <span class="card-icon">⚙️</span>
+      <div class="card-title-block">
+        <div class="card-title">Ingénieur DevOps / SRE</div>
+        <div class="card-subtitle">DevOps · Site Reliability Engineer · Cloud Ops</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★★☆☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Ingénieur DevOps / Site Reliability Engineer (SRE)</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Pont entre développement et opérations. Automatise les déploiements, gère l'infra cloud, assure la disponibilité des services à grande échelle. Polyvalent (Linux, conteneurs, cloud, CI/CD). Fort télétravail. Excellente demande en startups.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Rotations d'astreintes et pression des incidents très stressantes. Pas de formation dédiée (autodidacte + certs). Peut ressembler à de la lutte contre les incendies. Écosystème d'outils en évolution rapide permanente.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">Bac+3 à Bac+5 info / réseaux. Pas de diplôme dédié — devs ou sysadmins qui montent en DevOps. Certs : AWS/GCP/Azure, Kubernetes (CKA), Terraform.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Junior : ~40–50k€/an · Confirmé : ~55–70k€/an · Senior : jusqu'à ~85k€/an</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 14 -->
+  <div class="card" data-cat="cyber" style="--accent-color:#ff3366; --fill-width:38%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#14</span>
+      <span class="card-icon">🏰</span>
+      <div class="card-title-block">
+        <div class="card-title">Architecte Cybersécurité</div>
+        <div class="card-subtitle">Security Architect · RSSI · Défense SI</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★☆☆☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Architecte Cybersécurité / Security Architect</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Conçoit la posture défensive entière des organisations. Haut niveau, stratégique et technique à la fois. Parmi les mieux payés en cyber. Travaille sur des infrastructures majeures pour banques, défense, grands groupes.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Nécessite des années d'expérience avant d'accéder au rôle. Beaucoup de gouvernance et documentation à côté du technique. Responsabilité personnelle importante en cas de breach.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">École d'ingénieur Bac+5 ou Master cybersécurité / architecture SI. Nécessite généralement 5+ ans d'expérience ingénieur ou consultant. Certs : CISSP, SABSA.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Junior : ~55–65k€/an · Senior : ~85–120k€/an · Freelance TJM : ~700–1 000€/jour</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 15 -->
+  <div class="card" data-cat="cyber" style="--accent-color:#ff8c00; --fill-width:33%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#15</span>
+      <span class="card-icon">👁️</span>
+      <div class="card-title-block">
+        <div class="card-title">Analyste SOC</div>
+        <div class="card-subtitle">Security Operations Center · Incident Response · SIEM</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★☆☆☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Analyste SOC / Analyste Incidents Cyber</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Chasse de menaces en temps réel — on voit les attaques en direct. Plus accessible en entrée que d'autres rôles cyber. Large exposition à différents vecteurs d'attaque. Forte demande tous secteurs (banque, défense, santé, télécom).</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Répétitif en niveau 1 (beaucoup de faux positifs à trier). Travail posté courant (couverture 24/7). Alert fatigue réelle. Plafond salarial plus bas que sécurité offensive ou architecture.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">Bac+3 à Bac+5 info/cybersécurité. BUT Informatique ou BTS SIO valides. Certs SIEM/SOC (CompTIA Security+, SC-200) valorisés. 42 reconnu.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Junior : ~31–38k€/an · Expérimenté : jusqu'à ~48k€/an</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 16 -->
+  <div class="card" data-cat="dev" style="--accent-color:#00ccff; --fill-width:28%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#16</span>
+      <span class="card-icon">☁️</span>
+      <div class="card-title-block">
+        <div class="card-title">Architecte Cloud</div>
+        <div class="card-subtitle">Cloud Solutions Architect · AWS / Azure / GCP</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★☆☆☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Architecte Cloud / Cloud Solutions Architect</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Conçoit et supervise des infrastructures cloud à grande échelle. Haute visibilité stratégique. Travaille avec AWS/Azure/GCP au niveau expert. Excellent salaire. Forte demande grands groupes et cabinets de conseil.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Rôle senior — nécessite des années DevOps/infra d'abord. Peut dériver vers PowerPoint et réunions plutôt que le code. Problématiques de vendor lock-in complexifient les décisions politiquement.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">École d'ingénieur ou Bac+5 info/réseaux, généralement en évolution depuis un background DevOps/sysadmin. Certs critiques : AWS Solutions Architect, Google Professional Cloud Architect, Azure Expert.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Confirmé : ~60–80k€/an · Senior/Expert : ~85–110k€/an · Freelance TJM : jusqu'à 1 200€/jour</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 17 -->
+  <div class="card" data-cat="cyber" style="--accent-color:#7b61ff; --fill-width:23%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#17</span>
+      <span class="card-icon">🔐</span>
+      <div class="card-title-block">
+        <div class="card-title">Ingénieur Cryptographie / Recherche Sécu</div>
+        <div class="card-subtitle">Cryptography Engineer · Security Researcher · INRIA</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★☆☆☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Ingénieur Cryptographie / Chercheur en Sécurité</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Travaille sur les fondations mathématiques de la sécurité — protocoles de chiffrement, preuves zero-knowledge, post-quantum. Profil extrêmement rare et respecté. Présent en labos de recherche (INRIA, CEA), défense, et blockchain/fintech.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Barrière mathématique très élevée (théorie des nombres, algèbre, probabilités au niveau master). Nécessite souvent un doctorat. Très peu de postes disponibles. Peut sembler déconnecté de l'ingénierie du quotidien.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">Bac+5 minimum, souvent doctorat en maths, info théorique ou cryptographie. INRIA, ENS, écoles d'ingénieur avec voies recherche. Stages ANSSI ou labos académiques = parcours standard.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Recherche/public : ~38–55k€/an · Privé (fintech/blockchain/défense) : ~65–100k€/an+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 18 -->
+  <div class="card" data-cat="dev" style="--accent-color:#00ff88; --fill-width:18%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#18</span>
+      <span class="card-icon">💻</span>
+      <div class="card-title-block">
+        <div class="card-title">Développeur Logiciel (Généraliste)</div>
+        <div class="card-subtitle">Software Developer · Full Stack · Backend</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★☆☆☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Développeur Logiciel / Software Engineer</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Construire des choses de zéro. Grande variété de domaines (apps, outils, systèmes). Fort potentiel freelance. Demande internationale massive. Courbe d'apprentissage constante. Travaillable dans quasiment tous les secteurs.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Risque de se retrouver piégé dans la maintenance et le legacy code. Deadlines serrées en ESN. Pression IA croissante sur les rôles juniors. Qualité du travail très variable selon les boîtes.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">BTS SIO (2 ans) → BUT Informatique (3 ans) → Master ou école d'ingénieur (5 ans) optionnel. 42 School (pas de diplôme, forte reconnaissance en France) = entrée alternative légitime.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Junior : ~35–45k€/an · Senior : ~55–75k€/an · Freelance : jusqu'à 100k€+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 19 -->
+  <div class="card" data-cat="data" style="--accent-color:#7b61ff; --fill-width:12%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#19</span>
+      <span class="card-icon">🗄️</span>
+      <div class="card-title-block">
+        <div class="card-title">Data Engineer</div>
+        <div class="card-subtitle">Pipeline · ETL · Data Warehouse · Spark</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★★☆☆☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Data Engineer</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Construit l'infrastructure qui rend les données utilisables — pipelines, entrepôts, ETL. La colonne vertébrale invisible de toute data science. Très forte demande marché. Travaille proche des équipes engineering et data science. Compétences très transférables.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Moins glamour que la data science. Beaucoup de travail de plomberie (pipelines cassés, migrations de schémas). Peut être répétitif en grand groupe. Nécessite SQL, Spark et infra cloud simultanément.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">Bac+5 info ou data science. BTS/BUT Informatique + autoformation + certifications (dbt, Airflow, Spark) viables. SQL solide + Python + cloud = vraie barrière d'entrée.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Junior : ~40k€/an · Confirmé : ~55–70k€/an · Senior : ~80k€/an+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 20 -->
+  <div class="card" data-cat="dev" style="--accent-color:#ff3366; --fill-width:5%;">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="rank-badge">#20</span>
+      <span class="card-icon">📋</span>
+      <div class="card-title-block">
+        <div class="card-title">Product Manager (Tech)</div>
+        <div class="card-subtitle">PM · Technical Product Manager · Product Owner</div>
+      </div>
+      <span class="toggle-icon">+</span>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <div class="rank-bar-wrap">
+          <span class="rank-label">Intérêt perso</span>
+          <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+          <span class="rank-label">★☆☆☆☆</span>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💼</span>Métier</div>
+          <div class="row-value">Product Manager (PM) / Technical Product Manager</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">✅</span>Ce que j'aime</div>
+          <div class="row-value like-value">Possède la vision produit — fait le lien entre utilisateurs, business et engineering. Fort impact stratégique sans coder à temps plein. Larges options de carrière. Excellent salaire en scale-ups.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">⚠️</span>Ce que j'aime moins</div>
+          <div class="row-value dislike-value">Nécessite de l'aisance dans l'ambiguïté. Beaucoup de gestion des parties prenantes et de réunions. Les PM techniques peuvent être frustrés de ne pas livrer du code eux-mêmes. Très compétitif dans les bonnes boîtes.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">🎓</span>Parcours d'études</div>
+          <div class="row-value">Pas de parcours unique — école d'ingénieur, école de commerce ou dev autodidacte. L'expérience en tant que dev est un avantage énorme pour les rôles "Technical PM". Le portfolio de décisions produit prises prime sur le diplôme spécifique.</div>
+        </div>
+        <div class="row">
+          <div class="row-label"><span class="row-label-icon">💰</span>Rémunération</div>
+          <div class="row-value salary-value">Junior PM : ~47–51k€/an · Senior PM : ~65–78k€/an · Head of Product : ~78–93k€/an · VP Product : ~87–137k€/an</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>// 20 métiers · sources : Onisep · Hellowork · Guardia · Licorne Society · Glassdoor · 2025–2026</footer>
+
+<script>
+  function toggle(header) {
+    const card = header.parentElement;
+    card.classList.toggle('open');
+  }
+
+  // Filter functionality
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      document.querySelectorAll('.card').forEach(card => {
+        if (filter === 'all' || card.dataset.cat === filter) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+          card.classList.remove('open');
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>
