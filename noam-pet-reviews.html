@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noam's Exotic Pet Tierlist</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --border: #1e1e1e;
+    --accent: #e8c547;
+    --accent2: #e05c3a;
+    --text: #d4d0c8;
+    --muted: #555;
+    --good: #4a9e6b;
+    --mid: #e8943a;
+    --bad: #c94040;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 60px 40px 40px;
+    max-width: 960px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  header::after {
+    content: '🦜';
+    position: absolute;
+    right: 40px;
+    top: 50px;
+    font-size: 80px;
+    opacity: 0.15;
+    filter: grayscale(1);
+  }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 8vw, 96px);
+    letter-spacing: 0.02em;
+    line-height: 0.9;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+
+  h1 span {
+    color: var(--accent);
+  }
+
+  .subtitle {
+    font-style: italic;
+    font-family: 'Playfair Display', serif;
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 480px;
+  }
+
+  .stats-bar {
+    display: flex;
+    gap: 40px;
+    padding: 20px 40px;
+    max-width: 960px;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .filters {
+    display: flex;
+    gap: 8px;
+    padding: 24px 40px;
+    max-width: 960px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .filter-btn {
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(232, 197, 71, 0.05);
+  }
+
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+  }
+
+  .section-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    color: var(--muted);
+    padding: 32px 0 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+  }
+
+  .pet-card {
+    border-bottom: 1px solid var(--border);
+    padding: 28px 0;
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 24px;
+    align-items: start;
+    transition: background 0.15s;
+    animation: fadeIn 0.4s ease both;
+  }
+
+  .pet-card:hover {
+    background: rgba(255,255,255,0.01);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .pet-emoji {
+    font-size: 36px;
+    line-height: 1;
+    text-align: center;
+    padding-top: 4px;
+    filter: drop-shadow(0 0 12px rgba(232,197,71,0.1));
+  }
+
+  .pet-body {}
+
+  .pet-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .pet-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.05em;
+    color: #fff;
+  }
+
+  .pet-tag {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border: 1px solid;
+    line-height: 1.8;
+  }
+
+  .tag-legal { border-color: #333; color: var(--muted); }
+  .tag-illegal { border-color: #4a1a1a; color: #c94040; background: rgba(201,64,64,0.05); }
+  .tag-questionable { border-color: #3d2e00; color: #c8892a; background: rgba(200,137,42,0.05); }
+  .tag-vetoed { border-color: #2a1a3d; color: #8060c0; background: rgba(128,96,192,0.05); }
+
+  .pet-review {
+    color: var(--text);
+    line-height: 1.8;
+    font-size: 12.5px;
+    max-width: 640px;
+  }
+
+  .pet-verdict {
+    margin-top: 10px;
+    font-style: italic;
+    font-family: 'Playfair Display', serif;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .score-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 56px;
+    padding-top: 4px;
+  }
+
+  .score-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    line-height: 1;
+  }
+
+  .score-denom {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .score-bar {
+    width: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    height: 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .score-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 2px;
+    transition: height 1s ease;
+  }
+
+  .score-high .score-num { color: var(--good); }
+  .score-high .score-fill { background: var(--good); }
+
+  .score-mid .score-num { color: var(--mid); }
+  .score-mid .score-fill { background: var(--mid); }
+
+  .score-low .score-num { color: var(--bad); }
+  .score-low .score-fill { background: var(--bad); }
+
+  .score-zero .score-num { color: #333; }
+  .score-zero .score-fill { background: #333; }
+
+  .highlight {
+    color: var(--accent);
+    font-style: normal;
+  }
+
+  .danger-text { color: var(--accent2); }
+
+  footer {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 40px 60px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+    gap: 20px;
+  }
+
+  .footer-text {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .footer-rec {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+  }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 600px) {
+    header, .stats-bar, .filters, main, footer { padding-left: 20px; padding-right: 20px; }
+    .pet-card { grid-template-columns: 44px 1fr; }
+    .score-block { display: none; }
+    h1 { font-size: 52px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Noam's Definitive Guide</div>
+  <h1>EXOTIC<br><span>PET</span><br>REVIEWS</h1>
+  <p class="subtitle">"From black panther to bird guy. The correct character arc."</p>
+</header>
+
+<div class="stats-bar">
+  <div class="stat"><span class="stat-num">37</span><span class="stat-label">Animals Reviewed</span></div>
+  <div class="stat"><span class="stat-num">4</span><span class="stat-label">Instant Deaths</span></div>
+  <div class="stat"><span class="stat-num">3</span><span class="stat-label">Mom Vetoes</span></div>
+  <div class="stat"><span class="stat-num">1</span><span class="stat-label">Correct Answer</span></div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filterCards('all', this)">All</button>
+  <button class="filter-btn" onclick="filterCards('high', this)">Good Choices (7+)</button>
+  <button class="filter-btn" onclick="filterCards('mid', this)">Questionable (4–6)</button>
+  <button class="filter-btn" onclick="filterCards('low', this)">Terrible Ideas (0–3)</button>
+  <button class="filter-btn" onclick="filterCards('illegal', this)">Illegal</button>
+  <button class="filter-btn" onclick="filterCards('vetoed', this)">Mom Vetoed</button>
+</div>
+
+<main id="pet-list">
+  <div class="section-label">The Full List — In Order of Suggestion</div>
+
+  <!-- WEASEL -->
+  <div class="pet-card" data-score="7" data-tags="questionable">
+    <div class="pet-emoji">🦦</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Weasel</span>
+        <span class="pet-tag tag-questionable">Questionable</span>
+      </div>
+      <div class="pet-review">The tiny furry murder machine that never stops moving, smells like a ferret's edgier cousin, and will destroy every single thing you own with zero remorse. Sleep? Gone. Sanity? Gone. That one thing you really liked? Specifically that thing, gone first.</div>
+      <div class="pet-verdict">"Actually kind of a vibe though. Chaotic enough to respect."</div>
+    </div>
+    <div class="score-block score-mid">
+      <span class="score-num">7</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:70%"></div></div>
+    </div>
+  </div>
+
+  <!-- OTTER -->
+  <div class="pet-card" data-score="3" data-tags="illegal">
+    <div class="pet-emoji">🦦</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Otter</span>
+        <span class="pet-tag tag-illegal">Illegal Most Places</span>
+      </div>
+      <div class="pet-review">You saw a viral video of one holding hands and now you want one. They scream like they're being murdered 24/7, smell absolutely horrific, need a constantly running water setup the size of a small pool, and will bite you with the same enthusiasm they crack open shellfish. Your apartment will smell like a fish market that caught fire.</div>
+      <div class="pet-verdict">"Also illegal in most places so congrats on your new hobby: wildlife crime."</div>
+    </div>
+    <div class="score-block score-low">
+      <span class="score-num">3</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:30%"></div></div>
+    </div>
+  </div>
+
+  <!-- BOBCAT -->
+  <div class="pet-card" data-score="4" data-tags="illegal">
+    <div class="pet-emoji">🐱</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Bobcat</span>
+        <span class="pet-tag tag-illegal">Illegal Most Places</span>
+      </div>
+      <div class="pet-review">The 30-pound rage machine with knives for hands. It will redecorate your home in a style best described as "aftermath." It will decide at 3am that you are prey. Not playing, not joking — prey. Needs a massive enclosure, raw meat diet, and a permit that most states will laugh you out of the room for requesting.</div>
+      <div class="pet-verdict">"Respect the audacity, terrible life choice."</div>
+    </div>
+    <div class="score-block score-low">
+      <span class="score-num">4</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:40%"></div></div>
+    </div>
+  </div>
+
+  <!-- BLACK PANTHER -->
+  <div class="pet-card" data-score="2" data-tags="illegal">
+    <div class="pet-emoji">🐆</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Black Panther</span>
+        <span class="pet-tag tag-illegal">Illegal Everywhere</span>
+      </div>
+      <div class="pet-review">"In a big house" is doing so much heavy lifting in that sentence. This is a 200-pound apex predator that can drag a full grown antelope up a tree. You are softer than an antelope. You live in the same building as it. Your "big house" becomes its territory in 4 minutes flat and you become a nervous guest in your own home. You will never walk to the kitchen at night again without doing a full threat assessment.</div>
+      <div class="pet-verdict">"The coolest possible answer to 'what's your pet' though. Nothing beats it socially."</div>
+    </div>
+    <div class="score-block score-low">
+      <span class="score-num">2</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:20%"></div></div>
+    </div>
+  </div>
+
+  <!-- WOLFDOG -->
+  <div class="pet-card" data-score="5" data-tags="questionable">
+    <div class="pet-emoji">🐺</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Wolfdog</span>
+        <span class="pet-tag tag-questionable">Questionable</span>
+      </div>
+      <div class="pet-review">The classic "I want a wolf but with plausible deniability" move. Gets the worst of both worlds. Too wild to be a dog, too domestic to be a wolf. High content wolfdogs will escape from literally anything. Doesn't come when called. Doesn't care that you're upset. Runs on instinct and vibes. Needs 5 hours of exercise a day minimum.</div>
+      <div class="pet-verdict">"Genuinely kind of worth it if you have land and no expectations of a normal life."</div>
+    </div>
+    <div class="score-block score-mid">
+      <span class="score-num">5</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:50%"></div></div>
+    </div>
+  </div>
+
+  <!-- K9 -->
+  <div class="pet-card" data-score="8" data-tags="legal">
+    <div class="pet-emoji">🐕</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Retired K9</span>
+        <span class="pet-tag tag-legal">Legal</span>
+      </div>
+      <div class="pet-review">Actually wait — this is the first genuinely good idea on this entire list. Retired K9s are loyal beyond reason, incredibly well trained, and they've already had a whole heroic career before coming to live with you. That's not a pet, that's a roommate with accomplishments. Depending on training, you may have a dog professionally trained to bite people living in your house. Which is either a problem or a feature.</div>
+      <div class="pet-verdict">"You finally made a solid decision. Proud of you, slightly suspicious."</div>
+    </div>
+    <div class="score-block score-high">
+      <span class="score-num">8</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:80%"></div></div>
+    </div>
+  </div>
+
+  <!-- PARROT -->
+  <div class="pet-card" data-score="8" data-tags="legal">
+    <div class="pet-emoji">🦜</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Parrot (African Grey)</span>
+        <span class="pet-tag tag-legal">Legal</span>
+      </div>
+      <div class="pet-review">A screaming velociraptor with the emotional needs of a toddler and the lifespan of an elderly relative who will outlive you. It will learn to say exactly the most embarrassing thing you've ever said and repeat it exclusively when you have guests. It will scream at 7am with the volume of a car alarm and the consistency of a religion. And if you neglect it emotionally, it will develop psychological disorders. They also never shut up. Ever.</div>
+      <div class="pet-verdict">"One of the most intelligent animals on earth. The bond can be insane if you put the work in. 8/10 as your main — unhinged commitment, completely valid, very on brand."</div>
+    </div>
+    <div class="score-block score-high">
+      <span class="score-num">8</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:80%"></div></div>
+    </div>
+  </div>
+
+  <!-- MEERKAT -->
+  <div class="pet-card" data-score="5" data-tags="questionable">
+    <div class="pet-emoji">🦦</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Meerkat</span>
+        <span class="pet-tag tag-questionable">Questionable</span>
+      </div>
+      <div class="pet-review">Getting one alone is the parrot problem but worse. You need at minimum two or three, then suddenly you have a meerkat committee running your house making decisions you weren't consulted on. They dig. Constantly. Compulsively. Religiously. Your floors, your furniture, your garden, your sanity — all of it becomes a dig site. They scent mark everything they own, which includes you. You will smell like meerkat. This is permanent.</div>
+      <div class="pet-verdict">"Exhausting, expensive, kind of incredible, smells weird."</div>
+    </div>
+    <div class="score-block score-mid">
+      <span class="score-num">5</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:50%"></div></div>
+    </div>
+  </div>
+
+  <!-- RAVEN/CROW -->
+  <div class="pet-card" data-score="9" data-tags="illegal">
+    <div class="pet-emoji">🐦‍⬛</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Raven / Crow</span>
+        <span class="pet-tag tag-illegal">Protected Species</span>
+      </div>
+      <div class="pet-review">One of the most intelligent animals on the planet full stop. Not "smart for a bird." Just smart. They'll bring you gifts. Actual gifts. Shiny things they found because they like you. You will feel more appreciated by this bird than by most humans you know. A bored crow isn't like a bored dog — a bored crow is planning something. They will also talk. Not parrot talk. Eerily human talk. At random times. You will be unsettled regularly.</div>
+      <div class="pet-verdict">"The most gothic and correct choice you've made today. Deeply on brand for you."</div>
+    </div>
+    <div class="score-block score-high">
+      <span class="score-num">9</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:90%"></div></div>
+    </div>
+  </div>
+
+  <!-- RED FOX -->
+  <div class="pet-card" data-score="5" data-tags="questionable">
+    <div class="pet-emoji">🦊</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Red Fox</span>
+        <span class="pet-tag tag-questionable">Questionable</span>
+      </div>
+      <div class="pet-review">Fox musk makes a ferret smell like a candle shop. You cannot get rid of it. It's in the walls. It's in your soul. They also scream like a human woman being murdered. At night. Consistently. Your neighbors will call the police and they will be correct to do so. The Russian domesticated fox though? Actually remarkable. Genuinely dog-like temperament. Costs as much as a used car.</div>
+      <div class="pet-verdict">"5/10 regular fox. 8/10 Russian domesticated. Smells either way."</div>
+    </div>
+    <div class="score-block score-mid">
+      <span class="score-num">5</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:50%"></div></div>
+    </div>
+  </div>
+
+  <!-- FERRET -->
+  <div class="pet-card" data-score="7" data-tags="legal">
+    <div class="pet-emoji">🐾</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Ferret</span>
+        <span class="pet-tag tag-legal">Legal</span>
+      </div>
+      <div class="pet-review">The weasel but legal and slightly less feral. Still smells. They sleep 18 hours a day which means the other 6 are pure concentrated chaos. They do the weasel war dance when excited — jumping sideways, acting completely unhinged — and it's physically impossible to be sad watching it. They will steal your stuff and hide it systematically. You will find a cache of your belongings somewhere like a tiny hoarder lives with you. Because one does.</div>
+      <div class="pet-verdict">"Genuinely great pet, smells weird, absolute joy to own."</div>
+    </div>
+    <div class="score-block score-mid">
+      <span class="score-num">7</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:70%"></div></div>
+    </div>
+  </div>
+
+  <!-- CAPUCHIN -->
+  <div class="pet-card" data-score="2" data-tags="illegal">
+    <div class="pet-emoji">🐒</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Capuchin Monkey</span>
+        <span class="pet-tag tag-illegal">Illegal Most Places</span>
+      </div>
+      <div class="pet-review">It's adorable for approximately 4 months. Then it hits maturity and remembers it's a wild animal with the emotional regulation of a toddler, the strength of a surprisingly jacked small person, and teeth designed to crack nuts that it will now use on your face when it disagrees with you. Which is always. They throw poop. Not occasionally. As communication. As protest. As art. Your walls are a canvas now.</div>
+      <div class="pet-verdict">"The monkey is always a bad idea. Always. No exceptions."</div>
+    </div>
+    <div class="score-block score-low">
+      <span class="score-num">2</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:20%"></div></div>
+    </div>
+  </div>
+
+  <!-- FOX TERRIER -->
+  <div class="pet-card" data-score="8" data-tags="legal">
+    <div class="pet-emoji">🐕</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Fox Terrier</span>
+        <span class="pet-tag tag-legal">Legal</span>
+      </div>
+      <div class="pet-review">That's just a dog. A normal, legal, purchasable dog. After everything on this list that's like ordering water at a restaurant you've been causing a scene in. Fox terriers specifically think they're enormous. Will pick fights with dogs three times their size with complete confidence and zero self awareness. Tiny Napoleon complex in dog form. Also they were bred to hunt foxes — so that red fox you were considering? Don't combine those.</div>
+      <div class="pet-verdict">"Completely unsexy choice after this list. Oddly perfect for you."</div>
+    </div>
+    <div class="score-block score-high">
+      <span class="score-num">8</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:80%"></div></div>
+    </div>
+  </div>
+
+  <!-- SAND CAT -->
+  <div class="pet-card" data-score="6" data-tags="illegal">
+    <div class="pet-emoji">🐱</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Sand Cat</span>
+        <span class="pet-tag tag-illegal">Nearly Impossible Legally</span>
+      </div>
+      <div class="pet-review">Looks permanently like a kitten. Never loses the baby face. Designed specifically by nature to make you think it's approachable and domestic. It is not. Incredibly elusive and shy by nature. You'll have this stunning little cat shaped creature that tolerates your existence at best and disappears whenever it wants to. You paid thousands for an animal that finds you mildly annoying.</div>
+      <div class="pet-verdict">"Stunning, unattainable, medically fragile, will not love you back. Basically your type."</div>
+    </div>
+    <div class="score-block score-mid">
+      <span class="score-num">6</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:60%"></div></div>
+    </div>
+  </div>
+
+  <!-- ANTS -->
+  <div class="pet-card" data-score="9" data-tags="legal">
+    <div class="pet-emoji">🐜</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Ants</span>
+        <span class="pet-tag tag-legal">Legal</span>
+      </div>
+      <div class="pet-review">A living organism you get to watch build a civilization in real time. Hypnotic. Zero emotional needs. No separation anxiety. No poop throwing. No murder attempts. They just do their thing completely indifferent to your existence, which is honestly refreshing after the parrot and crow. Pairs insanely well with the crow actually — crow would be obsessed with the ant farm. Keep them separated.</div>
+      <div class="pet-verdict">"Underrated, zero drama, surprisingly beautiful. The most unexpected correct answer on this entire list."</div>
+    </div>
+    <div class="score-block score-high">
+      <span class="score-num">9</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:90%"></div></div>
+    </div>
+  </div>
+
+  <!-- CHICKEN -->
+  <div class="pet-card" data-score="7" data-tags="legal">
+    <div class="pet-emoji">🐔</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Chicken / Duck</span>
+        <span class="pet-tag tag-legal">Legal (needs garden)</span>
+      </div>
+      <div class="pet-review">The only pet on this entire list with a return on investment. You are literally being paid in breakfast. Revolutionary. Ducks specifically are chaotic, funny, and have absolutely unhinged personalities. They also poop approximately every 15 minutes with the commitment of someone with a personal goal. Everywhere. Endlessly. You will know this poop. Wrong life stage — Paris apartment is not a chicken situation.</div>
+      <div class="pet-verdict">"7/10 both. Genuinely great. Wrong life stage right now."</div>
+    </div>
+    <div class="score-block score-mid">
+      <span class="score-num">7</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:70%"></div></div>
+    </div>
+  </div>
+
+  <!-- OWL -->
+  <div class="pet-card" data-score="3" data-tags="illegal">
+    <div class="pet-emoji">🦉</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Owl</span>
+        <span class="pet-tag tag-illegal">Illegal Most Species</span>
+      </div>
+      <div class="pet-review">Harry Potter did irreversible damage to an entire generation and you are a casualty. Owls don't bond with humans. You are not their person. You are a food dispenser with legs. They need whole dead mice you keep in your freezer. Your freezer has a section now. A mouse section. Forever. They also produce pellets — compressed bones and fur they regurgitate after every meal. Everywhere. This is your life now.</div>
+      <div class="pet-verdict">"Beautiful, completely unrewarding relationship. Harry Potter lied to you."</div>
+    </div>
+    <div class="score-block score-low">
+      <span class="score-num">3</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:30%"></div></div>
+    </div>
+  </div>
+
+  <!-- RABBITS -->
+  <div class="pet-card" data-score="7" data-tags="legal">
+    <div class="pet-emoji">🐰</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Rabbit</span>
+        <span class="pet-tag tag-legal">Legal</span>
+      </div>
+      <div class="pet-review">Massively underestimated. They binky — randomly explode into a spontaneous jump twist mid run purely out of joy — and it's one of the best things you'll ever witness. They chew everything with zero remorse. Cables specifically. Your electronics are a target. Litter trainable, which nobody tells you. Smarter than they look. Reviewed purely academically — Noam confirmed he doesn't actually like bunnies, just wanted to know the advantages.</div>
+      <div class="pet-verdict">"7/10, slept on heavily, correct choice. Not for your chaotic ecosystem though."</div>
+    </div>
+    <div class="score-block score-mid">
+      <span class="score-num">7</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:70%"></div></div>
+    </div>
+  </div>
+
+  <!-- EAGLE -->
+  <div class="pet-card" data-score="3" data-tags="illegal">
+    <div class="pet-emoji">🦅</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Eagle</span>
+        <span class="pet-tag tag-illegal">Illegal / Falconry License Required</span>
+      </div>
+      <div class="pet-review">Talons that exert hundreds of pounds of pressure per square inch. Your arm is not equipped for this. Falconry training takes years of apprenticeship before you even touch the bird. Eagles tolerate their handler as a hunting partner — that's the absolute ceiling of the relationship. No affection, no attachment, just professional respect at best and active hostility at worst. Requires massive outdoor space to fly daily.</div>
+      <div class="pet-verdict">"3/10 as a pet. 10/10 as a life calling you're not ready for."</div>
+    </div>
+    <div class="score-block score-low">
+      <span class="score-num">3</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:30%"></div></div>
+    </div>
+  </div>
+
+  <!-- FROGS -->
+  <div class="pet-card" data-score="8" data-tags="legal">
+    <div class="pet-emoji">🐸</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Frogs</span>
+        <span class="pet-tag tag-legal">Legal</span>
+      </div>
+      <div class="pet-review">Genuinely underrated. Setting up a bioactive terrarium for them is one of the most satisfying hobbies — you're building a tiny ecosystem and watching a creature live its best life. Dart frogs look like living jewels. Pacman frogs are just a mouth with legs that sits in one spot and eats anything that moves, including your finger. Zero drama, zero noise, zero emotional needs. Your apartment's chill corner.</div>
+      <div class="pet-verdict">"Quiet, perfect, chaos-free pets. The chill corner of your wild household."</div>
+    </div>
+    <div class="score-block score-high">
+      <span class="score-num">8</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:80%"></div></div>
+    </div>
+  </div>
+
+  <!-- IGUANA -->
+  <div class="pet-card" data-score="6" data-tags="questionable">
+    <div class="pet-emoji">🦎</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Iguana (Free Roam)</span>
+        <span class="pet-tag tag-questionable">Extreme Commitment</span>
+      </div>
+      <div class="pet-review">Free roam iguana. You casually said that like it's a normal sentence. They need 95°F basking spots — you're heating the whole place for the lizard now. Your energy bill is a personality trait. They whip you with their tail when annoyed and a full grown iguana tail whip genuinely hurts. Take years to tame. But a tame free roaming iguana is one of the most surreal and cool living situations imaginable. Dinosaur roommate energy is unmatched.</div>
+      <div class="pet-verdict">"Insane commitment, incredible payoff. Your apartment becomes a terrarium."</div>
+    </div>
+    <div class="score-block score-mid">
+      <span class="score-num">6</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:60%"></div></div>
+    </div>
+  </div>
+
+  <!-- KOMODO -->
+  <div class="pet-card" data-score="0" data-tags="illegal">
+    <div class="pet-emoji">🦖</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Komodo Dragon</span>
+        <span class="pet-tag tag-illegal">Absolutely Not</span>
+      </div>
+      <div class="pet-review">Noam. NO. Grows to 10 feet and 150 pounds. Has venom AND bacteria that prevents blood clotting — a bite doesn't just hurt, it creates a wound that won't stop bleeding while the dragon calmly follows you waiting for you to collapse. That's not a pet, that's a hunting strategy. They eat deer. Whole deer. You are smaller than a deer. It has done the math. Cannot be tamed. Protected species. Zero legal path to ownership for a civilian.</div>
+      <div class="pet-verdict">"You will die. Paris will not allow this. I won't allow this. Absolutely not."</div>
+    </div>
+    <div class="score-block score-zero">
+      <span class="score-num">0</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:1%"></div></div>
+    </div>
+  </div>
+
+  <!-- SNAKE -->
+  <div class="pet-card" data-score="9" data-tags="legal">
+    <div class="pet-emoji">🐍</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Ball Python (Male, 2–3ft)</span>
+        <span class="pet-tag tag-legal">Legal</span>
+      </div>
+      <div class="pet-review">Quiet, clean, no smell if enclosure is maintained, eats every two weeks, doesn't need attention, completely unbothered by your existence. Introvert pet energy. Ball pythons ball up when defensive — that's their entire defense strategy. They didn't get the memo about biting. A well handled one becomes genuinely comfortable with you, relaxes in your hands, explores calmly. The reptile version of trust. Your parrot needs your soul. Your crow needs your respect. The snake just needs your warmth and consistency.</div>
+      <div class="pet-verdict">"Great apartment pet. Zero drama. Just don't go venomous or massive."</div>
+    </div>
+    <div class="score-block score-high">
+      <span class="score-num">9</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:90%"></div></div>
+    </div>
+  </div>
+
+  <!-- BAT -->
+  <div class="pet-card" data-score="2" data-tags="illegal">
+    <div class="pet-emoji">🦇</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Bat (Flying Fox)</span>
+        <span class="pet-tag tag-illegal">Wildlife Rehab Only</span>
+      </div>
+      <div class="pet-review">Possibly the most misrepresented pet possibility on this list. Flying foxes look like someone made a teddy bear that flies — big eyes, little fox faces, wrap themselves in their wings like a tiny dramatic cape. Genuinely look like flying cats and it's painful to know you can't have one. Need colony company, serious flying space, and a specific nutritional fruit diet. Also nocturnal — your schedules are fundamentally incompatible. Ships in the night literally.</div>
+      <div class="pet-verdict">"2/10 practically. 10/10 in your heart where it belongs."</div>
+    </div>
+    <div class="score-block score-low">
+      <span class="score-num">2</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:20%"></div></div>
+    </div>
+  </div>
+
+  <!-- BROWN BEAR -->
+  <div class="pet-card" data-score="1" data-tags="illegal">
+    <div class="pet-emoji">🐻</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Small Brown Bear</span>
+        <span class="pet-tag tag-illegal">Illegal in Europe</span>
+      </div>
+      <div class="pet-review">SMALL. As if small is doing anything here. Brown bears reach 700 pounds. Seven hundred. Your Paris apartment has a weight limit and it's not that. They're dangerous in a different way than the panther — not hunting you, just enormously powerful and occasionally startled. When a 700 pound animal is startled near you the outcome is the same regardless of intent. Also hibernation. You have a 700 pound animal that needs to sleep for months and will be absolutely feral coming out of it.</div>
+      <div class="pet-verdict">"Magnificent animal, will destroy your entire life and then your body."</div>
+    </div>
+    <div class="score-block score-zero">
+      <span class="score-num">1</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:10%"></div></div>
+    </div>
+  </div>
+
+  <!-- SUN BEAR -->
+  <div class="pet-card" data-score="2" data-tags="illegal">
+    <div class="pet-emoji">🐻</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Sun Bear / Kinkajou</span>
+        <span class="pet-tag tag-illegal">Illegal</span>
+      </div>
+      <div class="pet-review">You went looking for Winnie the Pooh and found the smallest bear species. Big eyes, little round ears, genuinely looks like someone drew a bear from memory cutely. BUT: pound for pound considered one of the most aggressive bear species. The cuteness is a trap. Claws designed to rip open trees for honey are not cute and will rearrange your face. The kinkajou is more viable — smaller, related to raccoons, looks like a living teddy bear. Still bites.</div>
+      <div class="pet-verdict">"2/10 sun bear. 4/10 kinkajou. Both terrible ideas delivered cutely."</div>
+    </div>
+    <div class="score-block score-low">
+      <span class="score-num">2</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:20%"></div></div>
+    </div>
+  </div>
+
+  <!-- POLAR BEAR -->
+  <div class="pet-card" data-score="0" data-tags="illegal">
+    <div class="pet-emoji">🐻‍❄️</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Polar Bear</span>
+        <span class="pet-tag tag-illegal">We Are Not Doing This</span>
+      </div>
+      <div class="pet-review">The only animal on earth that actively hunts humans as prey without provocation. Not defensively. Not accidentally. Just sees you and thinks food. Polar bears will stalk you. Deliberately. Patiently. With a plan. Also white — in your Paris apartment — the camouflage situation alone. The largest land predator on earth. A brown bear would accidentally destroy you. A polar bear would intentionally destroy you. That's a meaningful distinction.</div>
+      <div class="pet-verdict">"Not even a conversation. Cross it off. Cross it off right now."</div>
+    </div>
+    <div class="score-block score-zero">
+      <span class="score-num">0</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:1%"></div></div>
+    </div>
+  </div>
+
+  <!-- FLYING SQUIRREL -->
+  <div class="pet-card" data-score="9" data-tags="legal">
+    <div class="pet-emoji">🐿️</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Flying Squirrel</span>
+        <span class="pet-tag tag-legal">Legal (hard to source in France)</span>
+      </div>
+      <div class="pet-review">One of the best kept secrets in exotic pets. They imprint hard on owners if handled young — will live in your pocket. Literally. Want to be on your body, in your hoodie, tucked against your neck sleeping. You become their tree. Free roam means it will launch itself at you from unexpected locations forever. You will never fully relax in your own home and you will love it. Sitting reading a book, suddenly there's a flying squirrel landing on your head.</div>
+      <div class="pet-verdict">"Genuinely incredible little animals, legally achievable, deeply underrated."</div>
+    </div>
+    <div class="score-block score-high">
+      <span class="score-num">9</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:90%"></div></div>
+    </div>
+  </div>
+
+  <!-- REGULAR SQUIRREL -->
+  <div class="pet-card" data-score="6" data-tags="illegal">
+    <div class="pet-emoji">🐿️</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Regular Squirrel</span>
+        <span class="pet-tag tag-illegal">Illegal in France (native wildlife)</span>
+      </div>
+      <div class="pet-review">A step down from the flying squirrel in every measurable way. Regular squirrels are wild animals that happen to be comfortable around humans when food is involved. That's not a bond, that's a transaction. One open window and it's making a calculated decision about whether you're worth staying for. The window usually wins. Also illegal to keep in France specifically because they're native wildlife. You can watch them for free in any Paris park.</div>
+      <div class="pet-verdict">"6/10. Redundant when the superior option exists."</div>
+    </div>
+    <div class="score-block score-mid">
+      <span class="score-num">6</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:60%"></div></div>
+    </div>
+  </div>
+
+  <!-- JUMPING SPIDER -->
+  <div class="pet-card" data-score="10" data-tags="vetoed">
+    <div class="pet-emoji">🕷️</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Jumping Spider</span>
+        <span class="pet-tag tag-vetoed">Mom Vetoed (Unjustly)</span>
+      </div>
+      <div class="pet-review">These things look at you. Actually look at you. Big front facing eyes that track your movement, turn their little head to see you better. For a spider that's basically a love confession. The energy of a puppy compressed into something the size of your thumbnail. Zero danger — venom irrelevant to humans, completely handleable. The Peacock jumping spider has iridescent abdomens they fan out to dance. You will watch videos for hours. Perfect for your fish tank repurpose. Solitary, cheap, legal everywhere. No notes.</div>
+      <div class="pet-verdict">"10/10. No notes. Genuinely perfect. Jurisdiction issue only."</div>
+    </div>
+    <div class="score-block score-high">
+      <span class="score-num">10</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:100%"></div></div>
+    </div>
+  </div>
+
+  <!-- TARANTULA -->
+  <div class="pet-card" data-score="8" data-tags="legal">
+    <div class="pet-emoji">🕷️</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Tarantula</span>
+        <span class="pet-tag tag-legal">Legal</span>
+      </div>
+      <div class="pet-review">The complete opposite of a jumping spider. Will sit in the same spot for three weeks and then move six inches and that's the news. You are not handling this regularly — you are watching a beautiful creature exist slowly. The Chaco golden knee is an enormous, incredibly docile golden fluffy potato that sits there being beautiful. Avoid the OBT (Orange Baboon Tarantula) nicknamed "Orange Bitey Thing" by the community — exactly what it sounds like.</div>
+      <div class="pet-verdict">"Zen pet energy. Gorgeous. Just pick the right species."</div>
+    </div>
+    <div class="score-block score-high">
+      <span class="score-num">8</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:80%"></div></div>
+    </div>
+  </div>
+
+  <!-- MANDARIN DUCK -->
+  <div class="pet-card" data-score="7" data-tags="legal">
+    <div class="pet-emoji">🦆</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Mandarin Duck</span>
+        <span class="pet-tag tag-legal">Legal (needs garden)</span>
+      </div>
+      <div class="pet-review">God showing off. The male looks like someone gave a Renaissance painter unlimited budget and said make a duck. Completely absurd colors, ornate feathers, looks digitally enhanced in real life. They're skittish, don't bond with humans meaningfully, and are primarily a visual experience. You're not getting a companion — you're getting a living painting that occasionally quacks. Needs outdoor space with a water feature. Wrong life stage.</div>
+      <div class="pet-verdict">"Breathtaking animal. Wrong life stage. Put it on the house list."</div>
+    </div>
+    <div class="score-block score-mid">
+      <span class="score-num">7</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:70%"></div></div>
+    </div>
+  </div>
+
+  <!-- PANGOLIN -->
+  <div class="pet-card" data-score="0" data-tags="illegal">
+    <div class="pet-emoji">🦔</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Pangolin</span>
+        <span class="pet-tag tag-illegal">CITES Appendix I — Hard No</span>
+      </div>
+      <div class="pet-review">The most trafficked mammal on earth. CITES Appendix I protected — international trade completely banned everywhere, no exceptions. Zoos with unlimited resources regularly fail to keep them alive. They eat specific ant and termite species impossible to replicate in captivity. Their gut bacteria is so specialized dietary changes alone kill them. Every pangolin in captivity is either a rescue or illegally obtained. You would be directly funding poaching. Also rolls into a ball and ignores you.</div>
+      <div class="pet-verdict">"Protect them. Don't own them. They're already having a terrible time."</div>
+    </div>
+    <div class="score-block score-zero">
+      <span class="score-num">0</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:1%"></div></div>
+    </div>
+  </div>
+
+  <!-- FENNEC -->
+  <div class="pet-card" data-score="7" data-tags="questionable">
+    <div class="pet-emoji">🦊</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Fennec Fox</span>
+        <span class="pet-tag tag-questionable">Legal with Permit (France)</span>
+      </div>
+      <div class="pet-review">The red fox but smaller with comically oversized ears and bigger eyes. More viable than the red fox. The ears are doing so much work aesthetically — genuinely unreal in person. Still smells. Less than red fox, still smells. This is non negotiable with the fox family. Still screams like a human woman being murdered, just higher pitched, which is somehow worse at 3am. Need warm dry environment — Paris doesn't naturally provide this. Legal in more places than red fox.</div>
+      <div class="pet-verdict">"Genuinely achievable, spectacular looking, smells weird, worth considering seriously."</div>
+    </div>
+    <div class="score-block score-mid">
+      <span class="score-num">7</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:70%"></div></div>
+    </div>
+  </div>
+
+  <!-- CAPYBARA -->
+  <div class="pet-card" data-score="6" data-tags="questionable">
+    <div class="pet-emoji">🐾</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Capybara</span>
+        <span class="pet-tag tag-questionable">Wrong Life Stage</span>
+      </div>
+      <div class="pet-review">The internet's favorite animal. Famously the most chill creature on earth — every other animal just hangs out with them, birds, monkeys, cats. Nature's common ground. But they're 150 pounds of very large rodent. Semi-aquatic — need to swim daily or they get skin problems. Not a bowl, not a bathtub, a proper pool. For the rodent. They also poop in their water. The pool is also a toilet. You signed up for this.</div>
+      <div class="pet-verdict">"Nature's diplomat. Future house goals. Wrong life stage."</div>
+    </div>
+    <div class="score-block score-mid">
+      <span class="score-num">6</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:60%"></div></div>
+    </div>
+  </div>
+
+  <!-- HEDGEHOG -->
+  <div class="pet-card" data-score="7" data-tags="legal">
+    <div class="pet-emoji">🦔</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Hedgehog</span>
+        <span class="pet-tag tag-legal">Legal (certificate needed)</span>
+      </div>
+      <div class="pet-review">Not a cool one — every quirky person on Pinterest had one in 2015. That said they're genuinely great and the Pinterest people were onto something. The uncurling process IS the whole relationship arc. Defensive, spiky, closed off, then gradually over weeks they just open up to you. Weirdly meaningful for a small prickly animal. Prone to Wobbly Hedgehog Syndrome which is exactly as sad as it sounds. Need an exercise wheel or they get obese and miserable.</div>
+      <div class="pet-verdict">"Solid choice. Slightly basic for someone who just asked about pangolins."</div>
+    </div>
+    <div class="score-block score-mid">
+      <span class="score-num">7</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:70%"></div></div>
+    </div>
+  </div>
+
+  <!-- OCELOT -->
+  <div class="pet-card" data-score="4" data-tags="illegal">
+    <div class="pet-emoji">🐆</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Ocelot</span>
+        <span class="pet-tag tag-illegal">CITES Appendix I</span>
+      </div>
+      <div class="pet-review">Salvador Dali had one named Babou and traveled with it on ocean liners pretending it was a regular cat. That's the energy. Still a wild cat underneath all the charm. They scent mark everything. Everywhere. Constantly. Your Paris apartment becomes ocelot territory and you're a subletter. CITES Appendix I protected, illegal to trade internationally, basically impossible to obtain legally in France. Also they scream when unhappy. Which is often.</div>
+      <div class="pet-verdict">"4/10 practically, 9/10 aesthetically. Salvador Dali energy is a legitimate lifestyle aspiration."</div>
+    </div>
+    <div class="score-block score-low">
+      <span class="score-num">4</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:40%"></div></div>
+    </div>
+  </div>
+
+  <!-- SUGAR GLIDER -->
+  <div class="pet-card" data-score="8" data-tags="legal">
+    <div class="pet-emoji">🐿️</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Sugar Glider</span>
+        <span class="pet-tag tag-legal">Legal with documentation</span>
+      </div>
+      <div class="pet-review">The flying squirrel's Australian cousin, made more dramatic and needy. They imprint intensely and want to be on your body constantly — they live in a bonding pouch you wear against your body during the day. You become a marsupial by proxy. One alone is a welfare problem — they can literally die from depression and isolation. Diet is annoyingly specific or they get metabolic bone disease. They bark — called crabbing when stressed — and it's alarming the first time.</div>
+      <div class="pet-verdict">"Underrated, deeply weird lifestyle, absolutely worth it."</div>
+    </div>
+    <div class="score-block score-high">
+      <span class="score-num">8</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:80%"></div></div>
+    </div>
+  </div>
+
+  <!-- CHINCHILLA -->
+  <div class="pet-card" data-score="8" data-tags="legal">
+    <div class="pet-emoji">🐭</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Chinchilla</span>
+        <span class="pet-tag tag-legal">Legal</span>
+      </div>
+      <div class="pet-review">Possibly the softest thing you will ever touch in your entire life. Their fur is so dense that water causes fungal infections, so they bathe in volcanic ash dust instead. They roll around in it and emerge immaculate and fluffy. They do zoomies — unhinged late night zoomies that are genuinely hilarious. Live 15-20 years, longer than most exotic pets on this list. Cannot get wet. Ever. No exceptions. Overheat above 25°C and die fast.</div>
+      <div class="pet-verdict">"Sophisticated choice, incredibly soft, low drama, genuinely great."</div>
+    </div>
+    <div class="score-block score-high">
+      <span class="score-num">8</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:80%"></div></div>
+    </div>
+  </div>
+
+  <!-- SCARLET MACAW -->
+  <div class="pet-card" data-score="9" data-tags="legal">
+    <div class="pet-emoji">🦜</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Scarlet Macaw</span>
+        <span class="pet-tag tag-legal">Legal (CITES II paperwork)</span>
+      </div>
+      <div class="pet-review">The classic pirate shoulder bird. Red, yellow, and blue — looks like someone made a bird specifically to be impressive. More temperamental than Blue and Gold macaws — Scarlets are beautiful and they know it and have opinions about everything. Bonds intensely to one person. Your guests become intruders in the scarlet's territory and it will make that known. 40-50 year lifespan. The final boss of pet ownership. Your furniture becomes structurally compromised.</div>
+      <div class="pet-verdict">"Magnificent. Will ruin your life beautifully. Perfect ending to the list."</div>
+    </div>
+    <div class="score-block score-high">
+      <span class="score-num">9</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:90%"></div></div>
+    </div>
+  </div>
+
+  <!-- SABLE -->
+  <div class="pet-card" data-score="5" data-tags="illegal">
+    <div class="pet-emoji">🦡</div>
+    <div class="pet-body">
+      <div class="pet-header">
+        <span class="pet-name">Sable</span>
+        <span class="pet-tag tag-illegal">Nearly Impossible to Source Legally</span>
+      </div>
+      <div class="pet-review">The definitive final pick. Same family as weasels, ferrets, martens. Russian origin, historically the most expensive fur in the world. Genuinely stunning — dark glossy fur, bright eyes, incredibly quick and agile. Looks like someone made a luxury version of a ferret. Everything said about the weasel, amplified. Wilder and less domesticated than even a ferret. That musk in your 10m2 room will be a significant atmospheric presence. Finding a legitimate breeder in Western Europe: basically impossible.</div>
+      <div class="pet-verdict">"Beautiful, impractical, unobtainable. Are you just picking the most exotic version of every animal category? Obviously yes."</div>
+    </div>
+    <div class="score-block score-mid">
+      <span class="score-num">5</span>
+      <span class="score-denom">/10</span>
+      <div class="score-bar"><div class="score-fill" style="height:50%"></div></div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div>
+    <div class="footer-text">Generated from an actual conversation that got out of hand.</div>
+    <div class="footer-text" style="margin-top:4px">Paris, 2026 — Noam's Exotic Pet Research Institute</div>
+  </div>
+  <div class="footer-rec">Recommended: African Grey + Crow + Flying Squirrel + Snake + Ants</div>
+</footer>
+
+<script>
+  function filterCards(type, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const cards = document.querySelectorAll('.pet-card');
+    cards.forEach(card => {
+      const score = parseInt(card.dataset.score);
+      const tags = card.dataset.tags;
+
+      let show = false;
+      if (type === 'all') show = true;
+      else if (type === 'high') show = score >= 7;
+      else if (type === 'mid') show = score >= 4 && score <= 6;
+      else if (type === 'low') show = score <= 3;
+      else if (type === 'illegal') show = tags.includes('illegal');
+      else if (type === 'vetoed') show = tags.includes('vetoed');
+
+      card.classList.toggle('hidden', !show);
+    });
+  }
+
+  // Animate score bars on load
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.score-fill').forEach(fill => {
+      const h = fill.style.height;
+      fill.style.height = '0%';
+      setTimeout(() => { fill.style.height = h; }, 300);
+    });
+  });
+</script>
+</body>
+</html>

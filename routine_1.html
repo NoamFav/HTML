@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Routine</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --surface2: #1e1e1e;
+    --border: #2a2a2a;
+    --border2: #333;
+    --text: #e8e8e8;
+    --muted: #666;
+    --dim: #444;
+    --accent: #c8ff00;
+    --accent-dim: rgba(200,255,0,0.08);
+    --done-color: #3a3a3a;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --font-sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .container { max-width: 560px; margin: 0 auto; }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .date {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 1px;
+    margin-bottom: 2rem;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .stat {
+    flex: 1;
+    background: var(--surface);
+    padding: 12px 16px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text);
+    display: block;
+  }
+
+  .stat-num.accent { color: var(--accent); }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: var(--font-mono);
+    display: block;
+    margin-top: 2px;
+  }
+
+  .progress-track {
+    height: 2px;
+    background: var(--border);
+    margin-bottom: 2.5rem;
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 1px;
+    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+  }
+
+  .section { margin-bottom: 1.75rem; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    padding: 0 2px;
+  }
+
+  .section-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .section-count {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .items { display: flex; flex-direction: column; gap: 2px; }
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.1s, border-color 0.1s;
+    user-select: none;
+  }
+
+  .item:hover { background: var(--surface2); border-color: var(--border2); }
+
+  .item.done {
+    background: var(--bg);
+    border-color: var(--border);
+  }
+
+  .item.done .item-label {
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+
+  .item.done .item-sub { color: var(--dim); }
+
+  .checkbox {
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--dim);
+    border-radius: 2px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .item.done .checkbox {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .checkmark {
+    display: none;
+    width: 7px;
+    height: 4px;
+    border-left: 1.5px solid #000;
+    border-bottom: 1.5px solid #000;
+    transform: rotate(-45deg) translateY(-1px);
+  }
+
+  .item.done .checkmark { display: block; }
+
+  .item-label {
+    font-size: 13px;
+    color: var(--text);
+    flex: 1;
+    line-height: 1.4;
+  }
+
+  .item-sub {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .reset-btn {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: color 0.1s, border-color 0.1s;
+  }
+
+  .reset-btn:hover { color: var(--text); border-color: var(--border2); }
+
+  .footer-note {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--dim);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <span class="title">// daily routine</span>
+    <span class="date" id="date-display"></span>
+  </header>
+
+  <div class="stats-row">
+    <div class="stat"><span class="stat-num accent" id="pct">0%</span><span class="stat-label">done</span></div>
+    <div class="stat"><span class="stat-num" id="done-count">0</span><span class="stat-label">checked</span></div>
+    <div class="stat"><span class="stat-num" id="left-count">0</span><span class="stat-label">left</span></div>
+  </div>
+
+  <div class="progress-track"><div class="progress-fill" id="prog"></div></div>
+
+  <div id="list"></div>
+
+  <footer>
+    <button class="reset-btn" onclick="resetDay()">reset today</button>
+    <span class="footer-note" id="save-note">auto-saved</span>
+  </footer>
+</div>
+
+<script>
+const sections = [
+  { id: "sleep", title: "Sleep", color: "#8b7cf8", items: [
+    { label: "In bed by midnight", sub: "non-negotiable" },
+    { label: "Wake up same time daily", sub: "aim 7–8h" },
+    { label: "No screen 30 min before bed" },
+    { label: "No caffeine after 3pm" },
+  ]},
+  { id: "pills", title: "Pills / supplements", color: "#e879a0", items: [
+    { label: "Morning pills", sub: "with breakfast" },
+    { label: "Evening pills", sub: "if applicable" },
+  ]},
+  { id: "gym", title: "Gym", color: "#4ade80", items: [
+    { label: "Train (min 3x/week)", sub: "any session counts" },
+    { label: "Hit protein target", sub: "meat-first" },
+    { label: "Track session in notes" },
+  ]},
+  { id: "diet", title: "Diet", color: "#fb923c", items: [
+    { label: "Eat breakfast", sub: "don't skip" },
+    { label: "No junk / ultra-processed today" },
+    { label: "Hydrate — 2L+", sub: "water" },
+  ]},
+  { id: "outside", title: "Outside time", color: "#38bdf8", items: [
+    { label: "Leave the house", sub: "min 30 min" },
+    { label: "Walk / commute on foot", sub: "when possible" },
+    { label: "Sunlight before noon" },
+  ]},
+  { id: "work", title: "Work / 42 prep", color: "#c8ff00", items: [
+    { label: "C study session", sub: "min 1h" },
+    { label: "42 Piscine prep materials" },
+    { label: "One coding exercise", sub: "keep hands dirty" },
+  ]},
+  { id: "gigs", title: "Gig hunting (Paris)", color: "#f97316", items: [
+    { label: "Check freelance boards", sub: "Malt, Codeur, LinkedIn" },
+    { label: "1 application or reach-out" },
+    { label: "Update portfolio / GitHub" },
+    { label: "Check local tech meetups" },
+  ]},
+  { id: "misc", title: "General", color: "#94a3b8", items: [
+    { label: "Tidy room / desk space" },
+    { label: "Check in with Fallen" },
+    { label: "One thing for yourself", sub: "Lego, music, whatever" },
+  ]},
+];
+
+const STORAGE_KEY = 'routine_state';
+const DATE_KEY = 'routine_date';
+const total = sections.reduce((a, s) => a + s.items.length, 0);
+
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function loadState() {
+  const saved_date = localStorage.getItem(DATE_KEY);
+  const today = todayStr();
+  if (saved_date !== today) {
+    localStorage.setItem(DATE_KEY, today);
+    localStorage.removeItem(STORAGE_KEY);
+    return {};
+  }
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+}
+
+function saveState(state) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  localStorage.setItem(DATE_KEY, todayStr());
+  const note = document.getElementById('save-note');
+  note.textContent = 'saved ✓';
+  setTimeout(() => { note.textContent = 'auto-saved'; }, 1200);
+}
+
+let state = loadState();
+
+function updateStats() {
+  const done = Object.values(state).filter(Boolean).length;
+  const left = total - done;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('done-count').textContent = done;
+  document.getElementById('left-count').textContent = left;
+  document.getElementById('pct').textContent = pct + '%';
+  document.getElementById('prog').style.width = pct + '%';
+}
+
+function render() {
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  sections.forEach(sec => {
+    const doneInSec = sec.items.filter((_, i) => state[sec.id + i]).length;
+    const section = document.createElement('div');
+    section.className = 'section';
+    section.innerHTML = `
+      <div class="section-header">
+        <span class="section-title" style="color:${sec.color}">${sec.title}</span>
+        <span class="section-count">${doneInSec}/${sec.items.length}</span>
+      </div>
+      <div class="items" id="items-${sec.id}"></div>
+    `;
+    list.appendChild(section);
+    const container = section.querySelector(`#items-${sec.id}`);
+    sec.items.forEach((item, i) => {
+      const key = sec.id + i;
+      const el = document.createElement('div');
+      el.className = 'item' + (state[key] ? ' done' : '');
+      el.innerHTML = `
+        <div class="checkbox"><div class="checkmark"></div></div>
+        <span class="item-label">${item.label}</span>
+        ${item.sub ? `<span class="item-sub">${item.sub}</span>` : ''}
+      `;
+      el.onclick = () => {
+        state[key] = !state[key];
+        saveState(state);
+        updateStats();
+        render();
+      };
+      container.appendChild(el);
+    });
+  });
+}
+
+function resetDay() {
+  if (confirm('Reset all tasks for today?')) {
+    state = {};
+    saveState(state);
+    updateStats();
+    render();
+  }
+}
+
+const d = new Date();
+document.getElementById('date-display').textContent =
+  d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }).toLowerCase();
+
+updateStats();
+render();
+</script>
+</body>
+</html>
